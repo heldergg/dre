@@ -1,0 +1,93 @@
+
+= How to get the DRE documents =
+
+i) First we have to get the following page:
+
+http://www.dre.pt/sug/digesto/rgratis.asp?reg=PCMLex
+
+This will return a 200 code. Whthin the returned page we'll get a html redirect. Someting like the following:
+
+<meta http-equiv="refresh" content="0; URL=http://digestoconvidados.dre.pt/digesto/Main.aspx?Database=LEX" />
+
+The redirect URL is:
+
+[I] http://digestoconvidados.dre.pt/digesto/Main.aspx?Database=LEX 
+
+The headers returned are:
+
+HTTP/1.1 200 OK
+Date: Sun, 15 Apr 2012 22:02:22 GMT
+Server: Microsoft-IIS/6.0
+X-Powered-By: ASP.NET
+Content-Length: 972
+Content-Type: text/html
+Cache-Control: private
+Set-Cookie: DREUtilities=Acessos=2; expires=Sun, 15-Apr-2012 22:22:22 GMT; domain=; path=/
+Set-Cookie: UserDigesto=; expires=Sun, 15-Apr-2012 22:22:22 GMT; domain=; path=/
+Set-Cookie: CGI=; expires=Sun, 15-Apr-2012 22:22:22 GMT; domain=; path=/
+Set-Cookie: UserDRE=; expires=Sun, 15-Apr-2012 22:22:22 GMT; domain=; path=/
+Set-Cookie: ASPSESSIONIDCCRBBCBA=ONDPABABKNHHELKGPFDDIMLE; path=/
+Keep-Alive: timeout=15, max=1000
+Connection: Keep-Alive
+
+ii) Then, when following the redirect url [I] we will get two 302 code redirections. The first one pointing to:
+
+http://digestoconvidados.dre.pt/digesto/(S(d0f2vi55vmx0xj45jhsdfg45))/Main.aspx?Database=LEX
+
+And then, from this one we are redirected to:
+
+[II] http://digestoconvidados.dre.pt/digesto/(S(d0f2vi55vmx0xj45jhsdfg45))/Paginas/PesquisaDetalhada.aspx
+
+No new cookies are set on this redirections. The string (S(d0f2vi55vmx0xj45jhsdfg45)) changes each time we visit URL [I]. 
+The objective of using this unique URL setup is yet unknown, however this url as a time to live and it is somehow tied to 
+the session. The consequences are:
+
+* You can't share a result url (the PDFs URL are permanent however);
+* You have a short period of time to complete the query, judging by the cookies expire hour, this will be 22 minutes. 
+There's a good chance that this setup relies on the browser cooiki experation compliance. If this is true we can simply
+feed the same cookies, if not step one an two will have to be repeted everytime the cookis expire.
+
+
+iii) Making a query: The querie is made using URL:
+
+[III] http://digestoconvidados.dre.pt/digesto/(S(f5kjxb55sfongn55lcjdbc45))/Paginas/PesquisaResultados.aspx
+
+There's an added dificulty, they use a query composer where we can choose the query conditions. Problem is that each time 
+we change a setting in the form, a port request is made (via java script). The query doesn't seem to work without
+JavaScript.
+
+
+
+The final post form is rather long (1140 Bytes):
+
+__EVENTTARGET=
+__EVENTARGUMENT=
+__LASTFOCUS=
+__VIEWSTATE=%2FwEPDwUJMzAzNDk1OTA4D2QWAgIBD2QWCAIBD2QWAmYPZBYIAgEPDxYCHgtOYXZpZ2F0ZVVybAUOQWp1ZGFDb252LmFzcHhkZAIHDw8WAh8ABSwuLi9NYWluLmFzcHg%2FTG9nb3V0PTEmR290bz1odHRwOi8vd3d3LmRyZS5wdGRkAgkPDxYCHgRUZXh0BQQ8SDY%2BZGQCCw8PFgIfAQUFPC9INj5kZAICD2QWAmYPZBYCAgMPDxYCHgdWaXNpYmxlaGRkAgMPZBYCZg9kFgoCAg8PFgQfAQUSUGVzcXVpc2EgRGV0YWxoYWRhHwJnZGQCBA8PFgYfAQUKUmVzdWx0YWRvcx4HRW5hYmxlZGgfAmdkZAIFDw8WAh8CaGRkAgYPDxYCHwNoZGQCBw8PFgIfAmhkZAIID2QWBgIBD2QWAmYPFgIeCWlubmVyaHRtbAU9UmVzdWx0YWRvcyANCgkJZGEgcGVzcXVpc2EgbmENCgkgUENNTEVYICgzNDIpIC0gUCYjMjI1O2dpbmEgMWQCAw8PFgIfAmhkZAIFD2QWBAIBDw8WAh8CaGRkAgIPDxYCHwJoZGQYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgEFGlBhZ2luYUJhc2VfQm90YW9Qb3JEZWZlaXRvSl%2F%2B8SutQ%2BsSNIRw%2FgRu0UypFJM%3D
+__EVENTVALIDATION=%2FwEWEQK%2Fk5OaBwK2oqHtAgLSv8NgAtK%2Fr4UIAtK%2F65YCAoTk94wJAoTk94wJAsmk4e4MAsmk4e4MAqGfzdsHAv3zw%2BwLArvf9fUBArvf8fUBArvf7fUBArvf6fUBAsDC9OkOAuO5lAP1bj3CeW%2B%2BSp%2FVpxJQs%2BJIpprs3A%3D%3D
+menuState=Pcmlex%7C
+PesquisaResultadosPres%3AacrescentarComboId=
+PesquisaResultadosPres%3AremoverComboId=
+PesquisaResultadosPres%3APaginaPosteriorId=Pr%C3%B3xima
+
+
+The __VIEWSTATE variable can be read directly from the page [II].
+
+The __EVENTVALIDATION is a bit trickier since it seems to be JavaScript processed.
+
+/wEWYQKJ9aYgAraioe0CAtK
+/w2AC0r+vhQgC7K+xiQQC+LKplw4CytDkqAUCsfn1ngYCyqrV9QECudrarwUC6qeJ0wwC58Pf5Q4ChaHNlwQC
+/4LG4QkC6P+cKwLDoeGQBALIz7yOBALK2K7JDAKTyuKhDQKGjYy+CgK5leOyBALsr8WJBAL4st2XDgLK0JCoBQKx+emeBgLKqsn1AQK52savBQLqp5XTDALnw8PlDgKFodGXBAL
+/gtrhCQLo
+/4ArAsOh
+/ZAEAsjPoI4EAp7UnIYNAqWHv4gCAuetysYNAoqq4+sBAsLL4qENAoWA+qEPAoaNgL4KAuyvuYkEAviyoZcOAsrQ7KgFArH57Z4GAsqqzfUBArnawq8FAuqnkdMMAufDx+UOAoWh1ZcEAv+C3uEJAuj
+/hCsCw6H5kAQCyM+kjgQCyNiuyQwCydiuyQwCz9iuyQwCydjyygwCz9jyygwCkcrioQ0Cho2EvgoCg8OnCALsr62JBAL4srWXDgLK0PioBQKx+YGfBgLKqqH0AQK52q6uBQLqp
+/3SDALnw6vkDgKFobmWBAL
+/grLgCQLo
+/+gqAsOhlZEEAsjPyI8EAsXYrskMApzK4qENAoaNmL4KAorRvPICAuyvoYkEAviyuZcOAsrQ9KgFArH5hZ8GAsqqpfQBArnaqq4FAuqn+dIMAufDr+QOAoWhvZYEAv+CtuAJAuj
+/7CoCw6GRkQQCyM/MjwQCl7LUoAkCo/CZzAQCiLKivgICsuD8ogUCm8KN+gZaqo7ogSupVBqydISVQ0PBW3RdoQ==
+
+
+
+
+
