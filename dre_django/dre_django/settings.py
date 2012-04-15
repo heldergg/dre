@@ -27,17 +27,17 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-PT'
 
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
@@ -78,7 +78,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '8r_^#-*ycr1&=w3p7ghck&_ipg+8mz*u7tz_i4pd^szdtvg5x5'
+SECRET_KEY = '8r_^#-*ycr1&=w3pfjhl#$$x#f.jkhgf7ghck&_ipg+8mz*u7tz_i4pd^szdtvg5x5'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -115,10 +115,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+
+    ##
+    ## DRE apps
+    ##
+
+    'dre_django.dreapp',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -149,3 +151,13 @@ LOGGING = {
         },
     }
 }
+
+##
+## LOCAL
+##
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
