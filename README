@@ -5,7 +5,8 @@ i) First we have to get the following page:
 
 http://www.dre.pt/sug/digesto/rgratis.asp?reg=PCMLex
 
-This will return a 200 code. Whthin the returned page we'll get a html redirect. Someting like the following:
+This will return a 200 code. Whthin the returned page we'll get a html
+redirect. Someting like the following:
 
 <meta http-equiv="refresh" content="0; URL=http://digestoconvidados.dre.pt/digesto/Main.aspx?Database=LEX" />
 
@@ -38,23 +39,27 @@ And then, from this one we are redirected to:
 
 [II] http://digestoconvidados.dre.pt/digesto/(S(d0f2vi55vmx0xj45jhsdfg45))/Paginas/PesquisaDetalhada.aspx
 
-No new cookies are set on this redirections. The string (S(d0f2vi55vmx0xj45jhsdfg45)) changes each time we visit URL [I]. 
-The objective of using this unique URL setup is yet unknown, however this url as a time to live and it is somehow tied to 
-the session. The consequences are:
+No new cookies are set on this redirections. The string
+(S(d0f2vi55vmx0xj45jhsdfg45)) changes each time we visit URL [I].  The
+objective of using this unique URL setup is yet unknown, however this url
+as a time to live and it is somehow tied to the session. The consequences are:
 
 * You can't share a result url (the PDFs URL are permanent however);
-* You have a short period of time to complete the query, judging by the cookies expire hour, this will be 22 minutes. 
-There's a good chance that this setup relies on the browser cooiki experation compliance. If this is true we can simply
-feed the same cookies, if not step one an two will have to be repeted everytime the cookis expire.
+* You have a short period of time to complete the query, judging by the
+cookies expire hour, this will be 22 minutes.  There's a good chance that
+this setup relies on the browser cooiki experation compliance. If this is
+true we can simply feed the same cookies, if not step one an two will have
+to be repeted everytime the cookis expire.
 
 
 iii) Making a query: The querie is made using URL:
 
 [III] http://digestoconvidados.dre.pt/digesto/(S(f5kjxb55sfongn55lcjdbc45))/Paginas/PesquisaResultados.aspx
 
-There's an added dificulty, they use a query composer where we can choose the query conditions. Problem is that each time 
-we change a setting in the form, a port request is made (via java script). The query doesn't seem to work without
-JavaScript.
+There's an added dificulty, they use a query composer where we can choose
+the query conditions. Problem is that each time we change a setting in the
+form, a port request is made (via java script). The query doesn't seem to
+work without JavaScript.
 
 
 
@@ -87,7 +92,11 @@ The __EVENTVALIDATION is a bit trickier since it seems to be JavaScript processe
 /+gqAsOhlZEEAsjPyI8EAsXYrskMApzK4qENAoaNmL4KAorRvPICAuyvoYkEAviyuZcOAsrQ9KgFArH5hZ8GAsqqpfQBArnaqq4FAuqn+dIMAufDr+QOAoWhvZYEAv+CtuAJAuj
 /7CoCw6GRkQQCyM/MjwQCl7LUoAkCo/CZzAQCiLKivgICsuD8ogUCm8KN+gZaqo7ogSupVBqydISVQ0PBW3RdoQ==
 
+----------------------------------------------------------------------
 
+We can get the documents directly from:
 
+http://digestoconvidados.dre.pt/digesto/%28S%28ue1u0ujqjopzvfr0qwybwqms%29%29/Paginas/DiplomaDetalhado.aspx?claint=293063
 
+Where 293063 is the ID.
 
