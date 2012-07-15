@@ -21,11 +21,12 @@ def usage():
     print '''Usage: %(script_name)s [options]\n
     Commands:
         -r
-        --read_stats        Reads the stats from sitemeter
+        --read_docs         Reads documents from the site until no more
+                            documents are available
 
-        -u <sitemeter_key>
-        --read_single <sitemeter_key>
-                            Reads the stats of a single blog
+        -u <document_id>
+        --read_single <document_id>
+                            Reads a single document from the site
 
         -h
         --help              This help screen
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
                                    'hru:v',
-                                   ['help', 'read_stats','read_single=','verbose'])
+                                   ['help', 'read_docs','read_single=','verbose'])
     except getopt.GetoptError, err:
         print str(err)
         print
@@ -45,18 +46,18 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Commands
-    for o, a in opts:
-        if o in ('-r', '--read_stats'):
-            from webscraper.scrapstats import SitemeterScraper
-            scraper = SitemeterScraper()
+    for o, a in opts: 
+        if o in ('-r', '--read_docs'):
+            from drescraper import DREScraper
+            scraper = DREScraper()
             scraper.run()
             sys.exit()
 
         elif o in ('-u', '--read_single'):
-            from webscraper.scrapstats import SitemeterScraper
-            sitemeter_key = a.strip()
-            scraper = SitemeterScraper()
-            scraper.read_blog(sitemeter_key)
+            from drescraper import DREScraper
+            document_id = a.strip()
+            scraper = DREScraper()
+            scraper.read_doc(document_id)
             sys.exit()
 
         elif o in ('-h', '--help'):
