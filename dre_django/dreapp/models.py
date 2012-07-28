@@ -6,7 +6,7 @@ class DocType(models.Model):
 
 class Document(models.Model):
     claint = models.IntegerField() # dre.pt site id
-    doc_type = models.ForeignKey('DocType')
+    doc_type = models.CharField(max_length=32)
 
     number = models.CharField(max_length=16)
     emiting_body = models.CharField(max_length=128)
