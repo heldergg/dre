@@ -52,30 +52,57 @@ class DREScraper( object ):
 
     def download_page(self ):
         url, self.html, cj  =  fetch_url('http://digestoconvidados.dre.pt/digesto/(S(%s))/Paginas/DiplomaDetalhado.aspx?claint=%d' % (self.unique_marker, self.claint))
+        url, self.pdfhtml, cj = fetch_url('http://digestoconvidados.dre.pt/digesto/(S(%s))/Paginas/DiplomaTexto.aspx' % self.unique_marker )
 
     def soupify(self):
         self.soup = bs4.BeautifulSoup(self.html) 
+        self.pdfsoup = bs4.BeautifulSoup(self.pdfhtml) 
 
     def parse(self):
         page_result = {}
+
         page_result['claint'] = self.claint
-        page_result['doc_type'] = self.soup.find('td', { 'headers': 'tipoDescricaoIDHeader' }
+
+        page_result['doc_type'] = self.soup.find('td', 
+                { 'headers': 'tipoDescricaoIDHeader' }
                 ).renderContents() 
 
-        page_result['number'] = self.soup.find('td', { 'headers': 'numeroIDHeader' }).renderContents() 
+        page_result['number'] = self.soup.find('td', 
+                { 'headers': 'numeroIDHeader' }
+                ).renderContents() 
 
-        page_result['emiting_body'] = self.soup.find('td', { 'headers': 'entidadesEmitentesIDHeader' }).renderContents() 
+        page_result['emiting_body'] = self.soup.find('td', 
+                { 'headers': 'entidadesEmitentesIDHeader' }
+                ).renderContents() 
 
-        page_result['source'] = self.soup.find('td', { 'headers': 'fonteIDHeader' }).renderContents() 
+        page_result['source'] = self.soup.find('td', 
+                { 'headers': 'fonteIDHeader' }
+                ).renderContents() 
         
-        page_result['dre_key'] = self.soup.find('td', { 'headers': 'ChaveDreIDHeader' }).renderContents() 
-        page_result['date'] = datetime.strptime(self.soup.find('td', { 'headers': 'dataAssinaturaIDHeader' }).renderContents(), '%d.%m.%Y') 
+        page_result['dre_key'] = self.soup.find('td', 
+                { 'headers': 'ChaveDreIDHeader' }
+                ).renderContents() 
 
-        page_result['notes'] = self.soup.find('fieldset', { 'id': 'FieldsetResumo' }).find('div').renderContents()
+        page_result['date'] = datetime.strptime(self.soup.find('td', 
+                { 'headers': 'dataAssinaturaIDHeader' }
+                ).renderContents(), '%d.%m.%Y') 
+
+        page_result['notes'] = self.soup.find('fieldset', 
+                { 'id': 'FieldsetResumo' }
+                ).find('div').renderContents()
 
         page_result['summary'] = '' # TODO: Delete this field. 
-        page_result['plain_text'] = '' 
-        page_result['dre_pdf'] = '' 
+
+        page_result['plain_text'] = self.pdfsoup.find('span', 
+                { 'id': 'textoIntegral_textoIntegralResidente',
+                  'class': 'TextoIntegralMargin' }
+                ).find('a')['href']  
+                
+
+        page_result['dre_pdf'] = self.pdfsoup.find('span', 
+                { 'id': 'textoIntegral_imagemDoDre',
+                  'class': 'TextoIntegralMargin' }
+                ).find('a')['href']  
 
         import pprint
         pprint.pprint(page_result)
@@ -85,7 +112,7 @@ class DREScraper( object ):
             self.renew_cookie()
             self.renew_marker()
 
-        self.claint = 293063    
+        self.claint = 293064
 
         self.download_page()
         self.soupify()
