@@ -48,8 +48,8 @@ if __name__ == '__main__':
     # Commands
     for o, a in opts: 
         if o in ('-r', '--read_docs'):
-            from drescraper import DREScraper
-            scraper = DREScraper()
+            from drescraper import DREScrap
+            scraper = DREScrap()
             scraper.run()
             sys.exit()
 
