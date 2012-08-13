@@ -7,6 +7,8 @@
 ##
 
 from datetime import datetime, timedelta
+import time
+import random
 import re
 import sys
 import os.path
@@ -31,6 +33,7 @@ import bs4
 ##
 ## Scrap the entire site
 ##
+
 
 class DRESession( object ):
     '''This class manages the DRE session:
@@ -67,6 +70,7 @@ class DRESession( object ):
             'unique_marker': self.unique_marker, })
 
         return html 
+
 
 class DREReadDocs( object ):
     '''Reads a document and stores it in the database.
@@ -130,12 +134,27 @@ class DREReadDocs( object ):
                   'class': 'TextoIntegralMargin' }
                 ).find('a')['href']  
 
+        self.page_result = page_result        
+
         import pprint
         pprint.pprint(page_result)
 
-
     def save(self):
-        pass
+        document = Document()
+        page_result = self.page_result 
+
+        document.claint = page_result['claint']
+        document.doc_type = page_result['doc_type']
+        document.number = page_result['number']
+        document.emiting_body = page_result['emiting_body']
+        document.source = page_result['source']
+        document.dre_key = page_result['dre_key']
+        document.date = page_result['date']
+        document.notes = page_result['notes']
+        document.plain_text = page_result['plain_text']
+        document.dre_pdf = page_result['dre_pdf']
+
+        document.save()
 
     def read_document( self, claint ):
         self.claint = claint 
@@ -144,7 +163,8 @@ class DREReadDocs( object ):
         self.soupify()
         self.parse()
 
-        print html
+        self.save()
+
 
 class DREScrap( object ):
     '''Read the documents from the site. Stores the last publiched document.
@@ -160,7 +180,6 @@ class DREScrap( object ):
     
     def run(self):
         last_claint = self.last_read_doc() + 1
-        last_claint = 293064 
         while True:
             print last_claint
             try:
@@ -170,6 +189,7 @@ class DREScrap( object ):
                 break
             finally:
                 last_claint += 1
+                time.sleep( 20.0 * random.random() + 5 )
 
 TOLERANCE = timedelta(0, 120)
 
