@@ -6,12 +6,14 @@ legislation.
 
 # Imports
 
-import urllib2
 import cookielib
-import socket
 import re
+import socket
+import time
+import urllib2
 
 from drelog import logger
+from dreerror import DREError
 
 ######################################################################
 
@@ -25,7 +27,7 @@ class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
                         self, req, fp, code, msg, headers)              
 
         result.status = code
-        logger.debug('Redirect URL: %s' %  result.url)
+        logger.debug('Redirect URL (301): %s' %  result.url)
         return result
 
     def http_error_302(self, req, fp, code, msg, headers):  
@@ -33,7 +35,16 @@ class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
                         self, req, fp, code, msg, headers)              
 
         result.status = code
-        logger.debug('Redirect URL: %s' %  result.url)
+        logger.debug('Redirect URL (302): %s' %  result.url)
+
+        ### DRE ugly hack: the dre.pt site instead of issuing an http error code
+        ### redirects to an error page. Here we catch the error and raise an
+        ### exception.
+
+        if 'Paginas/Erro.aspx' in result.url:
+            logger.warn('DRE error condition on the site.')
+            raise DREError('Error condition on the site')
+
         return result
 
 def fetch_url( url, data=None, cj=None ):
@@ -70,7 +81,7 @@ def fetch_url( url, data=None, cj=None ):
             if repeat > MAXREPEAT:
                 logger.critical('Socket timeout! Aborting')
                 raise
-            logger.critical('Socket timeout! Sleeping for 5 minutes')
+            logger.debug('Socket timeout! Sleeping for 5 minutes')
             time.sleep(300)
         except urllib2.URLError, msg:
             repeat += 1
@@ -85,7 +96,7 @@ def fetch_url( url, data=None, cj=None ):
                 time.sleep(10)
                 continue
 
-            logger.critical('HTTP Error! Sleeping for 5 minutes: %s' % msg)
+            logger.warn('HTTP Error! Sleeping for 5 minutes: %s' % msg)
             time.sleep(300)
 
     return url, payload, cj

@@ -23,9 +23,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
 
 from dreapp.models import Document 
+from drelog import logger
 
 # Local Imports
 from mix_utils import fetch_url
+from dreerror import DREError
 import bs4 
 
 
@@ -34,6 +36,7 @@ import bs4
 ## Scrap the entire site
 ##
 
+TOLERANCE = timedelta(0, 120)
 
 class DRESession( object ):
     '''This class manages the DRE session:
@@ -55,6 +58,7 @@ class DRESession( object ):
         self.cookie_timeout = datetime.fromtimestamp(list(cj)[0].expires)
 
     def renew_marker(self):
+        logger.warn('Renewing cookies and marker.')
         assert self.cookies != None, 'No cookie jar...'
 
         url, payload, cj  =  fetch_url('http://digestoconvidados.dre.pt/digesto/Main.aspx?Database=LEX', cj=self.cookies )
@@ -86,6 +90,13 @@ class DREReadDocs( object ):
         self.html = self.dre_session.download_page( url )
         self.html_pdf = self.dre_session.download_page( url_pdf )
 
+        f = open('%d-test.html' % claint, 'w')
+        f.write(self.html)
+        f.close()
+        f = open('%d-pdf.html' % claint, 'w')
+        f.write(self.html_pdf)
+        f.close()
+
     def soupify(self):
         self.soup = bs4.BeautifulSoup(self.html) 
         self.soup_pdf = bs4.BeautifulSoup(self.html_pdf) 
@@ -107,37 +118,69 @@ class DREReadDocs( object ):
                 { 'headers': 'entidadesEmitentesIDHeader' }
                 ).renderContents() 
 
-        page_result['source'] = self.soup.find('td', 
-                { 'headers': 'fonteIDHeader' }
-                ).renderContents() 
+        try:
+            page_result['source'] = self.soup.find('td', 
+                    { 'headers': 'fonteIDHeader' }
+                    ).renderContents() 
+        except AttributeError:
+            page_result['source'] = ''
         
-        page_result['dre_key'] = self.soup.find('td', 
-                { 'headers': 'ChaveDreIDHeader' }
-                ).renderContents() 
+        try:
+            page_result['dre_key'] = self.soup.find('td', 
+                    { 'headers': 'ChaveDreIDHeader' }
+                    ).renderContents() 
+        except AttributeError:
+            page_result['dre_key'] = ''
 
-        page_result['date'] = datetime.strptime(self.soup.find('td', 
-                { 'headers': 'dataAssinaturaIDHeader' }
-                ).renderContents(), '%d.%m.%Y') 
+        try:
+            page_result['date'] = datetime.strptime(self.soup.find('td', 
+                    { 'headers': 'dataAssinaturaIDHeader' }
+                    ).renderContents(), '%d.%m.%Y') 
+        except AttributeError:
+            # Tries to get the date from the legend header
+            legend = self.soup.find('legend').renderContents()
+            search = re.search(r'(\d{2}\.\d{2}\.\d{4})', legend)
+            if search:
+                date_str = search.groups()[0]
+                page_result['date'] = datetime.strptime( date_str, '%d.%m.%Y')
+                logger.warn('Date extracted from legend: %s' % date_str)
+            else:
+                raise
 
         page_result['notes'] = self.soup.find('fieldset', 
                 { 'id': 'FieldsetResumo' }
-                ).find('div').renderContents()
+                ).find('div').renderContents().strip()
 
-        page_result['plain_text'] = self.soup_pdf.find('span', 
-                { 'id': 'textoIntegral_textoIntegralResidente',
-                  'class': 'TextoIntegralMargin' }
-                ).find('a')['href']  
-                
+        try:
+            page_result['plain_text'] = self.soup_pdf.find('span', 
+                    { 'id': 'textoIntegral_textoIntegralResidente',
+                      'class': 'TextoIntegralMargin' }
+                    ).find('a')['href']  
+        except TypeError:
+            page_result['plain_text'] = ''
+                    
+        try:
+            page_result['dre_pdf'] = self.soup_pdf.find('span', 
+                    { 'id': 'textoIntegral_imagemDoDre',
+                      'class': 'TextoIntegralMargin' }
+                    ).find('a')['href']  
+        except TypeError:
+            page_result['dre_pdf'] = ''
 
-        page_result['dre_pdf'] = self.soup_pdf.find('span', 
-                { 'id': 'textoIntegral_imagemDoDre',
-                  'class': 'TextoIntegralMargin' }
-                ).find('a')['href']  
+        self.page_result = page_result
 
-        self.page_result = page_result        
+        logger.debug('''
+    claint: %(claint)s
+    doc_type: %(doc_type)s
+    number: %(number)s
+    emiting_body: %(emiting_body)s
+    source: %(source)s
+    dre_key: %(dre_key)s
+    date: %(date)s
+    notes: %(notes)s
+    plain_text: %(plain_text)s
+    dre_pdf: %(dre_pdf)s''' % page_result)
 
-        import pprint
-        pprint.pprint(page_result)
 
     def save(self):
         document = Document()
@@ -165,7 +208,6 @@ class DREReadDocs( object ):
 
         self.save()
 
-
 class DREScrap( object ):
     '''Read the documents from the site. Stores the last publiched document.
     '''
@@ -181,34 +223,21 @@ class DREScrap( object ):
     def run(self):
         last_claint = self.last_read_doc() + 1
         while True:
-            print last_claint
+            logger.warn('*** Getting %d' % last_claint)
             try:
                 self.reader.read_document( last_claint )
+            except DREError, msg:
+                # Error reading the document. Will sleep 20 seconds and then
+                # we try again.
+                time.sleep( 20.0 * random.random() + 5 )
+                continue
             except Exception, msg:
                 raise 
                 break
-            finally:
-                last_claint += 1
-                time.sleep( 20.0 * random.random() + 5 )
-
-TOLERANCE = timedelta(0, 120)
-
-class DREScraper( object ):
-    '''Scraps the entire site'''
+                
+            t = 20.0 * random.random() + 5   
+            logger.debug('Incrementing the counter. Sleeping %ds' % t)
+            last_claint += 1
+            time.sleep( t )
 
 
-
-    def run(self):
-        if self.is_cookie_stale():
-            self.renew_cookie()
-            self.renew_marker()
-
-        self.claint = 293064
-
-        self.download_page()
-        self.soupify()
-        self.parse()
-        
-
-        print self.cookie_timeout
-        print self.unique_marker

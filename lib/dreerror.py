@@ -1,0 +1,3 @@
+
+class DREError(Exception):
+    pass
