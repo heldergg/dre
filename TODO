@@ -6,6 +6,13 @@
 
 * Get the document's PDFs from the server;
 
+* Account for "Vigência condicional" status. Maybe a new field should be done
+  do substitute "in_force" and use instead "status":
+
+  1 - in force (default)
+  2 - not in force
+  3 - conditionally in force
+
 ##
 ## DONE
 ##
