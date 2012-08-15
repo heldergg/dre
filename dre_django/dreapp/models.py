@@ -6,7 +6,7 @@ class Document(models.Model):
     doc_type = models.CharField(max_length=32)
 
     number = models.CharField(max_length=16)
-    emiting_body = models.CharField(max_length=128)
+    emiting_body = models.CharField(max_length=256)
     source = models.CharField(max_length=128)
     dre_key = models.CharField(max_length=32)
     in_force = models.BooleanField(default=True)
