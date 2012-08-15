@@ -22,7 +22,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
 
-from dreapp.models import Document 
+from dreapp.models import Document, FailedDoc
 from drelog import logger
 
 # Local Imports
@@ -199,9 +199,9 @@ class DREReadDocs( object ):
         document.dre_pdf = page_result['dre_pdf']
 
         document.save()
-        logger.debug('Document saved.')
 
     def read_document( self, claint ):
+        logger.debug('*** Getting %d' % claint)
         self.claint = claint 
 
         self.fetch_document(claint)
@@ -209,6 +209,7 @@ class DREReadDocs( object ):
         self.parse()
 
         self.save()
+        logger.debug('Document saved.')
 
 MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
 MAX_ERROR_DOCUMENT = 10 # Max number of consecutive documents with error
@@ -224,14 +225,22 @@ class DREScrap( object ):
         '''Gets the claint of the last read document'''
         max_claint = Document.objects.aggregate(Max('claint'))['claint__max']
         return max_claint if max_claint else 0
-    
+
+    def log_failed_read(self, claint):
+        try:
+           fdoc = FailedDoc.objects.get(claint=claint)
+           fdoc.tries += 1 
+        except ObjectDoesNotExist:
+            fdoc = FailedDoc()
+            fdoc.claint = claint
+        fdoc.save()
+        logger.error('Failure to read document %d. Making a log entry.' % claint)
+
     def run(self):
         last_claint = self.last_read_doc() + 1
         error_condition = 0
         error_document = 0
-        last_claint = 258
         while True:
-            logger.debug('*** Getting %d' % last_claint)
             try:
                 self.reader.read_document( last_claint )
                 error_condition = 0
@@ -252,8 +261,10 @@ class DREScrap( object ):
                     if error_document > MAX_ERROR_DOCUMENT:
                         logger.critical('#%d failed atempts to get documents. Giving up.' % MAX_ERROR_DOCUMENT)
                         raise
-                    logger.error('Error in document %d. Going to try the #%d document.' % (
+                    logger.error('Error in document %d. Going to try the next doc. This is the #%d skipped doc.' % (
                         last_claint,error_document ))
+                    self.log_failed_read( last_claint )    
+                        
             except Exception, msg:
                 raise 
                 break

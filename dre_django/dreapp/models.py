@@ -18,3 +18,9 @@ class Document(models.Model):
     dre_pdf = models.URLField()
 
     timestamp = models.DateTimeField(default=datetime.now())
+
+
+class FailedDoc(models.Model):
+    claint = models.IntegerField(unique=True) # dre.pt site id
+    tries = models.IntegerField(default=1)
+    timestamp = models.DateTimeField(default=datetime.now())
