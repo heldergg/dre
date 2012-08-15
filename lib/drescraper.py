@@ -26,7 +26,7 @@ from dreapp.models import Document, FailedDoc
 from drelog import logger
 
 # Local Imports
-from mix_utils import fetch_url
+from mix_utils import fetch_url, du
 from dreerror import DREError
 import bs4 
 
@@ -168,18 +168,19 @@ class DREReadDocs( object ):
 
         self.page_result = page_result
 
-        logger.debug('''
-    claint: %(claint)s
-    doc_type: %(doc_type)s
-    number: %(number)s
-    emiting_body: %(emiting_body)s
-    source: %(source)s
-    dre_key: %(dre_key)s
-    in_force: %(in_force)s
-    date: %(date)s
-    notes: %(notes)s
-    plain_text: %(plain_text)s
-    dre_pdf: %(dre_pdf)s''' % page_result)
+        txt = ''
+        txt += 'claint: %s\n' % page_result['claint']
+        txt += 'doc_type: %s\n' % du( page_result['doc_type'] )
+        txt += 'number: %s\n' % du( page_result['number'] )
+        txt += 'emiting_body: %s\n' % du( page_result['emiting_body'] )
+        txt += 'source: %s\n' % du( page_result['source'] )
+        txt += 'dre_key: %s\n' % du( page_result['dre_key'] )
+        txt += 'in_force: %s\n' %  page_result['in_force']
+        txt += 'date: %s\n' % page_result['date']
+        txt += 'notes: %s\n' % du( page_result['notes'] )
+        txt += 'plain_text: %s\n' % du( page_result['plain_text'] )
+        txt += 'dre_pdf: %s' % du( page_result['dre_pdf'] )
+        logger.debug(txt)
 
 
     def save(self):

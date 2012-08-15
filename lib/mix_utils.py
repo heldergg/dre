@@ -11,9 +11,20 @@ import re
 import socket
 import time
 import urllib2
+import unicodedata
 
 from drelog import logger
 from dreerror import DREError
+
+######################################################################
+
+def debug_unicode( st ):
+    if isinstance( st, unicode):
+        return unicodedata.normalize('NFKD', st).encode('ascii','ignore')
+    else:
+        return unicodedata.normalize('NFKD', unicode( st, 'ascii', 'ignore')).encode('ascii')
+
+du = debug_unicode
 
 ######################################################################
 
