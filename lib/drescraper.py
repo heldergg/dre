@@ -90,13 +90,6 @@ class DREReadDocs( object ):
         self.html = self.dre_session.download_page( url )
         self.html_pdf = self.dre_session.download_page( url_pdf )
 
-        f = open('%d-test.html' % claint, 'w')
-        f.write(self.html)
-        f.close()
-        f = open('%d-pdf.html' % claint, 'w')
-        f.write(self.html_pdf)
-        f.close()
-
     def soupify(self):
         self.soup = bs4.BeautifulSoup(self.html) 
         self.soup_pdf = bs4.BeautifulSoup(self.html_pdf) 
@@ -110,9 +103,15 @@ class DREReadDocs( object ):
                 { 'headers': 'tipoDescricaoIDHeader' }
                 ).renderContents() 
 
-        page_result['number'] = self.soup.find('td', 
+        number = self.soup.find('td', 
                 { 'headers': 'numeroIDHeader' }
                 ).renderContents() 
+        # Clean html tags
+        number = re.sub(r'(?:<[a-zA-Z]+.*?>)|(?:</[a-zA-Z]+.*?>)', '', number)        
+        page_result['in_force'] = not ('Diploma não vigente' in number)
+        number = number.replace('Diploma não vigente','')
+
+        page_result['number'] = number
 
         page_result['emiting_body'] = self.soup.find('td', 
                 { 'headers': 'entidadesEmitentesIDHeader' }
@@ -176,6 +175,7 @@ class DREReadDocs( object ):
     emiting_body: %(emiting_body)s
     source: %(source)s
     dre_key: %(dre_key)s
+    in_force: %(in_force)s
     date: %(date)s
     notes: %(notes)s
     plain_text: %(plain_text)s
@@ -192,12 +192,14 @@ class DREReadDocs( object ):
         document.emiting_body = page_result['emiting_body']
         document.source = page_result['source']
         document.dre_key = page_result['dre_key']
+        document.in_force = page_result['in_force']
         document.date = page_result['date']
         document.notes = page_result['notes']
         document.plain_text = page_result['plain_text']
         document.dre_pdf = page_result['dre_pdf']
 
         document.save()
+        logger.debug('Document saved.')
 
     def read_document( self, claint ):
         self.claint = claint 
@@ -207,6 +209,9 @@ class DREReadDocs( object ):
         self.parse()
 
         self.save()
+
+MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
+MAX_ERROR_DOCUMENT = 10 # Max number of consecutive documents with error
 
 class DREScrap( object ):
     '''Read the documents from the site. Stores the last publiched document.
@@ -222,15 +227,33 @@ class DREScrap( object ):
     
     def run(self):
         last_claint = self.last_read_doc() + 1
+        error_condition = 0
+        error_document = 0
+        last_claint = 258
         while True:
-            logger.warn('*** Getting %d' % last_claint)
+            logger.debug('*** Getting %d' % last_claint)
             try:
                 self.reader.read_document( last_claint )
+                error_condition = 0
+                error_document = 0
             except DREError, msg:
                 # Error reading the document. Will sleep 20 seconds and then
                 # we try again.
-                time.sleep( 20.0 * random.random() + 5 )
-                continue
+                error_condition += 1
+                if error_condition <= MAX_ERROR_CONDITION:
+                    t = 20.0 * random.random() + 5
+                    logger.warn('DRE error condition #%d on the site claint %d. Sleeping %ds.' % (
+                        error_condition, last_claint, t) )
+                    time.sleep( t )
+                    continue
+                else:
+                    error_condition = 0
+                    error_document += 1
+                    if error_document > MAX_ERROR_DOCUMENT:
+                        logger.critical('#%d failed atempts to get documents. Giving up.' % MAX_ERROR_DOCUMENT)
+                        raise
+                    logger.error('Error in document %d. Going to try the #%d document.' % (
+                        last_claint,error_document ))
             except Exception, msg:
                 raise 
                 break
@@ -239,5 +262,3 @@ class DREScrap( object ):
             logger.debug('Incrementing the counter. Sleeping %ds' % t)
             last_claint += 1
             time.sleep( t )
-
-

@@ -1,0 +1,19 @@
+##
+## TODO
+##
+
+* Make a list of failed documents, mantain a table with this list. Periodically
+  the list should be re-downloaded. Make this N times then give up on the
+  document.
+
+
+##
+## DONE
+##
+
+* Include a field "in_force". This info can be extracted from the document 
+  number: 
+
+  number: 12449/2002 (2ª Série)Diploma não vigente
+
+  Example: claint = 70

@@ -42,7 +42,6 @@ class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
         ### exception.
 
         if 'Paginas/Erro.aspx' in result.url:
-            logger.warn('DRE error condition on the site.')
             raise DREError('Error condition on the site')
 
         return result

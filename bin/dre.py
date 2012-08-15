@@ -54,10 +54,14 @@ if __name__ == '__main__':
             sys.exit()
 
         elif o in ('-u', '--read_single'):
-            from drescraper import DREScraper
-            document_id = a.strip()
-            scraper = DREScraper()
-            scraper.read_doc(document_id)
+            from drescraper import DREReadDocs, DRESession
+            try:
+                reader = DREReadDocs( DRESession() )
+                document_id = int(a.strip())
+                reader.read_document(document_id)
+            except ValueError:
+                print 'Please specify the document number (integer).'
+                sys.exit(1)
             sys.exit()
 
         elif o in ('-h', '--help'):
