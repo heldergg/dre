@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Busca Tretas - Mais{% endblock %}
+
+{% block body_content %}
+<div class="center_text">
+  <a href="{% url index %}">
+    <img src="{{ STATIC_URL }}dre_django/img/tretas_big.png" width="305" height="127" alt="Tretas logotipo">
+  </a>
+</div>
+
+<h1>Mais</h1>
+
+<ul>
+  <li><a href="{% url yesterday_articles %}">Ontem</a> - Artigos indexados ontem
+  <li><a href="{% url nav_by_day %}">Outras Datas</a> - Escolha uma data
+</ul>
+<hr>
+<ul>
+  <li><a href="{% url article_by_urlid %}">Artigo por URLID</a>
+</ul>
+{% endblock %}

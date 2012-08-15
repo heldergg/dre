@@ -2,10 +2,9 @@
 ## TODO
 ##
 
-* Make a list of failed documents, mantain a table with this list. Periodically
-  the list should be re-downloaded. Make this N times then give up on the
-  document.
+* Find a decent name for this project!
 
+* Get the document's PDFs from the server;
 
 ##
 ## DONE
@@ -17,3 +16,8 @@
   number: 12449/2002 (2ª Série)Diploma não vigente
 
   Example: claint = 70
+
+* Make a list of failed documents, mantain a table with this list. Periodically
+  the list should be re-downloaded. Make this N times then give up on the
+  document.
+

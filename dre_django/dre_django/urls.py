@@ -1,10 +1,8 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
-
 urlpatterns = patterns('',
+    url(r'^$', 'dreapp.views.browse', name='browse'),
+
     # Examples:
     # url(r'^$', 'dre_django.views.home', name='home'),
     # url(r'^dre_django/', include('dre_django.foo.urls')),
