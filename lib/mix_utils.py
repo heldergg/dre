@@ -12,6 +12,8 @@ import socket
 import time
 import urllib2
 import unicodedata
+import StringIO
+import gzip
 
 from drelog import logger
 from dreerror import DREError

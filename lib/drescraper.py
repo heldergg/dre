@@ -7,11 +7,12 @@
 ##
 
 from datetime import datetime, timedelta
-import time
+import os
+import os.path
 import random
 import re
 import sys
-import os.path
+import time
 
 # Append the current project path
 sys.path.append(os.path.abspath('../lib/'))
@@ -98,7 +99,7 @@ class DREReadDocs( object ):
             # PDF page. This errors will be flagged and dealt latter.
             self.pdf_error = True
             self.html_pdf = ''
-            logger.error('Error while trying to read the PDF page.')
+            logger.error('Error while trying to read the PDF page. Document %d.' % claint )
 
     def soupify(self):
         self.soup = bs4.BeautifulSoup(self.html) 
@@ -184,19 +185,19 @@ class DREReadDocs( object ):
         self.page_result = page_result
 
         txt = '\n'
-        txt += 'claint: %s\n' % page_result['claint']
-        txt += 'doc_type: %s\n' % du( page_result['doc_type'] )
-        txt += 'number: %s\n' % du( page_result['number'] )
-        txt += 'emiting_body: %s\n' % du( page_result['emiting_body'] )
-        txt += 'source: %s\n' % du( page_result['source'] )
-        txt += 'dre_key: %s\n' % du( page_result['dre_key'] )
-        txt += 'in_force: %s\n' %  page_result['in_force']
-        txt += 'conditional: %s\n' %  page_result['conditional']
-        txt += 'date: %s\n' % page_result['date']
-        txt += 'notes: %s\n' % du( page_result['notes'] )
-        txt += 'plain_text: %s\n' % du( page_result['plain_text'] )
-        txt += 'dre_pdf: %s\n' % du( page_result['dre_pdf'] )
-        txt += 'pdf_error: %s' % page_result['pdf_error'] 
+        txt += ' claint: %s\n' % page_result['claint']
+        txt += ' doc_type: %s\n' % du( page_result['doc_type'] )
+        txt += ' number: %s\n' % du( page_result['number'] )
+        txt += ' emiting_body: %s\n' % du( page_result['emiting_body'] )
+        txt += ' source: %s\n' % du( page_result['source'] )
+        txt += ' dre_key: %s\n' % du( page_result['dre_key'] )
+        txt += ' in_force: %s\n' %  page_result['in_force']
+        txt += ' conditional: %s\n' %  page_result['conditional']
+        txt += ' date: %s\n' % page_result['date']
+        txt += ' notes: %s\n' % du( page_result['notes'] )
+        txt += ' plain_text: %s\n' % du( page_result['plain_text'] )
+        txt += ' dre_pdf: %s\n' % du( page_result['dre_pdf'] )
+        txt += ' pdf_error: %s' % page_result['pdf_error'] 
         logger.debug(txt)
 
 
@@ -220,6 +221,42 @@ class DREReadDocs( object ):
 
         document.save()
 
+
+    def check_dirs(self):
+        date = self.page_result['date']
+        archive_dir = os.path.join( settings.ARCHIVEDIR, 
+                                    '%d' % date.year,
+                                    '%02d' % date.month,
+                                    '%02d' % date.day )
+        # Create the directory if needed
+        if not os.path.exists( archive_dir ):
+            os.makedirs( archive_dir )
+
+        return archive_dir    
+
+    def save_file(self, url, filename):
+        url, data_blob, cookies = fetch_url( url )
+        
+        with open(filename, 'wb') as f:
+            f.write(data_blob)
+            f.close()
+
+    def save_pdfs( self ):
+        page_result = self.page_result
+
+        if not( page_result['plain_text'] or page_result['dre_pdf']):
+            return
+
+        archive_dir = self.check_dirs()
+
+        if page_result['plain_text']:
+            self.save_file(page_result['plain_text'], os.path.join(archive_dir, 
+                           'plain-%d.pdf' % page_result['claint'])) 
+        if page_result['dre_pdf']:
+            self.save_file(page_result['dre_pdf'], os.path.join(archive_dir, 
+                           'dre-%d.pdf' % page_result['claint'])) 
+
+
     def read_document( self, claint ):
         logger.debug('*** Getting %d' % claint)
         self.claint = claint 
@@ -228,7 +265,9 @@ class DREReadDocs( object ):
         self.soupify()
         self.parse()
 
+        self.save_pdfs()
         self.save()
+
         logger.debug('Document saved.')
 
 MAX_ERROR_CONDITION = 5 # Max number of retries on a given document

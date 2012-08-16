@@ -176,6 +176,7 @@ import os.path
 project_dir = os.path.abspath ( os.path.join( os.path.dirname( __file__ ), '../..' ))
 
 LOGDIR  = os.path.join(project_dir, 'log')
+ARCHIVEDIR = os.path.join(project_dir, 'archive')
 
 ## Log file
 
