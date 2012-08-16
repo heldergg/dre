@@ -5,11 +5,12 @@ class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
     doc_type = models.CharField(max_length=32)
 
-    number = models.CharField(max_length=16)
+    number = models.CharField(max_length=32)
     emiting_body = models.CharField(max_length=256)
     source = models.CharField(max_length=128)
     dre_key = models.CharField(max_length=32)
     in_force = models.BooleanField(default=True)
+    conditional = models.BooleanField(default=False)
     date = models.DateField()
 
     notes = models.CharField(max_length=1024)

@@ -106,10 +106,13 @@ class DREReadDocs( object ):
         number = self.soup.find('td', 
                 { 'headers': 'numeroIDHeader' }
                 ).renderContents() 
-        # Clean html tags
+
+        # Clean html tags and set the flags
         number = re.sub(r'(?:<[a-zA-Z]+.*?>)|(?:</[a-zA-Z]+.*?>)', '', number)        
         page_result['in_force'] = not ('Diploma não vigente' in number)
+        page_result['conditional'] = ('Vigência condicional' in number)
         number = number.replace('Diploma não vigente','')
+        number = number.replace('Vigência condicional','')
 
         page_result['number'] = number
 
