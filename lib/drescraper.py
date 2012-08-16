@@ -81,6 +81,7 @@ class DREReadDocs( object ):
     '''
     def __init__(self, dre_session):
         self.dre_session = dre_session
+        self.pdf_error = False
 
     def fetch_document(self, claint):    
         base_url = 'http://digestoconvidados.dre.pt/digesto/(S(%(unique_marker)s))/Paginas'
@@ -88,7 +89,16 @@ class DREReadDocs( object ):
         url_pdf =  base_url + '/DiplomaTexto.aspx' 
 
         self.html = self.dre_session.download_page( url )
-        self.html_pdf = self.dre_session.download_page( url_pdf )
+
+        try:
+            self.html_pdf = self.dre_session.download_page( url_pdf )
+            self.pdf_error = False
+        except DREError, msg:
+            # There are lots of instances where an error is thrown in this
+            # PDF page. This errors will be flagged and dealt latter.
+            self.pdf_error = True
+            self.html_pdf = ''
+            logger.error('Error while trying to read the PDF page.')
 
     def soupify(self):
         self.soup = bs4.BeautifulSoup(self.html) 
@@ -158,7 +168,7 @@ class DREReadDocs( object ):
                     { 'id': 'textoIntegral_textoIntegralResidente',
                       'class': 'TextoIntegralMargin' }
                     ).find('a')['href']  
-        except TypeError:
+        except (TypeError, AttributeError):
             page_result['plain_text'] = ''
                     
         try:
@@ -166,12 +176,14 @@ class DREReadDocs( object ):
                     { 'id': 'textoIntegral_imagemDoDre',
                       'class': 'TextoIntegralMargin' }
                     ).find('a')['href']  
-        except TypeError:
+        except (TypeError, AttributeError):
             page_result['dre_pdf'] = ''
+
+        page_result['pdf_error'] = self.pdf_error
 
         self.page_result = page_result
 
-        txt = ''
+        txt = '\n'
         txt += 'claint: %s\n' % page_result['claint']
         txt += 'doc_type: %s\n' % du( page_result['doc_type'] )
         txt += 'number: %s\n' % du( page_result['number'] )
@@ -179,10 +191,12 @@ class DREReadDocs( object ):
         txt += 'source: %s\n' % du( page_result['source'] )
         txt += 'dre_key: %s\n' % du( page_result['dre_key'] )
         txt += 'in_force: %s\n' %  page_result['in_force']
+        txt += 'conditional: %s\n' %  page_result['conditional']
         txt += 'date: %s\n' % page_result['date']
         txt += 'notes: %s\n' % du( page_result['notes'] )
         txt += 'plain_text: %s\n' % du( page_result['plain_text'] )
         txt += 'dre_pdf: %s' % du( page_result['dre_pdf'] )
+        txt += 'pdf_error: %s' % page_result['pdf_error'] 
         logger.debug(txt)
 
 
@@ -197,10 +211,12 @@ class DREReadDocs( object ):
         document.source = page_result['source']
         document.dre_key = page_result['dre_key']
         document.in_force = page_result['in_force']
+        document.conditional = page_result['conditional']
         document.date = page_result['date']
         document.notes = page_result['notes']
         document.plain_text = page_result['plain_text']
         document.dre_pdf = page_result['dre_pdf']
+        document.pdf_error = page_result['pdf_error']
 
         document.save()
 

@@ -17,6 +17,7 @@ class Document(models.Model):
 
     plain_text = models.URLField()
     dre_pdf = models.URLField()
+    pdf_error = models.BooleanField(default=False)
 
     timestamp = models.DateTimeField(default=datetime.now())
 
