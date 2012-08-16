@@ -195,7 +195,7 @@ class DREReadDocs( object ):
         txt += 'date: %s\n' % page_result['date']
         txt += 'notes: %s\n' % du( page_result['notes'] )
         txt += 'plain_text: %s\n' % du( page_result['plain_text'] )
-        txt += 'dre_pdf: %s' % du( page_result['dre_pdf'] )
+        txt += 'dre_pdf: %s\n' % du( page_result['dre_pdf'] )
         txt += 'pdf_error: %s' % page_result['pdf_error'] 
         logger.debug(txt)
 
