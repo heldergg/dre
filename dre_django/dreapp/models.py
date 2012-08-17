@@ -13,7 +13,7 @@ class Document(models.Model):
     conditional = models.BooleanField(default=False)
     date = models.DateField()
 
-    notes = models.CharField(max_length=1024)
+    notes = models.CharField(max_length=2048)
 
     plain_text = models.URLField()
     dre_pdf = models.URLField()

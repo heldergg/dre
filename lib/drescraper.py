@@ -160,9 +160,11 @@ class DREReadDocs( object ):
             else:
                 raise
 
-        page_result['notes'] = self.soup.find('fieldset', 
+        notes = self.soup.find('fieldset', 
                 { 'id': 'FieldsetResumo' }
                 ).find('div').renderContents().strip()
+        notes = re.sub(r'(?:<[a-zA-Z]+.*?>)|(?:</[a-zA-Z]+.*?>)', '', notes)
+        page_result['notes'] = notes
 
         try:
             page_result['plain_text'] = self.soup_pdf.find('span', 

@@ -4,11 +4,13 @@
 
 * Find a decent name for this project!
 
-* Get the document's PDFs from the server;
-
 ##
 ## DONE
 ##
+
+2012-08-16
+
+* Get the document's PDFs from the server;
 
 * Include a field "in_force". This info can be extracted from the document 
   number: 
