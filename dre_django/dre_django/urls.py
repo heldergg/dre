@@ -1,7 +1,21 @@
+# -*- coding: utf-8 -*-
+
+# Global Imports:
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
 
 urlpatterns = patterns('',
     url(r'^$', 'dreapp.views.browse', name='browse'),
+
+    # About:
+    url(r'^about', 
+        TemplateView.as_view(template_name='about.html'),
+        name='about'),
+
+    # Not implemented:
+    url(r'^not_implemented', 
+        TemplateView.as_view(template_name='not_implemented.html'),
+        name='not_implemented'),
 
     # Examples:
     # url(r'^$', 'dre_django.views.home', name='home'),
