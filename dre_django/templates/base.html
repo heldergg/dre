@@ -1,4 +1,4 @@
-<!doctype html>
+{% load url from future %} <!doctype html>
 
 <html lang="pt">
 <head>
@@ -27,10 +27,11 @@
       <a href="/">Início</a> 
     </div>
     <div id="header_right">
-      <a href="{% url about %}">Acerca</a> | 
-      <a class="rss_link" href="{% url not_implemented %}">RSS</a> | 
+      <a href="{% url 'about' %}">Acerca</a> | 
+      <a class="rss_link" href="{% url 'not_implemented' %}">RSS</a>
     </div>
     <div class="clear_both"></div>
+  </div>
 
   <!-- Start Header for Printing -->
   <div class="only_print">

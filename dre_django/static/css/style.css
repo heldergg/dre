@@ -1,0 +1,77 @@
+/***********/
+/* General */
+/***********/
+
+body {
+  background: #fff;
+  padding: 0;
+  margin: 0;
+  font-family: verdana, arial, sans-serif;
+  font-size: 13px;
+  color: black;
+  }
+
+h1 {
+  text-align:center;
+  }
+
+/* Hide, just visible on print media */
+.only_print {
+  display: none;
+  }
+
+.clear_both {
+  clear:both;
+  height:1px;
+  width:1px;
+  overflow:hidden;
+  }
+
+/************/
+/* Top Menu */
+/************/
+
+.header {
+  background: #444444;
+  margin: 0;
+  position: relative;
+  color: white;
+  font-size: 1em;
+  height: 100%;
+  padding: 0.8em 0.5em 0.8em 0.5em;
+  }
+.header a {
+  color: white;
+  text-decoration: none;
+  }
+.header a:hover {
+  color: #fc3;
+  text-decoration: underline;
+  }
+
+a.user {
+  color: #ffc021;
+  text-decoration: none;
+  }
+
+#header_right {
+  float: right;
+  margin-right: 3px;
+  }
+
+#header_left {
+  float: left;
+  margin-right: 3px;
+  }
+
+/***********/
+/* Content */
+/***********/
+
+#content {
+  background-image: url('/static/dre_django/img/alfa.png');
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  padding: 1em;
+  }
+

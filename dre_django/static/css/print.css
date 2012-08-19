@@ -1,0 +1,66 @@
+body {
+    background-color: transparent;
+    font-size: 11pt;
+    font-family:'Times New Roman',Times,serif;
+    color:#000000;
+}
+
+A {
+    text-decoration: none;
+    color:#000000;
+    }
+
+P.break_page { 
+    page-break-after: always;
+    }
+
+P.maybe_break_page { 
+    page-break-before: auto;
+    }
+
+P.head_space {
+    height: 20px;
+    }
+
+.only_print {
+    display: inline;
+    }
+
+.content {
+    position: fixed;
+    top: -40px;
+    width: 650px;
+    }
+
+/* Information only available for printing */
+#print_header {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #417690;
+    }
+
+#print_footer {
+    clear: both;
+    text-align: center;
+    font-size: 10pt;
+    color: #417690;
+    }
+
+/* Don't show when printing */
+.noprint {
+    display: none;
+    }
+
+
+/* The styles to hide */
+
+.header {
+    display: none;
+    }
+
+.pagination {
+    display: none;
+    }
+
+
