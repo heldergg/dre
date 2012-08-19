@@ -137,7 +137,9 @@ class DREReadDocs( object ):
                     ).renderContents() 
         except AttributeError:
             page_result['source'] = ''
-        
+
+
+        # dre_key 
         try:
             page_result['dre_key'] = self.soup.find('td', 
                     { 'headers': 'ChaveDreIDHeader' }
@@ -145,21 +147,25 @@ class DREReadDocs( object ):
         except AttributeError:
             page_result['dre_key'] = ''
 
+
+        # date
         try:
-            page_result['date'] = datetime.strptime(self.soup.find('td', 
+            date_str = self.soup.find('td', 
                     { 'headers': 'dataAssinaturaIDHeader' }
-                    ).renderContents(), '%d.%m.%Y') 
+                    ).renderContents()
         except AttributeError:
             # Tries to get the date from the legend header
-            legend = self.soup.find('legend').renderContents()
-            search = re.search(r'(\d{2}\.\d{2}\.\d{4})', legend)
-            if search:
-                date_str = search.groups()[0]
-                page_result['date'] = datetime.strptime( date_str, '%d.%m.%Y')
-                logger.warn('Date extracted from legend: %s' % date_str)
-            else:
-                raise
+            date_str = self.soup.find('legend').renderContents()
 
+        search = re.search(r'(\d{2}\.\d{2}\.\d{4})', date_str)
+        if search:
+            date_str = search.groups()[0]
+            page_result['date'] = datetime.strptime( date_str, '%d.%m.%Y')
+            logger.warn('Date extracted from legend: %s' % date_str)
+        else:
+            raise DREError('Can\' find the date string.')
+
+        # notes
         notes = self.soup.find('fieldset', 
                 { 'id': 'FieldsetResumo' }
                 ).find('div').renderContents().strip()
