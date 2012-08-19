@@ -156,12 +156,12 @@ class DREReadDocs( object ):
         except AttributeError:
             # Tries to get the date from the legend header
             date_str = self.soup.find('legend').renderContents()
+            logger.warn('Date extracted from legend: %s' % date_str)
 
         search = re.search(r'(\d{2}\.\d{2}\.\d{4})', date_str)
         if search:
             date_str = search.groups()[0]
             page_result['date'] = datetime.strptime( date_str, '%d.%m.%Y')
-            logger.warn('Date extracted from legend: %s' % date_str)
         else:
             raise DREError('Can\' find the date string.')
 
