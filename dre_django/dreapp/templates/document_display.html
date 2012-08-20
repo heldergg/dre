@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Diários da República{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body_content %}
+<h1>Displaying document</h1>
+
+<table>
+  <tr>
+    <th>claint</th>
+    <td>{{ document.claint }}</td>
+  </tr>  
+  <tr>
+    <th>doc_type</th>
+    <td>{{ document.doc_type }}</td>
+  </tr>  
+  <tr>
+    <th>number</th>
+    <td>{{ document.number }}</td>
+  </tr>  
+  <tr>
+    <th>emiting_body</th>
+    <td>{{ document.emiting_body }}</td>
+  </tr>  
+  <tr>
+    <th>source</th>
+    <td>{{ document.source }}</td>
+  </tr>  
+  <tr>
+    <th>dre_key</th>
+    <td>{{ document.dre_key }}</td>
+  </tr>  
+  <tr>
+    <th>in_force</th>
+    <td>{{ document.in_force }}</td>
+  </tr>  
+  <tr>
+    <th>conditional</th>
+    <td>{{ document.conditional }}</td>
+  </tr>  
+  <tr>
+    <th>date</th>
+    <td>{{ document.date }}</td>
+  </tr>  
+  <tr>
+    <th>notes</th>
+    <td>{{ document.notes }}</td>
+  </tr>  
+  {% if document.plain_text %}
+  <tr>
+    <th>plain_text</th>
+    <td><a href="{{ document.plain_text }}">link</a></td>
+  </tr>{% endif %} 
+  {% if document.dre_pdf %}
+  <tr>
+    <th>dre_pdf</th>
+    <td><a href="{{ document.dre_pdf }}">link</a></td>
+  </tr>{% endif %}  
+</table>
+{% endblock %}
+
+
