@@ -307,7 +307,27 @@ class DREScrap( object ):
         last_claint = self.last_read_doc() + 1
         error_condition = 0
         error_document = 0
+        stop_periods = settings.STOPTIME
+
         while True:
+            # Checks the STOPTIME list
+            log_sleep = True
+            while True:
+                right_now = datetime.now().time()
+                wait = False
+                for start,end in stop_periods:
+                    if right_now >= start and right_now <= end:
+                        wait = True
+                        break
+                if wait:
+                    if log_sleep:
+                        logger.debug('Sleeping for a while, until %s.' % end) 
+                        log_sleep = False
+                    time.sleep(60)
+                else:
+                    break
+                   
+            # Get the document:       
             try:
                 self.reader.read_document( last_claint )
                 error_condition = 0
