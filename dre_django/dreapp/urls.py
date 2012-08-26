@@ -7,5 +7,9 @@ urlpatterns = patterns('dreapp.views',
     # Browsing index:
     url(r'^$', 'browse', name='browse'),
 
+    # Browse by day:
+    url(r'^data/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'browse_day', name='browse_day'),
+
+    # Document display
     url(r'(?P<claint>\d+)/$', 'document_display', name='document_display'),
     )

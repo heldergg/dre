@@ -13,6 +13,12 @@ def browse( request ):
     return render_to_response('browse.html', context,
                 context_instance=RequestContext(request))
 
+def browse_day( request, year, month, day ):
+    context = {}
+    context['query_date'] = '%d,%d,%d' % ( int(year), int(month), int(day) )
+
+    return render_to_response('browse_day.html', context,
+                context_instance=RequestContext(request))
 
 def document_display( request, claint ):
     context = {}
