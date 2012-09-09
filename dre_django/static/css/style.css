@@ -78,3 +78,8 @@ a.user {
   padding: 1em;
   }
 
+.resultnote {
+  padding: 0px;
+  margin: 0.5em 0px;
+  max-width: 1000px;
+  }

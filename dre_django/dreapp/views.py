@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Global Imports:
+import datetime
+
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
@@ -15,7 +17,13 @@ def browse( request ):
 
 def browse_day( request, year, month, day ):
     context = {}
-    context['query_date'] = '%d,%d,%d' % ( int(year), int(month), int(day) )
+    year, month, day = int(year), int(month), int(day) 
+    context['query_date'] = '%d,%d,%d' % ( year, month-1, day )
+
+    # Query the document table
+    docs = Document.objects.filter( date__exact = datetime.date( year, month, day ))
+
+    context['docs'] = docs
 
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))
