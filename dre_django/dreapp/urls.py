@@ -5,7 +5,7 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('dreapp.views',
     # Browsing index:
-    url(r'^$', 'browse', name='browse'),
+    url(r'^data/$', 'browse', name='browse'),
 
     # Browse by day:
     url(r'^data/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'browse_day', name='browse_day'),

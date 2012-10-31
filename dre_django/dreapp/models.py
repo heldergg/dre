@@ -21,6 +21,9 @@ class Document(models.Model):
 
     timestamp = models.DateTimeField(default=datetime.now())
 
+    def date_to_index (self):
+        return self.date.strftime('%Y%m%d')
+
 
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id

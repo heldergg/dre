@@ -9,6 +9,12 @@ from django.template import RequestContext
 # Local Imports:
 from dreapp.models import Document
 
+def search(request):
+    context = {}
+
+    return render_to_response('search.html', context,
+                context_instance=RequestContext(request))
+
 def browse( request ):
     context = {}
 

@@ -7,7 +7,7 @@ from django.conf import settings
 
 urlpatterns = patterns('',
     # Index:
-    url(r'^$', 'dreapp.views.browse'),
+    url(r'^$', 'dreapp.views.search'),
 
     # About:
     url(r'^about', 
