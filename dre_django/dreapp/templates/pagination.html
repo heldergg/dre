@@ -1,9 +1,23 @@
 <div class="pagination">
   {% if page.has_previous %}
-  <a href="{{ query }}">Primeira página</a> |
-  <a href="{{ query }}&page={{ page.previous_page_number }}">Página anterior</a> 
-  {% endif %}{% if page.has_next %}{% if page.has_previous %} | {% endif %}
-  <a href="{{ query }}&page={{ page.next_page_number }}">Página seguinte</a> |
-  <a href="{{ query }}&page={{ page.paginator.num_pages }}">Última página</a>
+  <a href="{{ query }}"><img src="{{ STATIC_URL }}dre_django/img/arrow-first.png" alt="Primeira página"></a> 
+  &nbsp;
+  <a href="{{ query }}&page={{ page.previous_page_number }}"><img src="{{ STATIC_URL }}dre_django/img/arrow-left.png" alt="Página anterior"></a> 
+  {% else %}
+  <img src="{{ STATIC_URL }}dre_django/img/arrow-first-d.png" alt="Primeira página">
+  &nbsp;
+  <img src="{{ STATIC_URL }}dre_django/img/arrow-left-d.png" alt="Página anterior">
+  {% endif %}
+  &nbsp;
+  <span style="font-size:48px;color:#000080;">{{ page.number }}/{{ page.paginator.num_pages }}</span>
+  &nbsp;
+  {% if page.has_next %}
+  <a href="{{ query }}&page={{ page.next_page_number }}"><img src="{{ STATIC_URL }}dre_django/img/arrow-right.png" alt="Página seguinte"></a> 
+  &nbsp;
+  <a href="{{ query }}&page={{ page.paginator.num_pages }}"><img src="{{ STATIC_URL }}dre_django/img/arrow-last.png" alt="Última página"></a>
+  {% else %}
+  <img src="{{ STATIC_URL }}dre_django/img/arrow-right-d.png" alt="Página seguinte">
+  &nbsp;
+  <img src="{{ STATIC_URL }}dre_django/img/arrow-last-d.png" alt="Última página">
   {% endif %}
 </div>

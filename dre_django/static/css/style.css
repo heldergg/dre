@@ -114,3 +114,7 @@ a.user {
 .result_bar {
     padding: 1em 0 1em 0;
 }
+
+.pagination {
+    text-align: center;
+}
