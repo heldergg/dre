@@ -57,7 +57,6 @@ def search(request):
         object_list.append(obj.instance)
 
     context['page'].object_list = object_list
-    context['shortdate'] = False
 
     return render_to_response('search.html', context,
                 context_instance=RequestContext(request))
@@ -74,9 +73,22 @@ def browse_day( request, year, month, day ):
     context['query_date'] = '%d,%d,%d' % ( year, month-1, day )
 
     # Query the document table
-    docs = Document.objects.filter( date__exact = datetime.date( year, month, day ))
+    results = Document.objects.filter( date__exact = datetime.date( year, month, day ))
 
-    context['docs'] = docs
+    # Pagination
+    page = request.GET.get('page', 1)
+    try:
+        page = int(page)
+    except:
+        page = 1
+
+    paginator = Paginator(results, settings.RESULTS_PER_PAGE, orphans=settings.ORPHANS)
+    if page < 1:
+        page = 1
+    if page > paginator.num_pages:
+        page = paginator.num_pages
+
+    context['page'] = paginator.page(page)
 
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))

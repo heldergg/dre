@@ -22,14 +22,10 @@
   <div id="calendar"></div>
   </div>
   <div class="results">
-  <ul>
-    {% if not docs %}
-    <p>No documents for this day.</p>
+    {% if page.object_list %}
+      {% include "results.html" %}
+    {% else %}
+      <p>Não temos documentos na nossa base de dados para este dia.</p>
     {% endif %}
-    {% for doc in docs %}
-    <li><a href="{% url 'document_display' doc.claint %}">{{ doc.number }} - {{ doc.doc_type }}</a>
-    <p class="resultnote">{{ doc.notes }}</p> </li>
-    {% endfor %}
-  </ul>
   </div>
 {% endblock %}

@@ -1,5 +1,11 @@
 
 <div id="search_results">
+  <div class="result_bar">
+  Encontrámos {{ page.paginator.count }} resultados.
+  <div style="float:right;">
+  Página {{ page.number }} de {{ page.paginator.num_pages }}
+  </div> </div>
+  {% include "pagination.html" %}
   <ul>
     {% for result in page.object_list %}
     <li>
@@ -19,4 +25,5 @@
     </li>
     {% endfor %}
   </ul>
+  {% include "pagination.html" %}
 </div> 
