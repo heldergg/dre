@@ -49,7 +49,13 @@ class Field(object):
             value = field_value and 't' or 'f'
         elif isinstance(content_type, (models.DateTimeField, datetime.datetime)):
             # DateTime fields are stored as %Y%m%d%H%M%S (better sorting)
-            value = field_value.strftime('%Y%m%d%H%M%S')
+            # value = field_value.strftime('%Y%m%d%H%M%S')
+            value = '%d%02d%02d%02d%02d%02d' % ( field_value.year,
+                                                 field_value.month,
+                                                 field_value.day,
+                                                 field_value.hour,
+                                                 field_value.minute,
+                                                 field_value.second )
 
         return smart_str(value)
 

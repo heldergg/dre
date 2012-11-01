@@ -25,6 +25,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
 
 from dreapp.models import Document, FailedDoc
+import dreapp.index
 from drelog import logger
 
 # Local Imports
