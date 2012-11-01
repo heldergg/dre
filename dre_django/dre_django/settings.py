@@ -203,6 +203,10 @@ STOPTIME = ((datetime.time(23,50), datetime.time(23,59, 59)),
             (datetime.time(0,0),   datetime.time(0,40)),
             )
 
+# Result config
+RESULTS_PER_PAGE = 10
+ORPHANS = 5
+
 ##
 ## LOCAL
 ##

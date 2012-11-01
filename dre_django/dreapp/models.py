@@ -24,6 +24,12 @@ class Document(models.Model):
     def date_to_index (self):
         return self.date.strftime('%Y%m%d')
 
+    def note_abrv(self):
+        if len(self.notes) < 512:
+            return self.notes
+        else:
+            return self.notes[:512]
+
 
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id

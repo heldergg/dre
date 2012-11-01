@@ -83,3 +83,30 @@ a.user {
   margin: 0.5em 0px;
   max-width: 1000px;
   }
+
+/* To center the content */
+/* to use insted of the deprecated align and center */
+
+.center_text {
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  }
+.center_text table {
+  margin-left:auto;
+  margin-right:auto;
+  }
+
+/***********/
+/* Results */
+/***********/
+
+.result_notes {
+    position: relative;
+    width: 50em;
+    padding: 10px;
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+}

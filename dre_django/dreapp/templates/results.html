@@ -1,0 +1,15 @@
+
+<div id="search_results">
+  <ul>
+    {% for result in page.object_list %}
+    <li>
+      <span class="result_date">{{ result.date|date:"Y-m-d" }}</span> - 
+      <a href="{% url 'document_display' claint=result.claint %}">
+      <span class="result_tipo">{{ result.doc_type.title }}</span>
+      <span class="result_number">{{ result.number }}</span></a> -
+      <span class="result_emiting">{{ result.emiting_body.title }}</span>
+      <p class="result_notes">{{ result.note_abrv }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</div> 

@@ -6,6 +6,23 @@
 {% endblock %}
 
 {% block body_content %}
-<h1>Test Search</h1>
+<div class="center_text">
+  <a href="/">
+    <img src="{{ STATIC_URL }}dre_django/img/tretas_logo.png" 
+    width="305" height="135" alt="Tretas logotipo">
+  </a>
+  <div class="intro">Indexador do Diário da República</div>
+  <form method="GET" action="">
+      <p>
+        <input id="id_query_string" type="search" name="q" maxlength="1000" placeholder="Escreva aqu i a sua busca, clique no ponto de interrogação para ajuda" />
+      </p>
+      <p><button class="big_center" type="submit" value="Submit">Busca</button></p>
+  </form>
+</div>
+
+{% include "pagination.html" %}
+{% include "results.html" %}
+{% include "pagination.html" %}
+
 {% endblock %}
 

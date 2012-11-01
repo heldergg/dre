@@ -2,15 +2,65 @@
 
 # Global Imports:
 import datetime
-
+from django.core.paginator import Paginator
+from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
 # Local Imports:
+import dreapp.index
 from dreapp.models import Document
+from dreapp.forms import QueryForm
 
 def search(request):
     context = {}
+
+    query = ''
+    results = []
+
+    new_data = request.GET.copy()
+    form = QueryForm(new_data)
+
+    page = request.GET.get('page', 1)
+    try:
+        page = int(page)
+    except:
+        page = 1
+
+    if form.is_valid():
+        query = form.cleaned_data['q']
+        indexer = Document.indexer
+        results = indexer.search(query)
+        context['result_count'] = results.count()
+    else:
+        form = QueryForm()
+
+    context['form'] = form
+    if query:
+        context['query'] = '?q=%s' % query
+    else:
+        context['query'] = ''
+
+    # Setting the pagination
+    paginator = Paginator(results, settings.RESULTS_PER_PAGE, orphans=settings.ORPHANS)
+    if page < 1:
+        page = 1
+    if page > paginator.num_pages:
+        page = paginator.num_pages
+
+    context['page'] = paginator.page(page)
+
+    print dir(paginator.page(page))
+    print paginator.page(page).paginator
+
+    object_list = []
+
+    for obj in context['page'].object_list:
+        obj.instance.docid = obj.docid
+        object_list.append(obj.instance)
+
+    context['page'].object_list = object_list
+    context['shortdate'] = False
 
     return render_to_response('search.html', context,
                 context_instance=RequestContext(request))
