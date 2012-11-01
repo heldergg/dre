@@ -3,7 +3,14 @@
   <ul>
     {% for result in page.object_list %}
     <li>
-      <span class="result_date">{{ result.date|date:"Y-m-d" }}</span> - 
+      {% if result.plain_text or result.dre_pdf %}
+      <img src="{{ STATIC_URL }}dre_django/img/attach.png" alt="Tem documento">
+      {% else %}
+      <img src="{{ STATIC_URL }}dre_django/img/attach-no.png" alt="Não tem documento">
+      {% endif %} 
+      <span class="result_date">
+        <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
+      {{ result.date|date:"Y-m-d" }}</span></a> - 
       <a href="{% url 'document_display' claint=result.claint %}">
       <span class="result_tipo">{{ result.doc_type.title }}</span>
       <span class="result_number">{{ result.number }}</span></a> -

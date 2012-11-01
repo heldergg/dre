@@ -50,9 +50,6 @@ def search(request):
 
     context['page'] = paginator.page(page)
 
-    print dir(paginator.page(page))
-    print paginator.page(page).paginator
-
     object_list = []
 
     for obj in context['page'].object_list:
