@@ -2,11 +2,8 @@
   {% if page.has_previous %}
   <a href="{{ query }}">Primeira página</a> |
   <a href="{{ query }}&page={{ page.previous_page_number }}">Página anterior</a> 
-  {% endif %}
-  {% if page.has_next %}
-  {% if page.has_previous %} | {% endif %}
+  {% endif %}{% if page.has_next %}{% if page.has_previous %} | {% endif %}
   <a href="{{ query }}&page={{ page.next_page_number }}">Página seguinte</a> |
   <a href="{{ query }}&page={{ page.paginator.num_pages }}">Última página</a>
-  {{ page.num_pages }}
   {% endif %}
 </div>

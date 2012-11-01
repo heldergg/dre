@@ -14,15 +14,18 @@
   <div class="intro">Indexador do Diário da República</div>
   <form method="GET" action="">
       <p>
-        <input id="id_query_string" type="search" name="q" maxlength="1000" placeholder="Escreva aqu i a sua busca, clique no ponto de interrogação para ajuda" />
+        <input id="id_query_string" type="search" name="q" value="{{ form.cleaned_data.q }}" maxlength="1000" placeholder="Escreva aqui a sua busca, clique no ponto de interrogação para ajuda" />
+        
       </p>
       <p><button class="big_center" type="submit" value="Submit">Busca</button></p>
   </form>
 </div>
 
-{% include "pagination.html" %}
-{% include "results.html" %}
-{% include "pagination.html" %}
+{% if page.object_list %}
+  {% include "pagination.html" %}
+  {% include "results.html" %}
+  {% include "pagination.html" %}
+{% endif %}
 
 {% endblock %}
 
