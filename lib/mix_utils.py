@@ -32,7 +32,7 @@ du = debug_unicode
 
 # Socket timeout in seconds
 socket.setdefaulttimeout(60)
-MAXREPEAT = 6
+MAXREPEAT = 2
 
 class SmartRedirectHandler(urllib2.HTTPRedirectHandler):     
     def http_error_301(self, req, fp, code, msg, headers):  
@@ -66,7 +66,7 @@ def fetch_url( url, data=None, cj=None ):
             logger.debug('Getting: %s' % url)
             request = urllib2.Request(url, data)
             request.add_header('Accept-Encoding', 'gzip; q=1.0, identity; q=0.5')
-            request.add_header('User-agent', 'Mozilla/5.0')
+            request.add_header('User-agent', 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0; chromeframe/11.0.696.57)')
             if not cj:
                 cj = cookielib.LWPCookieJar()
             opener = urllib2.build_opener(SmartRedirectHandler(), urllib2.HTTPCookieProcessor(cj) )
@@ -99,10 +99,10 @@ def fetch_url( url, data=None, cj=None ):
             repeat += 1
             if repeat > MAXREPEAT:
                 logger.critical('HTTP Error! Aborting. Error repeated %d times: %s' % (MAXREPEAT, msg) )
-                raise
+                raise DREError('Error condition on the site')
             if 'Error 400' in str(msg) or 'Error 404' in str(msg):
                 logger.critical('HTTP Error 40x - URL: %s' % url)
-                return '' 
+                raise
             if 'Error 503' in str(msg):
                 logger.critical('HTTP Error 503 - cache problem going to try again in 10 seconds.')
                 time.sleep(10)

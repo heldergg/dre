@@ -13,6 +13,7 @@ import random
 import re
 import sys
 import time
+import urllib2
 
 # Append the current project path
 sys.path.append(os.path.abspath('../lib/'))
@@ -243,7 +244,14 @@ class DREReadDocs( object ):
         return archive_dir    
 
     def save_file(self, url, filename):
-        url, data_blob, cookies = fetch_url( url )
+        try:
+            url, data_blob, cookies = fetch_url( url )
+        except urllib2.HTTPError:
+            self.page_result['pdf_error'] = True
+            logger.error('Could not read PDF: %s DOC: %s' % (
+                url,
+                self.page_result['claint']))
+            return
         
         with open(filename, 'wb') as f:
             f.write(data_blob)
@@ -279,7 +287,7 @@ class DREReadDocs( object ):
         logger.debug('Document saved.')
 
 MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
-MAX_ERROR_DOCUMENT = 10 # Max number of consecutive documents with error
+MAX_ERROR_DOCUMENT = 1000 # Max number of consecutive documents with error
 
 class DREScrap( object ):
     '''Read the documents from the site. Stores the last publiched document.
