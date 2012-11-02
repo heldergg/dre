@@ -89,6 +89,7 @@ def browse_day( request, year, month, day ):
         page = paginator.num_pages
 
     context['page'] = paginator.page(page)
+    context['query'] = '?'
 
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))
