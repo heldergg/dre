@@ -1,6 +1,4 @@
 {% extends "base.html" %}
-{% load displaypdf %}
-
 
 {% block title %}Diários da República{% endblock %}
 
@@ -64,11 +62,17 @@
 </table>
 
 {% if document.dre_pdf %}
-<div class="displaypdf ">
+<h2>Texto do documento</h2>
+<div class="result_notes">
   {% autoescape off %}
-  {{ document.plain_pdf_to_html }}
+  {{ document.plain_html }}
   {% endautoescape %}
 </div>
+<p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
+leitura do Diário da República correspondente. Não nos responsabilizamos por
+quaisquer incorrecções produzidas na transcrição do original para este formato.
+{% if document.dre_pdf %}<p>Pode consultar o DR original 
+<a href="{{ document.dre_pdf }}">aqui</a>.{% endif %}
 {% endif %}
 
 {% endblock %}
