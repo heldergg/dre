@@ -1,5 +1,12 @@
+# -*- coding: utf-8 -*-
+
+import os
+import bs4
+
 from datetime import datetime
 from django.db import models
+from django.conf import settings
+
 
 class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
@@ -43,8 +50,29 @@ class Document(models.Model):
             self.date.year,
             self.date.month,
             self.date.day, )
-            
 
+    # File methods
+    def archive_dir(self):
+        return  os.path.join( settings.ARCHIVEDIR,
+                            '%d' % self.year(),
+                            '%02d' % self.month(),
+                            '%02d' % self.day() )
+
+    def plain_pdf_filename(self):
+        return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint) 
+
+    def plain_html(self):
+        '''Converts the plain_pdf pdf to html''' 
+        command = 'pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
+        html = os.popen(command).read()
+        soup = bs4.BeautifulSoup(html)
+
+        return soup.body.renderContents()
+         
+    def plain_txt(self):
+        '''Converts the plain_pdf pdf to txt''' 
+        command = 'pdftotext -htmlmeta -layout %s -' % self.plain_pdf_filename()
+        return os.popen(command).read()
 
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id

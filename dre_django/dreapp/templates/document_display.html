@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load displaypdf %}
+
 
 {% block title %}Diários da República{% endblock %}
 
@@ -60,6 +62,15 @@
     <td><a href="{{ document.dre_pdf }}">link</a></td>
   </tr>{% endif %}  
 </table>
+
+{% if document.dre_pdf %}
+<div class="displaypdf ">
+  {% autoescape off %}
+  {{ document.plain_pdf_to_html }}
+  {% endautoescape %}
+</div>
+{% endif %}
+
 {% endblock %}
 
 
