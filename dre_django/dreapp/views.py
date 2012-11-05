@@ -94,10 +94,10 @@ def browse_day( request, year, month, day ):
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))
 
-def document_display( request, claint ):
+def document_display( request, docid ):
     context = {}
 
-    document = get_object_or_404(Document, claint=claint )
+    document = get_object_or_404(Document, pk=docid )
 
     context['document'] = document
 
