@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import bs4
 
 from datetime import datetime
 from django.db import models
@@ -65,9 +64,9 @@ class Document(models.Model):
         '''Converts the plain_pdf pdf to html''' 
         command = 'pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
         html = os.popen(command).read()
-        soup = bs4.BeautifulSoup(html)
+        html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
 
-        return soup.body.renderContents()
+        return html
          
     def plain_txt(self):
         '''Converts the plain_pdf pdf to txt''' 
