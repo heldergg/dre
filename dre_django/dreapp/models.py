@@ -62,7 +62,7 @@ class Document(models.Model):
 
     def plain_html(self):
         '''Converts the plain_pdf pdf to html''' 
-        command = 'pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
+        command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
         html = os.popen(command).read()
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
 
@@ -72,7 +72,7 @@ class Document(models.Model):
         '''Converts the plain_pdf pdf to txt''' 
         filename = self.plain_pdf_filename()
         if os.path.exists(filename):
-            command = 'pdftotext -htmlmeta -layout %s -' % filename 
+            command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename 
             return os.popen(command).read()
         else:
             return ''
