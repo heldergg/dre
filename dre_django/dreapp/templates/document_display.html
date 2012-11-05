@@ -6,21 +6,9 @@
 {% endblock %}
 
 {% block body_content %}
-<h1>Displaying document</h1>
+<h1>{{ document.doc_type.title }} {{ document.number }}</h1>
 
 <table>
-  <tr>
-    <th>claint</th>
-    <td>{{ document.claint }}</td>
-  </tr>  
-  <tr>
-    <th>doc_type</th>
-    <td>{{ document.doc_type }}</td>
-  </tr>  
-  <tr>
-    <th>number</th>
-    <td>{{ document.number }}</td>
-  </tr>  
   <tr>
     <th>emiting_body</th>
     <td>{{ document.emiting_body }}</td>

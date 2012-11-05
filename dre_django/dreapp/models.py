@@ -71,8 +71,12 @@ class Document(models.Model):
          
     def plain_txt(self):
         '''Converts the plain_pdf pdf to txt''' 
-        command = 'pdftotext -htmlmeta -layout %s -' % self.plain_pdf_filename()
-        return os.popen(command).read()
+        filename = self.plain_pdf_filename()
+        if os.path.exists(filename):
+            command = 'pdftotext -htmlmeta -layout %s -' % filename 
+            return os.popen(command).read()
+        else:
+            return ''
 
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
