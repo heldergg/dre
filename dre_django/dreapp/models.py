@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 
 from datetime import datetime
 from django.db import models
@@ -65,6 +66,12 @@ class Document(models.Model):
         command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
         html = os.popen(command).read()
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
+        html = html.replace('&nbsp;', ' ').replace('<hr>','')
+        html = re.sub( r' *<br>', '<br>', html)
+        html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
+        html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
+        html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
+        html = html.replace('</b><br>','</b><br><p>')
 
         return html
          

@@ -49,7 +49,7 @@
   </tr>{% endif %}  
 </table>
 
-{% if document.dre_pdf %}
+{% if document.plain_text %}
 <h2>Texto do documento</h2>
 <div class="result_notes">
   {% autoescape off %}
@@ -59,9 +59,9 @@
 <p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
 leitura do Diário da República correspondente. Não nos responsabilizamos por
 quaisquer incorrecções produzidas na transcrição do original para este formato.
+{% endif %}
 {% if document.dre_pdf %}<p>Pode consultar o DR original 
 <a href="{{ document.dre_pdf }}">aqui</a>.{% endif %}
-{% endif %}
 
 {% endblock %}
 
