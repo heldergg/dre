@@ -6,12 +6,44 @@
 {% endblock %}
 
 {% block body_content %}
+<div class="content-text">
   <h1>Acerca do DRE Tretas</h1>
-  <div class="content_text">
+    <p>Este site disponibiliza uma cópia tão fiel quanto possível do <a href="http://dre.pt/">Diário da República Electrónico</a>, em caso de dúvida deverá sempre recorrer à fonte oficial.
 
-      <p>Todos os cidadãos são convidados a utilizar este site. Qualquer 
-         comentário, crítica ou sugestão pode ser enviado para: 
-         <a href="mailto:webmaster@tretas.org">webmaster@tretas.org</a>.</p>
-      <p>Helder Guerreiro</p> <p>José Lopes</p>
-  </div>
+    <p>O motivo que nos levou a fazer este trabalho foi a extremamente baixa qualidade do site oficial. A qualidade é tão baixa que chega ao extremo de não nos permitir partilhar ligações para os documentos nele contidos. Notar que não estou a falar em ligações automáticas para redes sociais ou coisa do género. Estou a falar das próprias ligações para a legislação. Por exemplo, a seguinte ligação:
+
+    <pre>http://digestoconvidados.dre.pt/Digesto/(S(1bpz5ljwwqq15s450ea0s145))
+/Paginas/DiplomaDetalhado.aspx?claint=305745</pre> 
+
+    <p>Não vai, pura e simplesmente, funcionar. Não há motivo técnico válido para que assim seja.
+
+    <p>O site oficial é mau de outras formas:
+
+    <ul>
+      <li>O sistema de busca, para além de lento, é muito sensível às perguntas que lhe pomos. Muitas vezes simplesmente cracha sem nos devolver qualquer resultado;
+      <li>Não conseguimos fazer buscas em texto livre, ficamos limitados a procurar nos metadados disponibilizados;
+      <li>Não existem feeds que nos permitam acompanhar a nova legislação que vai saindo, da mesma forma não é possível criar avisos por mail;
+    </ul>
+
+    <p>Por todos estes motivos, decidimos criar este site onde tentaremos remediar as questões acima citadas bem como desenvolver soluções que permitam aos cidadãos explorar a legislação de formas inovadoras e práticas.. 
+
+    <p>Todos os cidadãos são convidados a utilizar este site. Qualquer 
+       comentário, crítica ou sugestão pode ser enviado para: 
+       <a href="mailto:webmaster@tretas.org">webmaster@tretas.org</a>.</p>
+
+    <p>Helder Guerreiro</p> 
+    <p>José Lopes</p>
+
+  <h2>Nota técnica</h2>
+
+  <p>Este sistema corre sobre Linux, utilizam-se os seguintes sistemas principais:
+
+  <ul>
+    <li>Base de dados <a href="http://www.postgresql.org/">PostgreSQL</a>;
+    <li>Índice feito utilizando a biblioteca <a href="http://xapian.org/">Xapian</a>;
+    <li>Interface web feita com <a href="https://www.djangoproject.com/">Django</a>;
+  </ul>
+
+  <p>Corre num servidor HP ML110 G3, completamente obsoleto!
+</div>
 {% endblock %}

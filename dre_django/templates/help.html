@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}DRE Tretas - Help{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text">
+  <h1>Ajuda</h1>
+
+  <h2>Procurar</h2>
+
+  <p>Os documentos, extraídos do Diário da República Electrónico são indexados neste site. O nosso motor de busca suporta a utilização de modificadores que tornam as buscas mais eficientes. Por exemplo para se procurar apenas por leis, pode-se acrescentar: <tt>tipo:lei</tt>. Da mesma forma, se um determinado documento que procuramos é de um ano conhecido, podemos modificar a busca utilizando: <tt>ano:1989</tt>.
+
+  <p>Os modificadores suportados, neste momento, são:
+
+  <ul>
+    <li><strong>data</strong> - aceita uma data no formato <tt>AAAAMMDD</tt>; 
+    <li><strong>ano</strong> - ano do documento, no formato <tt>AAAA</tt>;
+    <li><strong>mês</strong> - mês do documento, no formato <tt>MM</tt> ou <tt>M</tt>, sem zeros à esquerda;
+    <li><strong>dia</strong> - dia do documento, no formato <tt>DD</tt> ou <tt>D</tt>, sem zeros à esquerda;
+    <li><strong>tipo</strong> - tipo de documento, a seguir listamos os tipos de documentos suportados;
+    <li><strong>número</strong> - número do documento, tem de ser o número exacto. Notar que os documentos antes do ano dois mil identificam o ano com dois caracteres, a partir do ano dois mil, utilizam quatro dígitos. Isto é apenas uma regra que muitas vezes não é seguida. O número de documento utilizado com este documento deve ser exacto;
+  </ul>
+
+  <h3>Tipos de documentos</h3>
+
+    <ul>
+      <li>ACÓRDÃO
+      <li>ACORDO
+      <li>ACTA
+      <li>ALVARÁ
+      <li>ALVARÁ-EXTRACTO
+      <li>ANÚNCIO
+      <li>ASSENTO
+      <li>AUTORIZAÇÃO
+      <li>AVISO
+      <li>AVISO-EXTRACTO
+      <li>CARTA DE CONFIRMAÇÃO E RATIFICAÇÃO DE CONVENÇÃO INTERNACIONAL
+      <li>CARTA DE LEI
+      <li>COMUNICAÇÃO DE RENÚNCIA
+      <li>CONTA
+      <li>CONTRATO
+      <li>CONTRATO-EXTRACTO
+      <li>CONVÉNIO
+      <li>DECLARAÇÃO
+      <li>DECLARAÇÃO DE DÍVIDA
+      <li>DECLARAÇÃO DE RECTIFICAÇÃO
+      <li>DECRETO
+      <li>DECRETO LEGISLATIVO REGIONAL
+      <li>DECRETO LEI
+      <li>DECRETO REGIONAL
+      <li>DECRETO REGULAMENTAR
+      <li>DECRETO REGULAMENTAR REGIONAL
+      <li>DELIBERAÇÃO
+      <li>DELIBERAÇÃO-EXTRACTO
+      <li>DESPACHO
+      <li>DESPACHO CONJUNTO
+      <li>DESPACHO-EXTRACTO
+      <li>DESPACHO MINISTERIAL
+      <li>DESPACHO NORMATIVO
+      <li>DESPACHO ORIENTADOR
+      <li>DESPACHO RECTIFICATIVO
+      <li>DESPACHO REGULADOR
+      <li>DIRECTIVA CONTABILÍSTICA
+      <li>EDITAL
+      <li>EXTRACTO
+      <li>INSTRUÇÃO
+      <li>INSTRUÇÕES
+      <li>JURISPRUDÊNCIA
+      <li>LEI
+      <li>LEI CONSTITUCIONAL
+      <li>LEI ORGÂNICA
+      <li>LISTAGEM
+      <li>LISTA RECTIFICATIVA
+      <li>LOUVOR
+      <li>MAPA
+      <li>MAPA OFICIAL
+      <li>MOÇÃO
+      <li>MOÇÃO DE CONFIANÇA
+      <li>NÃO ESPECIFICADO
+      <li>NORMA
+      <li>PARECER
+      <li>PORTARIA
+      <li>PORTARIA-EXTRACTO
+      <li>PROCESSO
+      <li>PROTOCOLO
+      <li>RECOMENDAÇÃO
+      <li>RECTIFICAÇÃO
+      <li>REGIMENTO
+      <li>REGULAMENTO
+      <li>REGULAMENTO INTERNO
+      <li>RELATÓRIO
+      <li>RESOLUÇÃO
+      <li>RESOLUÇÃO DA ASSEMBLEIA NACIONAL
+    </ul>
+
+  <h3>Exemplos</h3>
+
+  <p>Procurar leis sobre os caminhos de ferro:
+
+  <p><tt>"caminhos de ferro" tipo:lei</tt>
+
+  <p>Procurar portarias de Maio de 1989:
+
+  <p><tt>ano:1989 mês:5 tipo:portaria</tt>
+
+</div>
+{% endblock %}

@@ -91,6 +91,19 @@ a.user {
   padding: 1em;
   }
 
+.content-text {
+  max-width:50em;
+  margin:auto;
+  text-align: justify;
+}
+
+.content-text tt {
+  background-color: #e89900;
+  text-decoration: none;
+  padding: 0.2em 0.3em 0.2em 0.3em;
+  border-radius: 0.3em;
+}
+
 .resultnote {
   padding: 0px;
   margin: 0.5em 0px;
@@ -152,5 +165,7 @@ a.user {
 }
 
 .pagination {
+    padding-top: 1.5em;
+    padding-bottom: 2em;
     text-align: center;
 }

@@ -14,6 +14,11 @@ urlpatterns = patterns('',
         TemplateView.as_view(template_name='about.html'),
         name='about'),
 
+    # Help:
+    url(r'^ajuda', 
+        TemplateView.as_view(template_name='help.html'),
+        name='help'),
+
     # Not implemented:
     url(r'^not_implemented', 
         TemplateView.as_view(template_name='not_implemented.html'),
