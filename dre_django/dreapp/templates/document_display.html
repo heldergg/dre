@@ -10,18 +10,12 @@
 
 <h1>{{ document.doc_type.title }} {{ document.number }} de {{ document.date|date:"Y-m-d" }}</h1>
 
-<table>
-  <tr>
-    <th>conditional</th>
-    <td>{{ document.conditional }}</td>
-  </tr>  
-</table>
-
 <ul>
   <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
   <li><strong>Fonte</strong>: {{ document.source }}
-  <li><strong>Chave DRE</strong>: {{ document.dre_key }}
-  <li>{% if document.in_force %}Este documento está em vigor{% else %}<strong style="color:red;">Este documento não está em vigor</strong>{% endif %} 
+  {% if document.dre_key %}<li><strong>Chave DRE</strong>: {{ document.dre_key }}{% endif %}
+  {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
+  {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
 </ul>
 
 <h2>Notas</h2>
