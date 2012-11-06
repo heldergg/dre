@@ -6,52 +6,28 @@
 {% endblock %}
 
 {% block body_content %}
-<h1>{{ document.doc_type.title }} {{ document.number }}</h1>
+<div style="max-width:50em;margin:auto;">
+
+<h1>{{ document.doc_type.title }} {{ document.number }} de {{ document.date|date:"Y-m-d" }}</h1>
 
 <table>
-  <tr>
-    <th>claint</th>
-    <td>{{ document.claint }}</td>
-  </tr>  
-  <tr>
-    <th>emiting_body</th>
-    <td>{{ document.emiting_body }}</td>
-  </tr>  
-  <tr>
-    <th>source</th>
-    <td>{{ document.source }}</td>
-  </tr>  
-  <tr>
-    <th>dre_key</th>
-    <td>{{ document.dre_key }}</td>
-  </tr>  
-  <tr>
-    <th>in_force</th>
-    <td>{{ document.in_force }}</td>
-  </tr>  
   <tr>
     <th>conditional</th>
     <td>{{ document.conditional }}</td>
   </tr>  
-  <tr>
-    <th>date</th>
-    <td>{{ document.date }}</td>
-  </tr>  
-  <tr>
-    <th>notes</th>
-    <td>{{ document.notes }}</td>
-  </tr>  
-  {% if document.plain_text %}
-  <tr>
-    <th>plain_text</th>
-    <td><a href="{{ document.plain_text }}">link</a></td>
-  </tr>{% endif %} 
-  {% if document.dre_pdf %}
-  <tr>
-    <th>dre_pdf</th>
-    <td><a href="{{ document.dre_pdf }}">link</a></td>
-  </tr>{% endif %}  
 </table>
+
+<ul>
+  <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
+  <li><strong>Fonte</strong>: {{ document.source }}
+  <li><strong>Chave DRE</strong>: {{ document.dre_key }}
+  <li>{% if document.in_force %}Este documento está em vigor{% else %}<strong style="color:red;">Este documento não está em vigor</strong>{% endif %} 
+</ul>
+
+<h2>Notas</h2>
+<div class="result_notes">
+{{ document.notes }}
+</div>
 
 {% if document.plain_text %}
 <h2>Texto do documento</h2>
@@ -59,14 +35,25 @@
   {% autoescape off %}
   {{ document.plain_html }}
   {% endautoescape %}
+  <div class="noprint">
+    <p><a href="{{ document.plain_text }}"><img src="{{ STATIC_URL }}dre_django/img/pdf.png"> Versão em PDF deste documento</a>
+  </div>
 </div>
 <p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
 leitura do Diário da República correspondente. Não nos responsabilizamos por
 quaisquer incorrecções produzidas na transcrição do original para este formato.
 {% endif %}
-{% if document.dre_pdf %}<p>Pode consultar o DR original 
-<a href="{{ document.dre_pdf }}">aqui</a>.{% endif %}
+{% if document.dre_pdf %}
+<div class="noprint">
+<p>Pode consultar o DR original <a href="{{ document.dre_pdf }}">aqui</a>.
+</div>
+<div class="only_print">
+<p>Pode consultar o DR original em:
+<p>{{ document.dre_pdf }}
+</div>
+{% endif %}
 
+</div>
 {% endblock %}
 
 

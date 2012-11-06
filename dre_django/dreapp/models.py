@@ -7,6 +7,77 @@ from datetime import datetime
 from django.db import models
 from django.conf import settings
 
+# select distinct doc_type from dreapp_document order by doc_type;
+doc_type = (
+    'ACÓRDÃO',
+    'ACORDO',
+    'ACTA',
+    'ALVARÁ',
+    'ALVARÁ-EXTRACTO',
+    'ANÚNCIO',
+    'ASSENTO',
+    'AUTORIZAÇÃO',
+    'AVISO',
+    'AVISO-EXTRACTO',
+    'CARTA DE CONFIRMAÇÃO E RATIFICAÇÃO DE CONVENÇÃO INTERNACIONAL',
+    'CARTA DE LEI',
+    'COMUNICAÇÃO DE RENÚNCIA',
+    'CONTA',
+    'CONTRATO',
+    'CONTRATO-EXTRACTO',
+    'CONVÉNIO',
+    'DECLARAÇÃO',
+    'DECLARAÇÃO DE DÍVIDA',
+    'DECLARAÇÃO DE RECTIFICAÇÃO',
+    'DECRETO',
+    'DECRETO LEGISLATIVO REGIONAL',
+    'DECRETO LEI',
+    'DECRETO REGIONAL',
+    'DECRETO REGULAMENTAR',
+    'DECRETO REGULAMENTAR REGIONAL',
+    'DELIBERAÇÃO',
+    'DELIBERAÇÃO-EXTRACTO',
+    'DESPACHO',
+    'DESPACHO CONJUNTO',
+    'DESPACHO-EXTRACTO',
+    'DESPACHO MINISTERIAL',
+    'DESPACHO NORMATIVO',
+    'DESPACHO ORIENTADOR',
+    'DESPACHO RECTIFICATIVO',
+    'DESPACHO REGULADOR',
+    'DIRECTIVA CONTABILÍSTICA',
+    'EDITAL',
+    'EXTRACTO',
+    'INSTRUÇÃO',
+    'INSTRUÇÕES',
+    'JURISPRUDÊNCIA',
+    'LEI',
+    'LEI CONSTITUCIONAL',
+    'LEI ORGÂNICA',
+    'LISTAGEM',
+    'LISTA RECTIFICATIVA',
+    'LOUVOR',
+    'MAPA',
+    'MAPA OFICIAL',
+    'MOÇÃO',
+    'MOÇÃO DE CONFIANÇA',
+    'NÃO ESPECIFICADO',
+    'NORMA',
+    'PARECER',
+    'PORTARIA',
+    'PORTARIA-EXTRACTO',
+    'PROCESSO',
+    'PROTOCOLO',
+    'RECOMENDAÇÃO',
+    'RECTIFICAÇÃO',
+    'REGIMENTO',
+    'REGULAMENTO',
+    'REGULAMENTO INTERNO',
+    'RELATÓRIO',
+    'RESOLUÇÃO',
+    'RESOLUÇÃO DA ASSEMBLEIA NACIONAL',
+)
+
 
 class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
@@ -33,7 +104,7 @@ class Document(models.Model):
         if len(self.notes) < 512:
             return self.notes
         else:
-            return self.notes[:512]
+            return self.notes[:512] + ' (...)'
 
     # Date methods
     def year(self):
