@@ -4,6 +4,10 @@
 
 body {
   background: #fdfeff;
+  background-image: url('/static/dre_django/img/esfera_armilar.png');
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-attachment:fixed;
   padding: 0;
   margin: 0;
   font-family: verdana, arial, sans-serif;
@@ -14,7 +18,13 @@ body {
 
 h1 {
   text-align:center;
+  line-height: 150%;
+  margin-bottom: 2em;
   }
+
+h2 {
+  margin-top: 1em;
+}
 
 /* Hide, just visible on print media */
 .only_print {
@@ -85,6 +95,18 @@ a.user {
   max-width: 1000px;
   }
 
+/* Logos */
+
+.dre_logo {
+  margin-bottom: 1.5em;
+}
+
+/* Form fields */
+#id_query_string {
+  width: 60%;
+  font-size: 1.3em;
+  }
+
 /* To center the content */
 /* to use insted of the deprecated align and center */
 
@@ -102,6 +124,15 @@ a.user {
 /* Results */
 /***********/
 
+#search_results {
+  max-width: 50em;   
+}
+
+#search_results ul {
+  list-style-type: none; 
+  padding: 0;
+}
+
 .result_notes {
     position: relative;
     max-width: 50em;
@@ -110,6 +141,8 @@ a.user {
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+
+    opacity:0.9;
 }
 
 .result_bar {
