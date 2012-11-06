@@ -57,10 +57,12 @@ h2 {
 .header a {
   color: white;
   text-decoration: none;
+  padding: 0.1em 0.3em 0.2em 0.3em;
+  border-radius: 0.3em;
   }
 .header a:hover {
-  color: yellow;
-  text-decoration: underline;
+  background-color: #e89900;
+  text-decoration: none;
   }
 
 a.user {
