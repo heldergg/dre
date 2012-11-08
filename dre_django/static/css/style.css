@@ -139,9 +139,7 @@ a.user {
 /* Results */
 /***********/
 
-#search_results {
-  max-width: 50em;   
-}
+#search_results { }
 
 #search_results ul {
   list-style-type: none; 
