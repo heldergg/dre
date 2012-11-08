@@ -134,6 +134,8 @@ class Document(models.Model):
 
     def plain_html(self):
         '''Converts the plain_pdf pdf to html''' 
+        # TODO: substitute this regexes for compiled regexes
+
         command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
         html = os.popen(command).read()
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
@@ -143,6 +145,10 @@ class Document(models.Model):
         html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
         html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
         html = html.replace('</b><br>','</b><br><p>')
+
+        # "Decreto-Lei" recognition
+        html = re.sub( r'((Decreto-Lei|Lei)(?: | n.º )([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))',
+                       r'<a href="http://dre.tretas.org/?q=tipo:\2 número:\3">\1</a>', html)
 
         return html
          
