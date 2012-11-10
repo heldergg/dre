@@ -30,7 +30,13 @@
     <div id="header_right">
       <a href="{% url 'about' %}">Acerca</a><!-- | 
       <a class="rss_link" href="{% url 'not_implemented' %}">RSS</a> --> |
-      <a href="{% url 'help' %}">Ajuda</a>
+      <a href="{% url 'help' %}">Ajuda</a> |
+      {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}?next=/">Sair</a>
+      {% else %}
+      <a href="{% url 'registration' %}?next={{ request.get_full_path|urlencode }}">Registar</a> |
+      <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Entrar</a>
+      {% endif %}
     </div>
     <div class="clear_both"></div>
   </div>
@@ -44,7 +50,7 @@
   </div> <!-- End Header for Printing -->
 
   <!-- Body Content -->
-  <div id="content">
+  <div id="content":>
   {% block body_content %}{% endblock %}
   </div>
 

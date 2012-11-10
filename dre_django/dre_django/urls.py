@@ -24,6 +24,9 @@ urlpatterns = patterns('',
         TemplateView.as_view(template_name='not_implemented.html'),
         name='not_implemented'),
 
+    # Authentication and registration
+    (r'^auth/', include('authapp.urls')),
+
     # dreapp
     url(r'^dre/', include('dreapp.urls')),
 

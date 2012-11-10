@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block header_js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}newsrss/js/jquery.autofocus-min.js"></script>
+  <script type="text/javascript">
+  $(document).ready(function() {
+      $("#id_username").autofocus();
+  });
+  </script>
+{% endblock %}
+
+{% block body_content %}
+<h1>Autenticação</h1>
+
+<div class="center_text">
+{% if auth_error %}
+<p class="warning">O seu nome e/ou passwords estão errados. Por favor tente de novo.</p>
+{% endif %}
+<form method="post" action="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
+<table>
+  <tr>
+    <th><label for="id_username">Utilizador:</label></th>
+    <td>{{ form.username }}</td>
+  </tr>
+  <tr>
+    <th><label for="id_password">Senha:</label></th>
+    <td>{{ form.password }}</td>
+  </tr>
+  <tr>
+    <th><label for="id_autologin">Login automatico?</label></th>
+    <td>{{ form.autologin }}</td>
+  </tr>
+  {% if form.captcha %}
+  <tr>
+    <td colspan="2">{{ form.captcha }}<br>{{ form.captcha.errors }}</td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td colspan=2>
+      <div class="center_text">
+        <button style="width:6em" type="submit" value="Submit">Entrar</button>
+      </div>
+    </td>
+  </tr>
+</table>
+<input type="hidden" name="next" value="{{ next }}" />
+<input type="submit" style="width:0px;height:0px;border:none;padding:0px;font-size:0px">
+</form>
+</div>
+{% endblock %}

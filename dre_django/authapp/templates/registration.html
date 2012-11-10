@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Registar{% endblock %}
+
+{% block header_js %}
+{% endblock %}
+
+{% block body_content %}
+<div class="center_text">
+<h1>Registar</h1>
+
+<form method="post" action="{% url 'registration' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
+<table>
+  <tr>
+    <th>{{ form.username.label }}</th>
+    <td>
+      {{ form.username }}
+      {{ form.username.errors }}
+    </td>
+  </tr>
+  <tr>
+    <th>{{ form.password_1.label }}</th>
+    <td>{{ form.password_1 }}</td>
+  </tr>
+  <tr>
+    <th>{{ form.password_2.label }}</th>
+    <td>
+      {{ form.password_2 }}
+      {{ form.password_2.errors }}
+    </td>
+  </tr>
+  <tr>
+    <th>{{ form.email.label }} <cite>({{ form.email.help_text }})</cite></th>
+    <td>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </td>
+  </tr>
+  <tr>
+    <th colspan=2><br>{{ form.captcha|safe }}<br>{{ form.captcha.errors|safe }}</th>
+  </tr>
+  <tr>
+    <th colspan=2>
+      <button style="width:8em" type="submit" value="Submit">Registar</button>
+      <input type="hidden" name="next" value="{{ next }}">
+    </th>
+  </tr>
+</table>
+</form>
+</div>
+{% endblock %}

@@ -26,6 +26,13 @@ h2 {
   margin-top: 1em;
 }
 
+input {
+  border: 1px solid #6f94de;
+  background-color: white;
+  font-size: 1.3em;
+  border: 1px solid #6f94de;
+}
+
 /* Hide, just visible on print media */
 .only_print {
   display: none;
@@ -119,7 +126,6 @@ a.user {
 /* Form fields */
 #id_query_string {
   width: 60%;
-  font-size: 1.3em;
   }
 
 /* To center the content */

@@ -148,7 +148,7 @@ class Document(models.Model):
 
         # "Decreto-Lei" recognition
         html = re.sub( r'((Decreto-Lei|Lei)(?: | n.º )([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))',
-                       r'<a href="http://dre.tretas.org/?q=tipo:\2 número:\3">\1</a>', html)
+                       r'<a href="/?q=tipo:\2 número:\3">\1</a>', html)
 
         return html
          

@@ -120,6 +120,19 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth', 
+    'django.core.context_processors.debug', 
+    'django.core.context_processors.i18n', 
+    'django.core.context_processors.media', 
+    'django.core.context_processors.static', 
+    'django.core.context_processors.tz', 
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+)
+
+
+
 ##
 ## Applications
 ##
@@ -135,7 +148,8 @@ INSTALLED_APPS = (
     ##
     ## DRE apps
     ##
-
+    
+    'authapp',
     'dreapp',
 
     ##
@@ -178,6 +192,39 @@ INSTALLED_APPS = (
 ##         },
 ##     }
 ## }
+
+##
+## Authentication and sessions
+##
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 24 * 3600 * 14   # 14 days
+SESSION_COOKIE_SECURE = False    # set to True if using https
+SESSION_COOKIE_NAME = 'dre_sessionid'
+
+LOGIN_URL   = '/auth/login/'
+LOGOUT_URL  = '/auth/logout/'
+
+LOGIN_REDIRECT_URL = '/'
+
+REMEMBER_LOGIN = True
+
+FAILURE_LIMIT= 3 # number of failed attempts
+
+##
+## Registration
+##
+
+PASSWORD_MIN_SIZE = 3
+PASSWORD_MAX_SIZE = 30
+
+##
+## ReCaptcha
+##
+
+RECAPTCHA_PUB_KEY = 'GET A VALID KEY FROM http://recaptcha.net'
+RECAPTCHA_PRIV_KEY = 'GET A VALID KEY FROM http://recaptcha.net'
+RECAPTCHA_THEME = 'white'
 
 ##
 ## DRE specific
