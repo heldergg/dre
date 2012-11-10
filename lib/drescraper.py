@@ -126,6 +126,7 @@ class DREReadDocs( object ):
         page_result['conditional'] = ('Vigência condicional' in number)
         number = number.replace('Diploma não vigente','')
         number = number.replace('Vigência condicional','')
+        number = number.replace('(2ªSérie)','')
 
         page_result['number'] = number
 
