@@ -13,7 +13,7 @@
 </head>
 <body>
 <!--[if lte IE 8]>
-  <div style="background:yellow;color:red;width:100%;margin:0;padding:0.5em;">
+  <div style="background:yellow;color:red;margin:0;padding:0.5em;">
      <p>Está a utilizar uma versão antiga do Internet Explorer. Não vai
         conseguir usufruir da totalidade deste site (para além do facto de
         estar vulnerável a uma grande quantidade de vírus e afins). Faça
@@ -22,10 +22,17 @@
         <a href="http://www.opera.com/">browser</a> de
         <a href="http://www.google.com/chrome">qualidade</a>.</p>
   </div>
-<![endif]-->
+<![endif]--> <!--
+  <div style="background:yellow;color:red;margin:0;padding:0.5em;">
+  <p><strong>ATENÇÃO!!!</strong> - Este site está em desenvolvimento intenso. 
+  Por vezes poderá estar instável e até é normal que não funcione de quando em 
+  vez. Neste momento já temos o código necessário para fazer o registo de novos
+  utilizadores e para fazer o respectivo login. Infelizmente ainda não há
+  nenhuma funcionalidade que aproveite os logins de utilizadores...
+  </div> -->
   <div class="header">
     <div id="header_left">
-      <a href="/">Início</a> 
+      <a href="/">Procurar</a> 
     </div>
     <div id="header_right">
       <a href="{% url 'about' %}">Acerca</a><!-- | 

@@ -24,14 +24,18 @@ h1 {
 
 h2 {
   margin-top: 1em;
-}
+  }
 
 input {
   border: 1px solid #6f94de;
   background-color: white;
   font-size: 1.3em;
   border: 1px solid #6f94de;
-}
+  }
+
+cite {
+  color: gray;
+  }
 
 /* Hide, just visible on print media */
 .only_print {
@@ -61,12 +65,14 @@ input {
   border-width: 0 0 2px 0;
   border-color: #6f94de;
   }
+
 .header a {
   color: white;
   text-decoration: none;
   padding: 0.1em 0.3em 0.2em 0.3em;
   border-radius: 0.3em;
   }
+
 .header a:hover {
   background-color: #e89900;
   text-decoration: none;
@@ -102,14 +108,14 @@ a.user {
   max-width:50em;
   margin:auto;
   text-align: justify;
-}
+  }
 
 .content-text tt {
   background-color: #e89900;
   text-decoration: none;
   padding: 0.2em 0.3em 0.2em 0.3em;
   border-radius: 0.3em;
-}
+  }
 
 .resultnote {
   padding: 0px;
@@ -121,7 +127,7 @@ a.user {
 
 .dre_logo {
   margin-bottom: 1.5em;
-}
+  }
 
 /* Form fields */
 #id_query_string {
@@ -136,6 +142,7 @@ a.user {
   margin-top: 1em;
   margin-bottom: 1em;
   }
+
 .center_text table {
   margin-left:auto;
   margin-right:auto;
@@ -150,26 +157,25 @@ a.user {
 #search_results ul {
   list-style-type: none; 
   padding: 0;
-}
+  }
 
 .result_notes {
-    position: relative;
-    max-width: 50em;
-    padding: 10px;
-    background-color: #fff;
-    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-
-    opacity:0.9;
-}
+  position: relative;
+  max-width: 50em;
+  padding: 10px;
+  background-color: #fff;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+  opacity:0.9;
+  }
 
 .result_bar {
-    padding: 1em 0 1em 0;
-}
+  padding: 1em 0 1em 0;
+  }
 
 .pagination {
-    padding-top: 1.5em;
-    padding-bottom: 2em;
-    text-align: center;
-}
+  padding-top: 1.5em;
+  padding-bottom: 2em;
+  text-align: center;
+  }
