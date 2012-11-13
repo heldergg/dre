@@ -27,6 +27,9 @@ urlpatterns = patterns('',
     # Authentication and registration
     (r'^auth/', include('authapp.urls')),
 
+    # Bookmarks
+    (r'^bookmark/', include('bookmarksapp.urls')),
+
     # dreapp
     url(r'^dre/', include('dreapp.urls')),
 

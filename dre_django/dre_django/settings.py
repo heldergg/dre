@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     ## DRE apps
     ##
     
+    'bookmarksapp',
     'authapp',
     'dreapp',
 

@@ -1,3 +1,4 @@
+{% load bookmarks %}
 <div id="search_results">
   <div class="result_bar">
   Encontrámos {{ page.paginator.count }} resultados
@@ -7,6 +8,9 @@
   <ul>
     {% for result in page.object_list %}
     <li>
+      {% if user.is_authenticated %}
+      <a href="{% toggle_bookmark result %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon result %}</a>
+      {% endif %}
       {% if result.plain_text or result.dre_pdf %}
       <img src="{{ STATIC_URL }}dre_django/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
       {% else %}

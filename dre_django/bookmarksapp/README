@@ -1,0 +1,6 @@
+Django Bookmarks
+
+= Instalation =
+
+Make sure you have 'django.contrib.contenttypes' and 'bookmarksapp' on your 
+INSTALLED_APPS list. That's all.
