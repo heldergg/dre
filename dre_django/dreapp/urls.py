@@ -11,5 +11,8 @@ urlpatterns = patterns('dreapp.views',
     url(r'^data/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/$', 'browse_day', name='browse_day'),
 
     # Document display
-    url(r'(?P<docid>\d+)/$', 'document_display', name='document_display'),
+    url(r'^(?P<docid>\d+)/$', 'document_display', name='document_display'),
+
+    # Display the bookmarked documents
+    url(r'^marcador/(?P<userid>\d+)/$','bookmark_display', name='bookmark_display'),
     )

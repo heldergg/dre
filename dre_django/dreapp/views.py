@@ -2,15 +2,17 @@
 
 # Global Imports:
 import datetime
-from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
 # Local Imports:
 import dreapp.index
-from dreapp.models import Document
+from bookmarksapp.models import Bookmark
 from dreapp.forms import QueryForm
+from dreapp.models import Document
 
 def search(request):
     context = {}
@@ -102,4 +104,30 @@ def document_display( request, docid ):
     context['document'] = document
 
     return render_to_response('document_display.html', context,
+                context_instance=RequestContext(request))
+
+def bookmark_display( request, userid ):
+    context = {}
+    user = get_object_or_404(User, pk=userid)
+
+    # Select the bookmarks
+    results = Bookmark.objects.filter(user__exact = user) 
+
+    # Pagination
+    page = request.GET.get('page', 1)
+    try:
+        page = int(page)
+    except:
+        page = 1
+
+    paginator = Paginator(results, settings.RESULTS_PER_PAGE, orphans=settings.ORPHANS)
+    if page < 1:
+        page = 1
+    if page > paginator.num_pages:
+        page = paginator.num_pages
+
+    context['page'] = paginator.page(page)
+    context['query'] = '?'
+
+    return render_to_response('bookmark_display.html', context,
                 context_instance=RequestContext(request))

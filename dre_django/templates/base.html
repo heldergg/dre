@@ -34,7 +34,7 @@
     <div id="header_left">
       <a href="/">Procurar</a> 
       {% if user.is_authenticated %}
-      | <a href="{% url 'not_implemented' %}">Marcadores</a>
+      | <a href="{% url 'bookmark_display' user.id %}">Marcadores</a>
       {% endif %}
     </div>
     <div id="header_right">
