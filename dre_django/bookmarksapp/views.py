@@ -49,11 +49,10 @@ def toggle_bookmark( request, ctype_id, object_id ):
     if bookmark: 
         bookmark.delete()
     else:
-        print "#" * 80
         bookmark = add_bookmark( user, obj )
 
     if redirect_to:
         return redirect(redirect_to)
     else:
-        return HttpResponse('<h1>Toggle Bookmark</h1>') 
+        return HttpResponse('<h1>Bookmark toggled</h1>') 
  

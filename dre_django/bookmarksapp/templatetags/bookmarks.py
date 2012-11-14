@@ -25,8 +25,12 @@ from bookmarksapp.models import Bookmark
 
 register = template.Library()
 
-BOOKMARK_ON_ICON = getattr(settings, 'BOOKMARK_ON_ICON', '/static/dre_django/img/bookmark_on.png')
-BOOKMARK_OFF_ICON = getattr(settings, 'BOOKMARK_OFF_ICON', '/static/dre_django/img/bookmark_off.png')
+# Configuration
+STATIC_URL = getattr(settings, 'STATIC_URL', '/static/')
+BOOKMARK_ON_ICON = getattr( settings, 'BOOKMARK_ON_ICON', 
+                            '%simg/bookmark_on.png' % STATIC_URL)
+BOOKMARK_OFF_ICON = getattr( settings, 'BOOKMARK_OFF_ICON', 
+                             '%simg/bookmark_off.png' % STATIC_URL)
 
 ##
 # Tags

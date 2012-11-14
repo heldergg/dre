@@ -4,3 +4,11 @@ Django Bookmarks
 
 Make sure you have 'django.contrib.contenttypes' and 'bookmarksapp' on your 
 INSTALLED_APPS list. That's all.
+
+= Configuration =
+
+BOOKMARK_ON_ICON  - url to the bookmark on icon. 
+                    Default: {{ STATIC_URL }}img/bookmark_on.png
+
+BOOKMARK_OFF_ICON - url to the bookmark off icon. 
+                    Default: {{ STATIC_URL }}img/bookmark_off.png
