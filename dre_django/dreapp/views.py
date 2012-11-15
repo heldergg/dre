@@ -113,6 +113,10 @@ def bookmark_display( request, userid ):
     # Select the bookmarks
     results = Bookmark.objects.filter(user__exact = user) 
 
+    if user != request.user:
+        # Show only public bookmarks from other people
+        results = results.filter(public__exact = True )
+
     # Pagination
     page = request.GET.get('page', 1)
     try:
