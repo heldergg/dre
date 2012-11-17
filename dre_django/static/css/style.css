@@ -98,7 +98,7 @@ a.user {
 /***********/
 
 #content {
-  background-image: url('/static/dre_django/img/alfa.png');
+  background-image: url('http://static.tretas.org/dre/img/alfa.png');
   background-repeat: no-repeat;
   background-position: 0 0;
   padding: 1em;
