@@ -77,7 +77,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join( django_dir, 'static' ), 
+    ( 'dre_django', os.path.join( django_dir, 'static' ) ), 
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -138,6 +138,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 ##
 
 INSTALLED_APPS = (
+    ## 
+    ## Django apps
+    ##
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -150,6 +154,7 @@ INSTALLED_APPS = (
     ##
     
     'bookmarksapp',
+    'tagsapp',
     'authapp',
     'dreapp',
 

@@ -30,8 +30,11 @@ urlpatterns = patterns('',
     # Bookmarks
     (r'^bookmark/', include('bookmarksapp.urls')),
 
+    # Tags
+    (r'^tags/', include('tagsapp.urls')),
+
     # dreapp
-    url(r'^dre/', include('dreapp.urls')),
+    (r'^dre/', include('dreapp.urls')),
 
     # Examples:
     # url(r'^$', 'dre_django.views.home', name='home'),
