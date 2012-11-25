@@ -4,11 +4,27 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.transaction import commit_on_success
 import datetime
+
+##
+# Exceptions
+##
+
+class TagError(Exception):
+    pass
 
 ##
 # Tags 
 ##
+
+class TagManager(models.Manager):
+    '''The Tag table has a complicated role in the site. All the table handling
+    should be done throgh this manager in order to have consistency across the
+    application.
+    '''
+    pass
+
 
 class Tag(models.Model):
     user =  models.ForeignKey(User)
@@ -20,11 +36,47 @@ class Tag(models.Model):
     color = models.IntegerField( default=0xFFFFFF )
     background = models.IntegerField( default=0x444444 )
 
+    objects = TagManager()
 
     def __unicode__(self):
         return 'tag %s - %s - %s' % (self.user.username,
                                      self.id,
                                      self.name)
+    class Meta:
+        # Will raise an IntegrityError exception in the user tries to create 
+        # two tags with the same name
+        unique_together = ('user', 'name')
+
+# Functions
+
+def create_tag(user, name):
+    # Using autocommit because the function is extremely simple
+    tag = Tag( user = user, name = name )
+    tag.save()
+
+    return tag
+
+@commit_on_success
+def delete_tag(user, name, force=False):
+    tag = Tag.objects.get(user=user, name=name)
+    in_use = tag.objects.tag_in_use()
+
+    if in_use and not force:
+        raise TagError('Tag still in use, can\'t delete it.')
+    
+    if in_use and force: 
+        # Get the objects where the tag is used 
+        objects = TaggedItem.objects.filter( tag__exact = tag )
+        for obj in objects:
+            obj.delete()
+
+    # Finally delete the damn tag
+    tag.delete()
+
+
+##
+# Connect the tags to the objects
+##
 
 class TaggedItem(models.Model): 
     tag = models.ForeignKey(Tag)
@@ -42,4 +94,14 @@ class TaggedItem(models.Model):
     class Meta:
         unique_together = ('tag', 'content_type', 'object_id')
 
+@commit_on_success
+def tag_object(obj, tag):
+    content_type = ContentType.objects.get_for_model(obj)
+
+    tagged_item = TaggedItem( tag = tag,
+                              object_id = obj.id,
+                              content_type = content_type)
+    tagged_item.save()
+
+    return tagged_item
 
