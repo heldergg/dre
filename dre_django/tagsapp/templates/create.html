@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Criar tag{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text">
+<h1>{{ title }}</h1>
+
+<form method="POST" action="">{% csrf_token %}
+  <table>
+  {{ form }}
+  </table>
+  <p><button class="big_center"  style="width:8em" type="submit" value="Submit">OK</button></p>
+</form>
+</div>
+{% endblock %}
+

@@ -15,7 +15,7 @@ urlpatterns = patterns('',
         name='about'),
 
     # Help:
-    url(r'^ajuda', 
+    url(r'^help', 
         TemplateView.as_view(template_name='help.html'),
         name='help'),
 
@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     (r'^bookmark/', include('bookmarksapp.urls')),
 
     # Tags
-    (r'^tags/', include('tagsapp.urls')),
+    (r'^tag/', include('tagsapp.urls')),
 
     # dreapp
     (r'^dre/', include('dreapp.urls')),

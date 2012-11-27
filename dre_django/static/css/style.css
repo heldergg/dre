@@ -37,6 +37,8 @@ cite {
   color: gray;
   }
 
+.error { color:red; }
+
 /* Hide, just visible on print media */
 .only_print {
   display: none;
