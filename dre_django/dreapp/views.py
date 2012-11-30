@@ -132,6 +132,7 @@ def bookmark_display( request, userid ):
 
     context['page'] = paginator.page(page)
     context['query'] = '?'
+    context['bookmarks_user'] = user
 
     return render_to_response('bookmark_display.html', context,
                 context_instance=RequestContext(request))

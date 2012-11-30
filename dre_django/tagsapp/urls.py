@@ -11,5 +11,11 @@ urlpatterns = patterns('tagsapp.views',
 
     # Delete tag
     url( r'delete/(?P<tag_id>\d+)/$', 'delete', name= 'delete_tag' ),
+
+    # Tag Object
+    url( r'object/(?P<ctype_id>\d+)/(?P<object_id>\d+)/$',
+         'tag_object',
+         name= 'tag_object' ),
+    
     )
 

@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.transaction import commit_on_success
+
 import datetime
 
 ##
@@ -34,27 +35,24 @@ class Tag(models.Model):
     public = models.BooleanField( default=True )
     note = models.TextField(max_length=5120, blank=True, null=True )
     color = models.IntegerField( default=0xFFFFFF )
-    background = models.IntegerField( default=0x444444 )
+    background = models.IntegerField( default=0x4060A2 )
 
     objects = TagManager()
 
     def __unicode__(self):
-        return 'tag %s - %s - %s' % (self.user.username,
-                                     self.id,
-                                     self.name)
+        return '<tag %s - %s - %s>' % (self.user.username,
+                                       self.id,
+                                       self.name)
+
+    def style(self):
+        return 'color:#%x;background:#%x;' % (self.color, self.background)
+
     class Meta:
         # Will raise an IntegrityError exception in the user tries to create 
         # two tags with the same name
         unique_together = ('user', 'name')
 
 # Functions
-
-def create_tag(user, name):
-    # Using autocommit because the function is extremely simple
-    tag = Tag( user = user, name = name )
-    tag.save()
-
-    return tag
 
 @commit_on_success
 def delete_tag(user, name, force=False):
@@ -88,7 +86,7 @@ class TaggedItem(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     def __unicode__(self):
-        return '%s - %s' % ( self.tag,
+        return '<tagged item %s - %s>' % ( self.tag,
                              self.content_object )
 
     class Meta:

@@ -181,3 +181,15 @@ a.user {
   padding-bottom: 2em;
   text-align: center;
   }
+
+/********/
+/* Tags */
+/********/
+
+.tag {
+  padding: 0.2em 0.8em 0.3em 0.4em;
+  margin: 0 0.4em 0 0;
+  background: #4060A2;
+  color: white;
+  border-radius: 0.3em;
+}
