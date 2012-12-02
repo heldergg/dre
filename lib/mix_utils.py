@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 '''Scraping application for the dre.pt site, a portuguese database of 
 legislation.
@@ -10,7 +11,9 @@ import cookielib
 import re
 import socket
 import time
+import urllib
 import urllib2
+import urlparse
 import unicodedata
 import StringIO
 import gzip
@@ -60,6 +63,14 @@ class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
         return result
 
 def fetch_url( url, data=None, cj=None ):
+    # Treat url
+    url_object = list(urlparse.urlsplit(url))
+    if u'\xba' in url_object[2]:
+        url_object[2] = url_object[2].encode('utf-8')
+    url_object[2] = urllib.quote(url_object[2])
+    url = urlparse.urlunsplit(url_object)
+
+    # Get the payload
     repeat = 1
     while repeat:
         try:
