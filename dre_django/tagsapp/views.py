@@ -15,6 +15,8 @@ from django.template import RequestContext
 from tagsapp.forms import TagEditForm, TagForm
 from tagsapp.models import Tag, TaggedItem
 
+from decorators import is_ajax
+
 ##
 # Tagging objects
 ##
@@ -40,28 +42,45 @@ def get_tag_from_request(request):
 
 @login_required
 @commit_on_success
+@is_ajax(template = 'tags_ops.html', referer = True )
 def tag_object(request, ctype_id, object_id ):
+    context = {}
+
     # Get the tag
     tag = get_tag_from_request(request)
     if not tag:
-        raise Http404
+        context['success'] = False
+        context['message'] = 'Não consegui obter a etiqueta'
+        return context
 
     # Get the object
     content_type = ContentType.objects.get(id=ctype_id)
     try:
         obj = content_type.get_object_for_this_type(id=object_id)
     except ObjectDoesNotExist:
-        raise Http404
+        context['success'] = False
+        context['message'] = 'O objecto para aplicar a etiqueta já não existe.'
+        return context
 
     try:
         # Associate the tag with the object
         tagged_item = TaggedItem( tag=tag, content_object=obj )
         tagged_item.save()
     except IntegrityError:
-        return HttpResponse('<h1>Etiqueta REPETIDA</h1>')
+        context['success'] = False
+        context['message'] = 'Etiqueta repetida!'
+        return context
 
-    return HttpResponse('<h1>Etiqueta atribuída</h1>')
+    context['success'] = False
+    context['message'] = 'Etiqueta aplicada!'
+    return context
 
+
+@login_required
+@commit_on_success
+@is_ajax(template = 'tags_ops.html', referer = True )
+def untag_object(request, item_id ):
+    pass
 
 ##
 # Tag Management

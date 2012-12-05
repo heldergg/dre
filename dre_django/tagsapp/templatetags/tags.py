@@ -14,6 +14,7 @@ PROBLEM - we resolve the user name from the context, if we are
 '''
 
 # Global imports
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django import template
@@ -25,6 +26,12 @@ register = template.Library()
 from tagsapp.models import TaggedItem
 
 # Configuration
+STATIC_URL = getattr(settings, 'STATIC_URL', '/static/')
+REMOVE_TAG = getattr( settings, 
+                      'REMOVE_TAG', '%simg/remove-active.png' % STATIC_URL)
+REMOVE_TAG_INACTIVE = getattr( settings, 
+                      'REMOVE_TAG_INACTIVE', '%simg/remove-inactive.png' % STATIC_URL)
+
 
 ##
 # Tags
@@ -70,8 +77,13 @@ class ShowTagsNode(TagNode):
                                           content_type__exact = content_type,
                                           object_id__exact = obj.id )
 
-            return ''.join([ '<span class="tag" style="%s"><span class="tag_remove"><a>x</a></span> %s</span>' % 
-                            (item.tag.style(), item.tag.name) 
+            return ''.join([ '''<span class="tag" style="%(style)s"><span class="tag_remove"><a href="%(remove_tag)s"><img hight="16" width="16" src="%(icon)s"></a></span>%(tag_name)s</span>''' % 
+                            { 'style': item.tag.style(), 
+                              'icon': REMOVE_TAG_INACTIVE, 
+                              'tag_name': item.tag.name,
+                              'remove_tag': reverse('untag_object', kwargs={
+                                                    'item_id': item.id })
+                              } 
                             for item in tag_list]) 
         except template.VariableDoesNotExist:
             return ''

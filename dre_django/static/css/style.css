@@ -187,9 +187,18 @@ a.user {
 /********/
 
 .tag {
-  padding: 0.2em 0.8em 0.3em 0.4em;
+  padding: 0.15em 0.8em 0.3em 0.4em;
   margin: 0 0.4em 0 0;
   background: #4060A2;
   color: white;
   border-radius: 0.3em;
 }
+
+.tag_remove {
+  padding: 0.15em 0em 0.3em 0em;
+  margin: 0;
+}
+
+.tag_remove img { 
+  display: inline-block; 
+  vertical-align: middle; }

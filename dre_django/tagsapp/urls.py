@@ -17,5 +17,11 @@ urlpatterns = patterns('tagsapp.views',
          'tag_object',
          name= 'tag_object' ),
     
+    # Untag object
+    url( r'object/remove/(?P<item_id>\d+)/$',
+         'untag_object',
+         name= 'untag_object' ),
+
+    
     )
 

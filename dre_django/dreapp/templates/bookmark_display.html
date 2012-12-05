@@ -19,14 +19,14 @@
       <a href="{% url 'toggle_public' result.content_type.id result.object_id %}?next={{ request.get_full_path|urlencode }}">{% if result.public %}<img width=16 height=16 title="Marcador público" src="{{ STATIC_URL }}img/unlocked.png">{% else %}<img width=16 height=16 title="Marcador privado" src="{{ STATIC_URL }}img/locked.png">{% endif %}</a>
       {% endif %}
       {% if document.plain_text or document.dre_pdf %}
-      <img src="{{ STATIC_URL }}dre_django/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+      <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
       {% else %}
-      <img src="{{ STATIC_URL }}dre_django/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+      <img src="{{ STATIC_URL }}/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
       {% endif %}
       {% if document.in_force %}
-      <img src="{{ STATIC_URL }}dre_django/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+      <img src="{{ STATIC_URL }}/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
       {% else %}
-      <img src="{{ STATIC_URL }}dre_django/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+      <img src="{{ STATIC_URL }}/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
       {% endif %}
       <span class="document_date">
         <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}">
