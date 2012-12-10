@@ -10,12 +10,35 @@ from django.db.transaction import commit_on_success
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.db.models.signals import pre_delete
+from django.db.models.signals import Signal
 
 # Local imports:
 from tagsapp.forms import TagEditForm, TagForm
-from tagsapp.models import Tag, TaggedItem
+from tagsapp.models import Tag, TaggedItem, del_tagged_item
 
 from decorators import is_ajax
+
+##
+# Signals 
+##
+
+def check_object_deleted_tags(sender, **kwargs):
+    '''Each object that gets deleted is checked for association with tags. If
+    this associations exist they are deleted'''
+
+    # Get the tagged items list 
+    obj = kwargs['instance']
+    content_type = ContentType.objects.get_for_model(obj)
+    tag_list = TaggedItem.objects.filter( content_type__exact = content_type,
+                                          object_id__exact = obj.id )
+
+    # Delete the tags
+    for tagged_item in tag_list:
+        del_tagged_item(tagged_item)
+
+pre_delete.connect(check_object_deleted_tags)
+
 
 ##
 # Tagging objects
@@ -88,15 +111,7 @@ def untag_object(request, item_id ):
     if request.user != user:
         raise PermissionDenied 
 
-    # Detele the tag from the item
-    tag = tagged_item.tag
-    tagged_item.delete()
-
-    # Check if there are any remaining objects tagged with this tag
-    # if not, delete the tag
-    remaining_tags = TaggedItem.objects.filter( tag__exact = tag )
-    if not( remaining_tags ):
-        tag.delete()
+    del_tagged_item( tagged_item )
 
     context['success'] = True
     context['message'] = 'Tag removed from object'

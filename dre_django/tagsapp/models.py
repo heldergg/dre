@@ -91,3 +91,16 @@ class TaggedItem(models.Model):
 
     class Meta:
         unique_together = ('tag', 'content_type', 'object_id')
+
+
+@commit_on_success
+def del_tagged_item( tagged_item ): 
+    # Detele the tag from the item
+    tag = tagged_item.tag
+    tagged_item.delete()
+
+    # Check if there are any remaining objects tagged with this tag
+    # if not, delete the tag
+    remaining_tags = TaggedItem.objects.filter( tag__exact = tag )
+    if not( remaining_tags ):
+        tag.delete()
