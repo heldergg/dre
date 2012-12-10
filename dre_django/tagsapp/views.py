@@ -3,7 +3,7 @@
 # Global imports:
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import IntegrityError
 from django.db import IntegrityError
 from django.db.transaction import commit_on_success
@@ -23,7 +23,7 @@ from decorators import is_ajax
 
 def get_tag_from_request(request):
     if request.method != 'POST':
-        raise Http404
+        raise PermissionDenied
 
     user = request.user
     form = TagForm(request.POST)
@@ -80,7 +80,27 @@ def tag_object(request, ctype_id, object_id ):
 @commit_on_success
 @is_ajax(template = 'tags_ops.html', referer = True )
 def untag_object(request, item_id ):
-    pass
+    context = {}
+
+    tagged_item = get_object_or_404(TaggedItem, pk = item_id)
+    user = tagged_item.tag.user
+
+    if request.user != user:
+        raise PermissionDenied 
+
+    # Detele the tag from the item
+    tag = tagged_item.tag
+    tagged_item.delete()
+
+    # Check if there are any remaining objects tagged with this tag
+    # if not, delete the tag
+    remaining_tags = TaggedItem.objects.filter( tag__exact = tag )
+    if not( remaining_tags ):
+        tag.delete()
+
+    context['success'] = True
+    context['message'] = 'Tag removed from object'
+    return context
 
 ##
 # Tag Management
@@ -121,7 +141,7 @@ def edit( request, tag_id ):
     tag = get_object_or_404(Tag, id=tag_id)
     
     if tag.user != request.user:
-        raise Http404
+        raise PermissionDenied 
 
     return create_edit(request, tag )
 

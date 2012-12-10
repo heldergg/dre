@@ -37,19 +37,23 @@ REMOVE_TAG_INACTIVE = getattr( settings,
 # Tags
 ##
 
-class TagNode(template.Node):
-    def __init__(self, object_name):
-        self.obj = template.Variable(object_name)
 
-    def resolve_object(self, context):
+class TagNode(template.Node):
+    def __init__(self, object_name, user):
+        self.obj = template.Variable(object_name)
+        self.user = template.Variable(user)
+
+    def resolve_vars(self, context):
         obj = self.obj.resolve(context)
         content_type = ContentType.objects.get_for_model(obj)
-        return obj, content_type
+        user = self.user.resolve(context)
+        return obj, content_type, user
+        
 
 class TagFormNode(TagNode):
     def render(self, context):
         try:
-            obj, content_type = self.resolve_object(context)
+            obj, content_type, user = self.resolve_vars(context)
 
             form_view = reverse( 'tag_object', kwargs={ 
                                  'ctype_id': content_type.id,
@@ -70,21 +74,31 @@ class TagFormNode(TagNode):
 class ShowTagsNode(TagNode):
     def render(self, context):
         try:
-            obj, content_type = self.resolve_object(context)
-            user = context['request'].user
+            obj, content_type, user = self.resolve_vars(context)
 
             tag_list = TaggedItem.objects.filter( tag__user__exact = user,
                                           content_type__exact = content_type,
                                           object_id__exact = obj.id )
+                                          
+            remote_user = context['request'].user
 
-            return ''.join([ '''<span class="tag" style="%(style)s"><span class="tag_remove"><a href="%(remove_tag)s"><img hight="16" width="16" src="%(icon)s"></a></span>%(tag_name)s</span>''' % 
-                            { 'style': item.tag.style(), 
-                              'icon': REMOVE_TAG_INACTIVE, 
-                              'tag_name': item.tag.name,
-                              'remove_tag': reverse('untag_object', kwargs={
-                                                    'item_id': item.id })
-                              } 
-                            for item in tag_list]) 
+            html_list = []
+            render_remove = remote_user == user
+            for item in tag_list:        
+                remove_link = ''
+                if render_remove:
+                    remove_link = '<span class="tag_remove"><a href="%(remove_tag)s"><img hight="16" width="16" src="%(icon)s"></a></span>' % {
+                        'icon': REMOVE_TAG_INACTIVE, 
+                        'remove_tag': reverse('untag_object', kwargs={
+                                              'item_id': item.id }) } 
+                html =  ('<span class="tag" style="%(style)s">%(remove_link)s%(tag_name)s</span>' %       
+                        { 'style': item.tag.style(), 
+                          'tag_name': item.tag.name,
+                          'remove_link': remove_link,
+                        } )
+                html_list.append(html)        
+
+            return ''.join(html_list) 
         except template.VariableDoesNotExist:
             return ''
 
@@ -92,17 +106,17 @@ class ShowTagsNode(TagNode):
 @register.tag(name="tag_object")
 def do_tag_object(parser, token):
     try:
-        tag_name, object_name = token.split_contents()
+        tag_name, object_name, user = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError, "%r tag requires exactly two arguments" % token.contents.split()[0]
 
-    return TagFormNode(object_name)
+    return TagFormNode(object_name, user)
     
 @register.tag(name="show_tags")
-def do_tag_object(parser, token):
+def do_show_tags(parser, token):
     try:
-        tag_name, object_name = token.split_contents()
+        tag_name, object_name, user = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError, "%r tag requires exactly two arguments" % token.contents.split()[0]
 
-    return ShowTagsNode(object_name)
+    return ShowTagsNode(object_name, user)

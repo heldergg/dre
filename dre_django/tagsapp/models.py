@@ -91,15 +91,3 @@ class TaggedItem(models.Model):
 
     class Meta:
         unique_together = ('tag', 'content_type', 'object_id')
-
-@commit_on_success
-def tag_object(obj, tag):
-    content_type = ContentType.objects.get_for_model(obj)
-
-    tagged_item = TaggedItem( tag = tag,
-                              object_id = obj.id,
-                              content_type = content_type)
-    tagged_item.save()
-
-    return tagged_item
-
