@@ -161,6 +161,10 @@ a.user {
   padding: 0;
   }
 
+#search_results ul li {
+  margin-bottom: 0.5em;
+}
+
 .result_notes {
   position: relative;
   max-width: 50em;

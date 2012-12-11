@@ -15,7 +15,8 @@ urlpatterns = patterns('tagsapp.views',
     # Delete tag
     url( r'delete/(?P<tag_id>\d+)/$', 'delete', name= 'delete_tag' ),
 
-    # List tags
+    # Show tag list
+    url( r'display/$', 'display', name= 'tag_display' ),
 
 
     ##

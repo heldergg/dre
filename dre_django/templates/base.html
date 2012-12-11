@@ -4,8 +4,8 @@
 <head>
   <title>{% block title %}{% endblock %}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/style.css">
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/print.css" media="print">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print">
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
   <link rel="shortcut icon" href="{{ STATIC_URL }}/img/favicon.ico">
 
@@ -35,6 +35,7 @@
       <a href="/">Procurar</a> 
       {% if user.is_authenticated %}
       | <a href="{% url 'bookmark_display' user.id %}">Marcadores</a>
+      | <a href="{% url 'tag_display' %}">Etiquetas</a>
       {% endif %}
     </div>
     <div id="header_right">

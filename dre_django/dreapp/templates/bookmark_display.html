@@ -13,6 +13,7 @@
 
   <ul>
     {% for result in page.object_list %}
+    <li>
     {% with result.content_object as document %}
       {% if user.is_authenticated %}
       <a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
@@ -40,6 +41,7 @@
       {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
 
     {% endwith %}
+    </li>
     {% empty %}
     <li>Não tem bookmarks definidos.
     {% endfor %}

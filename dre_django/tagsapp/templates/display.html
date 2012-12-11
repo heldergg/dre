@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Listar Etiquetas{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text"><div id="search_results">
+<h1>Etiquetas de {{ user.username }}</h1>
+
+<p>Pode acrescentar etiquetas aos seus marcadores. Isto é útil para organizar
+os marcadores e ajudá-lo a encontrar o que procura. Pode filtrar os marcadores
+pelas etiquetas que lhes atribuíu. 
+
+<ul>
+    {% for tag in tag_list %}
+      <li><span class="tag" style="{{ tag.style }}">{{ tag.name }}</span> - <a href="{% url 'edit_tag' tag.id %}?next={{ request.get_full_path|urlencode }}">Editar</a> <a href="{% url 'delete_tag' tag.id %}?next={{ request.get_full_path|urlencode }}">Apagar</a></li> 
+    {% empty %}
+    <li>Não tem etiquetas definidas.
+    {% endfor %}
+</ul>
+</div></div>
+{% endblock %}
+

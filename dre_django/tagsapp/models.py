@@ -19,14 +19,6 @@ class TagError(Exception):
 # Tags 
 ##
 
-class TagManager(models.Manager):
-    '''The Tag table has a complicated role in the site. All the table handling
-    should be done throgh this manager in order to have consistency across the
-    application.
-    '''
-    pass
-
-
 class Tag(models.Model):
     user =  models.ForeignKey(User)
     timestamp = models.DateTimeField(default=datetime.datetime.now)
@@ -36,8 +28,6 @@ class Tag(models.Model):
     note = models.TextField(max_length=5120, blank=True, null=True )
     color = models.IntegerField( default=0xFFFFFF )
     background = models.IntegerField( default=0x4060A2 )
-
-    objects = TagManager()
 
     def __unicode__(self):
         return '<tag %s - %s - %s>' % (self.user.username,
@@ -55,18 +45,13 @@ class Tag(models.Model):
 # Functions
 
 @commit_on_success
-def delete_tag(user, name, force=False):
-    tag = Tag.objects.get(user=user, name=name)
-    in_use = tag.objects.tag_in_use()
-
-    if in_use and not force:
-        raise TagError('Tag still in use, can\'t delete it.')
-    
-    if in_use and force: 
-        # Get the objects where the tag is used 
-        objects = TaggedItem.objects.filter( tag__exact = tag )
-        for obj in objects:
-            obj.delete()
+def delete_tag(tag):
+    # Get the objects where the tag is used 
+    tagged_list = TaggedItem.objects.filter( tag__exact = tag )
+    for obj in tagged_list:
+        # delete t
+        print [obj]
+        obj.delete()
 
     # Finally delete the damn tag
     tag.delete()
