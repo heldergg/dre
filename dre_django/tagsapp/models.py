@@ -50,7 +50,6 @@ def delete_tag(tag):
     tagged_list = TaggedItem.objects.filter( tag__exact = tag )
     for obj in tagged_list:
         # delete t
-        print [obj]
         obj.delete()
 
     # Finally delete the damn tag

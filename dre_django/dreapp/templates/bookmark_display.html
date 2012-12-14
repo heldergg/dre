@@ -5,6 +5,14 @@
 {% block title %}Diários da República - Marcadores{% endblock %}
 
 {% block header %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tag_style.css">
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/start/jquery-ui.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+  <script>
+  var STATIC_URL="{{ STATIC_URL }}";
+  </script>
+  <script src="{{ STATIC_URL }}js/tags.js"></script>
 {% endblock %}
 
 {% block body_content %}
@@ -37,7 +45,7 @@
       <span class="document_number">{{ document.number }}</span></a> -
       <span class="document_emiting">{{ document.emiting_body.title }}</span>
       <p class="document_notes">{{ document.note_abrv }}</p>
-      <p class="tags">Etiquetas: {% show_tags result bookmarks_user %}</p>
+      <p class="tags">Etiquetas: {% show_tags result bookmarks_user %}
       {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
 
     {% endwith %}

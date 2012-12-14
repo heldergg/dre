@@ -6,18 +6,19 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import IntegrityError
 from django.db import IntegrityError
+from django.db.models.signals import pre_delete
+from django.db.models.signals import Signal
 from django.db.transaction import commit_on_success
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.db.models.signals import pre_delete
-from django.db.models.signals import Signal
+from django.utils import simplejson
 
 # Local imports:
 from tagsapp.forms import TagEditForm, TagForm
 from tagsapp.models import Tag, TaggedItem, del_tagged_item, delete_tag
 
-from decorators import is_ajax
+from decorators import is_ajax, only_ajax
 
 ##
 # Signals 
@@ -121,6 +122,27 @@ def untag_object(request, item_id ):
     context['message'] = 'Tag removed from object'
     return context
 
+@login_required
+@only_ajax
+def suggest( request ):
+    '''Creates the tags suggestions for the autocomplete field.
+    '''
+    suggestions = [] 
+    q = request.GET.get('term', '')
+
+    try:
+        result = Tag.objects.filter( user__exact = request.user, 
+                                     name__icontains = q 
+                                   ).order_by('name')
+        suggestions = [ tag.name for tag in result ]
+    except ObjectDoesNotExist:
+        pass
+
+    print "### ", suggestions
+
+    return HttpResponse(simplejson.dumps(suggestions), mimetype='application/json')
+
+
 ##
 # Tag Management
 ##
@@ -190,7 +212,6 @@ def delete( request, tag_id ):
     else:
         return HttpResponse('<h1>Etiqueta apagada</h1>')
     
-
 @login_required
 def display( request ):
     context = {}

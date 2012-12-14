@@ -27,16 +27,19 @@ from tagsapp.models import TaggedItem
 
 # Configuration
 STATIC_URL = getattr(settings, 'STATIC_URL', '/static/')
-REMOVE_TAG = getattr( settings, 
-                      'REMOVE_TAG', '%simg/remove-active.png' % STATIC_URL)
-REMOVE_TAG_INACTIVE = getattr( settings, 
-                      'REMOVE_TAG_INACTIVE', '%simg/remove-inactive.png' % STATIC_URL)
 
+# NOTE: this is not made to be a configuration option because then, we'd need
+# to generate the JavaScript having this in mind. It's too much trouble for
+# little gain.
+
+REMOVE_TAG_ICON = '%simg/remove-active.png' % STATIC_URL
+REMOVE_TAG_INACTIVE_ICON = '%simg/remove-inactive.png' % STATIC_URL
+ADD_TAG_ICON = '%simg/add-tag.png' % STATIC_URL
+REMOVE_TAG_ICON =  '%simg/remove-tag.png' % STATIC_URL
 
 ##
 # Tags
 ##
-
 
 class TagNode(template.Node):
     def __init__(self, object_name, user):
@@ -59,12 +62,16 @@ class TagFormNode(TagNode):
                                  'ctype_id': content_type.id,
                                  'object_id': obj.id })
 
-            form = '''<p class="object_tags"><form method="POST" action="%(form_view)s">
-            <div><input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' /></div>
-            <input id="id_name" type="text" name="name" maxlength="128" /> 
-            <button type="submit" value="Submit">Adicionar Etiqueta</button>
-            </form></p>
+            form = '''<span class="tag_control"><img src="%(add_icon)s"></span>
+            <div id="add_tag_%(object_id)d" class="add_tag">
+            <form method="POST" action="%(form_view)s">
+              <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
+              <input class="tag_name_input" id="id_name_%(object_id)d" type="text" name="name" maxlength="128" /> 
+              <button type="submit" value="Submit">Adicionar Etiqueta</button>
+            </form></div>
             ''' % { 'form_view': form_view, 
+                    'object_id': obj.id,
+                    'add_icon' : ADD_TAG_ICON,
                     'csrf':csrf.get_token(context['request']) }
 
             return form
@@ -88,7 +95,7 @@ class ShowTagsNode(TagNode):
                 remove_link = ''
                 if render_remove:
                     remove_link = '<span class="tag_remove"><a href="%(remove_tag)s"><img hight="16" width="16" src="%(icon)s"></a></span>' % {
-                        'icon': REMOVE_TAG_INACTIVE, 
+                        'icon': REMOVE_TAG_INACTIVE_ICON, 
                         'remove_tag': reverse('untag_object', kwargs={
                                               'item_id': item.id }) } 
                 html =  ('<span class="tag" style="%(style)s">%(remove_link)s%(tag_name)s</span>' %       

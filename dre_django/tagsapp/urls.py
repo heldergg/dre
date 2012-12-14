@@ -18,6 +18,9 @@ urlpatterns = patterns('tagsapp.views',
     # Show tag list
     url( r'display/$', 'display', name= 'tag_display' ),
 
+    # Autocomplete suggestions (AJAX only)
+    url( r'suggest/$', 'suggest', name= 'tag_suggest'),
+
 
     ##
     # Associate tags with objects
