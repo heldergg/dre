@@ -66,7 +66,7 @@ class TagFormNode(TagNode):
             <div id="add_tag_%(object_id)d" class="add_tag">
             <form method="POST" action="%(form_view)s">
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
-              <input class="tag_name_input" id="id_name_%(object_id)d" type="text" name="name" maxlength="128" /> 
+              <input class="tag_name_input" type="text" name="name" maxlength="128" /> 
               <button type="submit" value="Submit">Adicionar Etiqueta</button>
             </form></div>
             ''' % { 'form_view': form_view, 
@@ -94,7 +94,7 @@ class ShowTagsNode(TagNode):
             for item in tag_list:        
                 remove_link = ''
                 if render_remove:
-                    remove_link = '<span class="tag_remove"><a href="%(remove_tag)s"><img hight="16" width="16" src="%(icon)s"></a></span>' % {
+                    remove_link = '<span class="tag_remove"><a href="%(remove_tag)s"><img class="remove_tag_img" hight="16" width="16" src="%(icon)s"></a></span>' % {
                         'icon': REMOVE_TAG_INACTIVE_ICON, 
                         'remove_tag': reverse('untag_object', kwargs={
                                               'item_id': item.id }) } 

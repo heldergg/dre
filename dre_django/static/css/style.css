@@ -206,3 +206,21 @@ a.user {
 .tag_remove img { 
   display: inline-block; 
   vertical-align: middle; }
+
+/*****************/
+/* Notifications */
+/*****************/
+
+#notification {
+  position:fixed;
+  top: 4em;
+  right: 2em;
+  padding: 1.5em; 
+  background: black;
+  color: white;
+  border-radius: 0.8em;
+  opacity:0.8;
+  max-width: 12em;
+  display: none;
+}
+

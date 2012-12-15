@@ -119,7 +119,7 @@ def untag_object(request, item_id ):
     del_tagged_item( tagged_item )
 
     context['success'] = True
-    context['message'] = 'Tag removed from object'
+    context['message'] = 'Etiqueta removida'
     return context
 
 @login_required
@@ -137,8 +137,6 @@ def suggest( request ):
         suggestions = [ tag.name for tag in result ]
     except ObjectDoesNotExist:
         pass
-
-    print "### ", suggestions
 
     return HttpResponse(simplejson.dumps(suggestions), mimetype='application/json')
 
@@ -205,7 +203,7 @@ def delete( request, tag_id ):
     delete_tag( tag )
 
     context['success'] = True
-    context['message'] = 'Tag removed from object'
+    context['message'] = 'Etiqueta removida'
 
     if redirect_to:
         return redirect( redirect_to )

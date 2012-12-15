@@ -18,8 +18,8 @@ $(function() {
         if ( this != tag_form_visible ) {
             tag_form_visible = this; 
             $(this).find("img").attr("src", STATIC_URL + "img/remove-tag.png");
-            $(this).parent().next("div").slideDown("fast");
-            } else {
+            $(this).parent().next("div").slideDown("fast"); } 
+        else {
             tag_form_visible = null;
             };
         }); 
@@ -30,7 +30,31 @@ $(function() {
         minLength: 2,
         });
 
+    /* Change pic when hovering */
+    $(".remove_tag_img").hover(
+        function () {
+            $(this).attr("src", STATIC_URL + "img/remove-active.png");;
+            }, 
+        function () {
+            $(this).attr("src", STATIC_URL + "img/remove-inactive.png");
+            }
+        );
+
     /* Ajaxy tag delete */
+    $(".tag_remove").click(function (e) { 
+        e.preventDefault(); 
+        var delete_url = $(this).find("a").attr("href");
+        tag_remove = $(this).parent()
+
+        // Delete the tag
+        $.getJSON( delete_url, function(data, a, b) {
+            $("#notification").html(data.message);
+            $("#notification").fadeIn(200).delay(500).fadeOut(2000);
+            if (data.success) {
+                tag_remove.fadeOut(1000); 
+                };
+            });
+        });
 
     /* Ajaxy tag add */
 });
