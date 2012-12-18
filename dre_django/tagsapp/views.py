@@ -4,6 +4,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db import IntegrityError
 from django.db.models.signals import pre_delete
@@ -99,8 +100,10 @@ def tag_object(request, ctype_id, object_id ):
         context['message'] = 'Etiqueta repetida!'
         return context
 
-    context['success'] = False
+    context['success'] = True
     context['message'] = 'Etiqueta aplicada!'
+    context['tag_remove_url'] = reverse( 'untag_object', 
+        kwargs={ 'item_id': tagged_item.id } )
     return context
 
 

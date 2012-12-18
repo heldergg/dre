@@ -1,1 +1,14 @@
+.tag {
+  line-height: 200%; 
+  white-space:nowrap;
+  }
+
 .hidden {display: none;}
+
+.add_tag {
+  margin-top: 0.3em;
+  }
+
+.ui-autocomplete-loading {
+  background: white url('/static/img/progress.gif') right center no-repeat;
+  }

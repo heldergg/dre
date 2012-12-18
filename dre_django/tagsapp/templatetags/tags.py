@@ -105,7 +105,7 @@ class ShowTagsNode(TagNode):
                         } )
                 html_list.append(html)        
 
-            return ''.join(html_list) 
+            return '\n'.join(html_list) 
         except template.VariableDoesNotExist:
             return ''
 

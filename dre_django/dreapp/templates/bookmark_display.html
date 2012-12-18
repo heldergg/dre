@@ -45,7 +45,7 @@
       <span class="document_number">{{ document.number }}</span></a> -
       <span class="document_emiting">{{ document.emiting_body.title }}</span>
       <p class="document_notes">{{ document.note_abrv }}</p>
-      <p class="tags">Etiquetas: {% show_tags result bookmarks_user %}
+      <span class="tags">Etiquetas: {% show_tags result bookmarks_user %}<!--//--></span>
       {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
 
     {% endwith %}
