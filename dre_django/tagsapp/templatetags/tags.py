@@ -102,7 +102,8 @@ class ShowTagsNode(TagNode):
                           'tag_name': item.tag.name,
                           'remove_link': remove_link,
                         } )
-                html_list.append(html)        
+                if render_remove or item.tag.public:
+                    html_list.append(html)        
 
             tag_list = '<span class="tag_list">%s</span>' % '\n'.join(html_list)
             if render_remove:
