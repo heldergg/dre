@@ -9,7 +9,7 @@ from tagsapp.models import Tag
 class TagEditForm(forms.ModelForm):
     class Meta:
         model = Tag 
-        fields = ('name', 'public', 'note', 'color', 'background')
+        fields = ('name', 'public', 'color', 'background')
 
 class TagForm(forms.Form):
     name = forms.CharField(

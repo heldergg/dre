@@ -25,7 +25,6 @@ class Tag(models.Model):
 
     name = models.CharField(max_length=128)
     public = models.BooleanField( default=True )
-    note = models.TextField(max_length=5120, blank=True, null=True )
     color = models.IntegerField( default=0xFFFFFF )
     background = models.IntegerField( default=0x4060A2 )
 
