@@ -13,7 +13,6 @@ import datetime
 class Bookmark(models.Model):
     user =  models.ForeignKey(User)
     timestamp = models.DateTimeField(default=datetime.datetime.now)
-    note = models.TextField(max_length=5120, blank=True, null=True )
     public = models.BooleanField( default=True )
 
     # Object:
