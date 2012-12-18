@@ -113,7 +113,12 @@ def tag_object(request, ctype_id, object_id ):
 def untag_object(request, item_id ):
     context = {}
 
-    tagged_item = get_object_or_404(TaggedItem, pk = item_id)
+    try:
+        tagged_item = TaggedItem.objects.get(pk = item_id)
+    except ObjectDoesNotExist:
+        context['success'] = False
+        context['message'] = 'Etiqueta não existe'
+        return context
     user = tagged_item.tag.user
 
     if request.user != user:

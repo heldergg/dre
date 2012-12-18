@@ -62,7 +62,7 @@ class TagFormNode(TagNode):
                                  'ctype_id': content_type.id,
                                  'object_id': obj.id })
 
-            form = '''<span class="tag_control"><img src="%(add_icon)s"></span>
+            form = '''
             <div id="add_tag_%(object_id)d" class="add_tag">
             <form method="POST" action="%(form_view)s">
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
@@ -71,7 +71,6 @@ class TagFormNode(TagNode):
             </form></div>
             ''' % { 'form_view': form_view, 
                     'object_id': obj.id,
-                    'add_icon' : ADD_TAG_ICON,
                     'csrf':csrf.get_token(context['request']) }
 
             return form
@@ -98,14 +97,18 @@ class ShowTagsNode(TagNode):
                         'icon': REMOVE_TAG_INACTIVE_ICON, 
                         'remove_tag': reverse('untag_object', kwargs={
                                               'item_id': item.id }) } 
-                html =  ('<span class="tag" style="%(style)s">%(remove_link)s%(tag_name)s</span>' %       
+                html =  ('<span class="tag" style="%(style)s">%(remove_link)s<span class="tag_name">%(tag_name)s</span></span>' %       
                         { 'style': item.tag.style(), 
                           'tag_name': item.tag.name,
                           'remove_link': remove_link,
                         } )
                 html_list.append(html)        
 
-            return '\n'.join(html_list) 
+            tag_list = '<span class="tag_list">%s</span>' % '\n'.join(html_list)
+            if render_remove:
+                tag_list += '<span class="tag_control"><img src="%s"></span>' % ADD_TAG_ICON
+
+            return tag_list 
         except template.VariableDoesNotExist:
             return ''
 

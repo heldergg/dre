@@ -10,7 +10,8 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
   <script>
-  var STATIC_URL="{{ STATIC_URL }}";
+    var STATIC_URL="{{ STATIC_URL }}";
+    var is_owner = "{{ bookmarks_user.username }}"=="{{ user.username }}";
   </script>
   <script src="{{ STATIC_URL }}js/tags.js"></script>
 {% endblock %}
@@ -21,7 +22,7 @@
 
   <ul>
     {% for result in page.object_list %}
-    <li>
+    <li class="result_item">
     {% with result.content_object as document %}
       {% if user.is_authenticated %}
       <a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
@@ -45,7 +46,7 @@
       <span class="document_number">{{ document.number }}</span></a> -
       <span class="document_emiting">{{ document.emiting_body.title }}</span>
       <p class="document_notes">{{ document.note_abrv }}</p>
-      <span class="tags">Etiquetas: {% show_tags result bookmarks_user %}<!--//--></span>
+      <p class="tags">Etiquetas: {% show_tags result bookmarks_user %}</p>
       {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
 
     {% endwith %}

@@ -1,3 +1,7 @@
+.tags {
+  text-align: left;
+  }
+
 .tag {
   line-height: 200%; 
   white-space:nowrap;
@@ -11,4 +15,9 @@
 
 .ui-autocomplete-loading {
   background: white url('/static/img/progress.gif') right center no-repeat;
+  }
+
+.highlight {
+  background: #6f94de;
+  border-radius: 0.5em;
   }
