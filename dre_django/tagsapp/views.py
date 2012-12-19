@@ -15,6 +15,9 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils import simplejson
 
+import logging
+logger = logging.getLogger(__name__)
+
 # Local imports:
 from tagsapp.forms import TagEditForm, TagForm
 from tagsapp.models import Tag, TaggedItem, del_tagged_item, delete_tag
@@ -64,6 +67,7 @@ def get_tag_from_request(request):
         except ObjectDoesNotExist:
             tag = Tag( user=user, name=name )
             tag.save()
+            logger.info('User %s created tag "%s"' % (tag.user.username, tag.name))
     else:
         tag = None
 
@@ -168,6 +172,7 @@ def create_edit( request, tag_edit=None ):
             tag.user = request.user
             try:
                 tag.save()
+                logger.info('User %s created tag "%s"' % (tag.user.username, tag.name))
 
                 if redirect_to:
                     return redirect( redirect_to )
@@ -208,6 +213,7 @@ def delete( request, tag_id ):
     if request.user != user:
         raise PermissionDenied 
 
+    logger.info('User %s is going to detete tag "%s"' % (tag.user.username, tag.name))
     delete_tag( tag )
 
     context['success'] = True
