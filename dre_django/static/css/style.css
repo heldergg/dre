@@ -162,7 +162,7 @@ a.user {
   }
 
 #search_results ul li {
-  margin-bottom: 0.5em;
+  padding: 0.4em;
 }
 
 .result_notes {
