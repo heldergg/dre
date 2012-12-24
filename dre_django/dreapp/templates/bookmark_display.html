@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load bookmarks %}
 {% load tags %}
+{% load notes %}
 
 {% block title %}Diários da República - Marcadores{% endblock %}
 
@@ -46,6 +47,7 @@
       <span class="document_number">{{ document.number }}</span></a> -
       <span class="document_emiting">{{ document.emiting_body.title }}</span>
       <p class="document_notes">{{ document.note_abrv }}</p>
+      {% show_note result bookmarks_user %}
       <p class="tags">Etiquetas: {% show_tags result bookmarks_user %}</p>
       {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
 

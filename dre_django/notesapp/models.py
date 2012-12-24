@@ -1,3 +1,33 @@
-from django.db import models
+# -*- coding: utf-8 -*-
 
-# Create your models here.
+from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
+import datetime
+
+##
+#  Notes
+##
+
+class Notes(models.Model):
+    user =  models.ForeignKey(User)
+    timestamp = models.DateTimeField(default=datetime.datetime.now)
+    public = models.BooleanField( default=True )
+
+    txt = models.TextField(max_length = 1024*20)
+
+    # Object:
+    # https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    def __unicode__(self):
+        return 'Note: %s - %s - model: %s' % (self.user.username, 
+                                        self.id, 
+                                        self.content_type.name)
+
+    class Meta:
+        unique_together = ('user', 'content_type', 'object_id')
+
