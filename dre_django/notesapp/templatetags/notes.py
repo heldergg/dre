@@ -54,7 +54,7 @@ class NoteFormNode(NoteNode):
         try:
             obj, content_type, user = self.resolve_vars(context)
 
-            form_view = reverse( 'note_object', kwargs={ 
+            form_view = reverse( 'create_note', kwargs={ 
                                  'ctype_id': content_type.id,
                                  'object_id': obj.id })
 
@@ -62,12 +62,12 @@ class NoteFormNode(NoteNode):
             <div id="add_note_%(object_id)d" class="add_note">
             <form method="POST" action="%(form_view)s">
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
-              <input class="note_name_input" type="text" name="name" maxlength="128" /> 
-              <button type="submit" value="Submit">Adicionar Etiqueta</button>
+              <textarea class="note_name_input" type="text" name="txt" maxlength="20480"></textarea>
+              <button type="submit" value="Submit">Adicionar Nota</button>
             </form></div>
             ''' % { 'form_view': form_view, 
                     'object_id': obj.id,
-                    'csrf':csrf.get_token(context['request']) }
+                    'csrf': csrf.get_token(context['request']) }
 
             return form
         except template.VariableDoesNotExist:
@@ -99,7 +99,7 @@ class ShowNotesNode(NoteNode):
             return ''
 
 
-@register.tag(name="note_form")
+@register.tag(name="create_note")
 def do_note_form(parser, token):
     try:
         note_name, object_name, user = token.split_contents()

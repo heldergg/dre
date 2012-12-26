@@ -101,7 +101,7 @@ function draggables_setup() {
 
         drop: function( event, ui ) {
             /* Get the form url and parameters */
-            var form = $(this).find("form");
+            var form = $(this).find(".add_tag").find("form");
             var post_url = form.attr("action")
             var result_tag_list = $(this).find('.tag_list')
             var image = $(this).find('.tag_control').find('img')

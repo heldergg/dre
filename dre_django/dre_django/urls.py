@@ -33,6 +33,9 @@ urlpatterns = patterns('',
     # Tags
     (r'^tag/', include('tagsapp.urls')),
 
+    # Notes
+    (r'^notes/', include('notesapp.urls')),
+
     # dreapp
     (r'^dre/', include('dreapp.urls')),
 
