@@ -62,6 +62,9 @@ def get_tag_from_request(request):
  
     if form.is_valid():
         name = form.cleaned_data['name']
+        if not name.strip():
+            # Do not create empty tags
+            return None
         try:
             tag = Tag.objects.get( user=user, name=name ) 
         except ObjectDoesNotExist:
