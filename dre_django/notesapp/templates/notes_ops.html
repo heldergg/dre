@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Anotar Objecto{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text">
+<h1>Anotar Objecto</h1>
+
+{% if success %}
+<h2>Operação realizada com sucesso</h2>
+{% else %}
+<h2>A operação falhou</h2>
+{% endif %}
+
+<p>{{ message }}
+
+</div>
+{% endblock %}
+
