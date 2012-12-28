@@ -11,9 +11,6 @@ urlpatterns = patterns('notesapp.views',
 
     # Edit note
     url( r'edit/(?P<note_id>\d+)/$', 'edit', name= 'edit_note' ),
-
-    # Delete note
-    url( r'delete/(?P<note_id>\d+)/$', 'delete', name= 'delete_note' ),
     
     )
 

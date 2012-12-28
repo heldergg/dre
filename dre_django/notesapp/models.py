@@ -10,7 +10,7 @@ import datetime
 #  Notes
 ##
 
-class Notes(models.Model):
+class Note(models.Model):
     user =  models.ForeignKey(User)
     timestamp = models.DateTimeField(default=datetime.datetime.now)
     public = models.BooleanField( default=True )

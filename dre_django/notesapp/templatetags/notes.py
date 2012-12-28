@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 register = template.Library()
 
 # Local imports
-from notesapp.models import Notes
+from notesapp.models import Note
 
 # Configuration
 STATIC_URL = getattr(settings, 'STATIC_URL', '/static/')
@@ -53,32 +53,42 @@ class NoteFormNode(NoteNode):
     def render(self, context):
         try:
             obj, content_type, user = self.resolve_vars(context)
+            edit = True
 
             # Try to get the note for this object:
             try:
-                note = Notes.objects.get( user = user, 
+                note = Note.objects.get( user = user, 
                                           content_type = content_type,
                                           object_id = obj.id )
                 form_view = reverse( 'edit_note', kwargs={ 
                                          'note_id': note.id, })
+                public = 'on' if note.public else 'off'
+                checked = 'checked' if note.public else ''
                 note = note.txt
             except ObjectDoesNotExist:
                 note = ''
                 form_view = reverse( 'create_note', kwargs={ 
                                          'ctype_id': content_type.id,
                                          'object_id': obj.id })
+                edit = False
+                public = 'on' 
+                checked = 'checked'
 
             form = '''
             <div id="add_note_%(object_id)d" class="add_note">
             <form method="POST" action="%(form_view)s">
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
               <textarea class="note_name_input" type="text" name="txt" maxlength="20480">%(note)s</textarea>
-              <button type="submit" value="Submit">Adicionar Nota</button>
+              <input type="checkbox" name="public" id="id_public" value="%(public)s" %(checked)s /> Nota p&uacute;blica | 
+              <button type="submit" value="Submit">%(button)s</button>
             </form></div>
             ''' % { 'form_view': form_view, 
                     'object_id': obj.id,
                     'csrf': csrf.get_token(context['request']),
-                    'note': note, }
+                    'note': note,
+                    'public': public,
+                    'checked': checked,
+                    'button': 'Modificar nota' if edit else 'Adicionar Nota',  }
 
             return form
         except template.VariableDoesNotExist:
@@ -91,19 +101,22 @@ class ShowNotesNode(NoteNode):
             remote_user = context['request'].user
             render_remove = remote_user == user
             try:
-                note = Notes.objects.get( user=user,
+                note = Note.objects.get( user=user,
                                           content_type=content_type,
                                           object_id=obj.id)
             except ObjectDoesNotExist:
                 # No object to display
                 return ''
 
-            if not render_remove and note.private:
+            if not render_remove and not note.public:
                 # Do not show private notes to third parties
                 return ''
 
             html_list = []
-            note_txt = '<div class="user_notes">Notas:<p>%s</p></div>' % note.txt
+            note_txt = '<div class="user_notes">Notas (%(public)s):<p>%(txt)s</p></div>' % { 
+                'txt': note.txt,
+                'public': 'publica' if note.public else 'privada' }
+                        
 
             return note_txt
         except template.VariableDoesNotExist:
@@ -127,4 +140,3 @@ def do_show_notes(parser, token):
         raise template.TemplateSyntaxError, "%r note requires exactly two arguments" % token.contents.split()[0]
 
     return ShowNotesNode(object_name, user)
-
