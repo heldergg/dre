@@ -4,7 +4,7 @@
 
 body {
   background: #fdfeff;
-  background-image: url('/static/dre_django/img/esfera_armilar.png');
+  background-image: url('/static/img/esfera_armilar.png');
   background-repeat: no-repeat;
   background-position: right bottom;
   background-attachment:fixed;
@@ -165,7 +165,10 @@ a.user {
   padding: 0.4em;
 }
 
-.result_notes {
+.result_header { }
+
+/* TODO: remove the result_notes class */
+.result_notes, .document_notes {
   position: relative;
   max-width: 50em;
   padding: 10px;
@@ -185,6 +188,12 @@ a.user {
   padding-bottom: 2em;
   text-align: center;
   }
+
+.deco_toolbar {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+
+}
 
 /********/
 /* Tags */

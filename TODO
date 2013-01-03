@@ -17,6 +17,21 @@ Possible names:
 * Tags
     * Order
 
+* Use the following div structure for all the results everywhere:
+
+<li class="result_item">
+    <div class="result_header"></div>
+    <div class="document_notes"></div>
+    <div class="decoration">
+        <div class="deco_toolbar">
+            <span class="deco_controls"></span>
+            <span class="tags"> </span>
+        </div>
+        <div class="user_notes"> </div>
+        <div class="add_note"> </div>
+        <div class="add_tag"> </div>
+    </div>
+</li>
 
 ##
 ## DONE

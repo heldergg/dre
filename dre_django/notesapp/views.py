@@ -71,6 +71,7 @@ def create(request, ctype_id, object_id ):
         note.save()
 
         context['success'] = True
+        context['html'] = note.html()
         context['message'] = 'Nota criada para o objecto'
         return context
 
@@ -108,6 +109,7 @@ def edit(request, note_id):
         if not txt.strip():
             note.delete()
             context['success'] = True
+            context['html'] = '' 
             context['message'] = 'Nota apagada'
             return context
 
@@ -117,6 +119,7 @@ def edit(request, note_id):
         note.save()
 
         context['success'] = True
+        context['html'] = note.html()
         context['message'] = 'Nota editada'
         return context
 

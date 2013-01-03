@@ -16,6 +16,7 @@
     var is_owner = "{{ bookmarks_user.username }}"=="{{ user.username }}";
   </script>
   <script src="{{ STATIC_URL }}js/tags.js"></script>
+  <script src="{{ STATIC_URL }}js/notes.js"></script>
 {% endblock %}
 
 {% block body_content %}
@@ -26,32 +27,46 @@
     {% for result in page.object_list %}
     <li class="result_item">
     {% with result.content_object as document %}
-      {% if user.is_authenticated %}
-      <a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
-      <a href="{% url 'toggle_public' result.content_type.id result.object_id %}?next={{ request.get_full_path|urlencode }}">{% if result.public %}<img width=16 height=16 title="Marcador público" src="{{ STATIC_URL }}img/unlocked.png">{% else %}<img width=16 height=16 title="Marcador privado" src="{{ STATIC_URL }}img/locked.png">{% endif %}</a>
-      {% endif %}
-      {% if document.plain_text or document.dre_pdf %}
-      <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
-      {% else %}
-      <img src="{{ STATIC_URL }}/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
-      {% endif %}
-      {% if document.in_force %}
-      <img src="{{ STATIC_URL }}/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
-      {% else %}
-      <img src="{{ STATIC_URL }}/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
-      {% endif %}
-      <span class="document_date">
-        <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}">
-      {{ document.date|date:"Y-m-d" }}</span></a> -
-      <a href="{% url 'document_display' docid=document.id %}">
-      <span class="document_tipo">{{ document.doc_type.title }}</span>
-      <span class="document_number">{{ document.number }}</span></a> -
-      <span class="document_emiting">{{ document.emiting_body.title }}</span>
-      <p class="document_notes">{{ document.note_abrv }}</p>
-      {% show_note result bookmarks_user %}
-      {% if user == bookmarks_user %}{% create_note result bookmarks_user %}{% endif %}
-      <p class="tags">Etiquetas: {% show_tags result bookmarks_user %}</p>
-      {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
+      <div class="result_header">
+        {% if user.is_authenticated %}
+          <a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
+          <a href="{% url 'toggle_public' result.content_type.id result.object_id %}?next={{ request.get_full_path|urlencode }}">{% if result.public %}<img width=16 height=16 title="Marcador público" src="{{ STATIC_URL }}img/unlocked.png">{% else %}<img width=16 height=16 title="Marcador privado" src="{{ STATIC_URL }}img/locked.png">{% endif %}</a>
+        {% endif %}
+        {% if document.plain_text or document.dre_pdf %}
+          <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+        {% else %}
+          <img src="{{ STATIC_URL }}/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+        {% endif %}
+        {% if document.in_force %}
+          <img src="{{ STATIC_URL }}/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+        {% else %}
+          <img src="{{ STATIC_URL }}/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+        {% endif %}
+        <span class="document_date">
+        <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}">{{ document.date|date:"Y-m-d" }}</span></a> -
+        <a href="{% url 'document_display' docid=document.id %}">
+          <span class="document_tipo">{{ document.doc_type.title }}</span>
+          <span class="document_number">{{ document.number }}</span></a> -
+          <span class="document_emiting">{{ document.emiting_body.title }}</span>
+      </div> <!-- result_header -->
+
+      <div class="document_notes">
+        {{ document.note_abrv }}
+      </div> <!-- document_notes -->
+
+      <div class="decoration">
+        <div class="deco_toolbar">
+          {% if user == bookmarks_user %}<span class="tag_control"><img src="{{ STATIC_URL }}img/add-tag.png"></span> <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png"></span>{% endif %}
+          <span class="tags">
+            Etiquetas: 
+            {% show_tags result bookmarks_user %}
+          </span> <!-- tags -->
+        </div> <!-- deco_toolbar -->
+
+        {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
+        {% show_note result bookmarks_user %}
+        {% if user == bookmarks_user %}{% create_note result bookmarks_user %}{% endif %}
+      </div> <!-- decoration -->
 
     {% endwith %}
     </li>

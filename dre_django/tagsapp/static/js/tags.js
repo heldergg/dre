@@ -5,7 +5,7 @@
 /***********************************/
 
 
-function tagdelete_setup() {
+function tag_tagdelete_setup() {
     /* Ajaxy tag delete */
     $(".tag_remove").click(function (e) { 
         e.preventDefault(); 
@@ -33,20 +33,20 @@ function tagdelete_setup() {
         );
     }; // End formtag_setup
 
-function form_setup() {
+function tag_form_setup() {
     /* Hide and show the add tag form */
     $(".add_tag").addClass("hidden"); 
    
     var tag_form_visible = null;
     $(".tag_control").click( function() {
         if (tag_form_visible) {
-            $(tag_form_visible).parent().next("div").slideUp("fast");    
+            $(tag_form_visible).parent().parent().find('.add_tag').slideUp("fast");    
             $(tag_form_visible).find("img").attr("src", STATIC_URL + "img/add-tag.png");
             };
         if ( this != tag_form_visible ) {
             tag_form_visible = this; 
             $(this).find("img").attr("src", STATIC_URL + "img/remove-tag.png");
-            $(this).parent().next("div").slideDown("fast");
+            $(this).parent().parent().find('.add_tag').slideDown("fast");
             }
         else {
             tag_form_visible = null;
@@ -60,7 +60,7 @@ function form_setup() {
         });
     }; // form_setup
 
-function ajax_add_setup() {
+function tag_ajax_add_setup() {
     /* Ajaxy tag add */
     $(".add_tag form").submit(function () {
         var form_values = { 'name': $(this).find('input[name=name]').val(),
@@ -79,15 +79,15 @@ function ajax_add_setup() {
                 };
             $("#notification").html(data.message);
             $("#notification").fadeIn(200).delay(500).fadeOut(2000);
-            tagdelete_setup();
-            draggables_setup();
+            tag_tagdelete_setup();
+            tag_draggables_setup();
             }, "json" );
 
         return false;
         });
     }; // ajax_add_setup
 
-function draggables_setup() {
+function tag_draggables_setup() {
     /* Draggables */
     $(".tag").draggable({
             helper: "clone",
@@ -123,8 +123,8 @@ function draggables_setup() {
                     };
                 $("#notification").html(data.message);
                 $("#notification").fadeIn(200).delay(500).fadeOut(2000);
-                tagdelete_setup();
-                draggables_setup();
+                tag_tagdelete_setup();
+                tag_draggables_setup();
                 $(image).attr("src",old_image);
                 }, "json" );
             
@@ -138,9 +138,9 @@ function draggables_setup() {
 
 $(function() {
     if (is_owner) {
-        form_setup();
-        tagdelete_setup();
-        ajax_add_setup();
-        draggables_setup();
+        tag_form_setup();
+        tag_tagdelete_setup();
+        tag_ajax_add_setup();
+        tag_draggables_setup();
         };
 });

@@ -75,7 +75,7 @@ class NoteFormNode(NoteNode):
                 checked = 'checked'
 
             form = '''
-            <div id="add_note_%(object_id)d" class="add_note">
+            <div class="add_note">
             <form method="POST" action="%(form_view)s">
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
               <textarea class="note_name_input" type="text" name="txt" maxlength="20480">%(note)s</textarea>
@@ -83,7 +83,6 @@ class NoteFormNode(NoteNode):
               <button type="submit" value="Submit">%(button)s</button>
             </form></div>
             ''' % { 'form_view': form_view, 
-                    'object_id': obj.id,
                     'csrf': csrf.get_token(context['request']),
                     'note': note,
                     'public': public,
@@ -106,19 +105,13 @@ class ShowNotesNode(NoteNode):
                                           object_id=obj.id)
             except ObjectDoesNotExist:
                 # No object to display
-                return ''
+                return '<div class="user_notes"></div>'
 
             if not render_remove and not note.public:
                 # Do not show private notes to third parties
                 return ''
 
-            html_list = []
-            note_txt = '<div class="user_notes">Notas (%(public)s):<p>%(txt)s</p></div>' % { 
-                'txt': note.txt,
-                'public': 'publica' if note.public else 'privada' }
-                        
-
-            return note_txt
+            return '<div class="user_notes">%s</div>' % note.html()
         except template.VariableDoesNotExist:
             return ''
 

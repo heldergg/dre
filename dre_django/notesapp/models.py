@@ -23,6 +23,11 @@ class Note(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
+    def html(self):
+        return '<p>%(txt)s</p><p>(Nota %(public)s)</p>' % {
+            'txt': self.txt,
+            'public': 'p&uacute;blica' if self.public else 'privada' }
+
     def __unicode__(self):
         return 'Note: %s - %s - model: %s' % (self.user.username, 
                                         self.id, 
