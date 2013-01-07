@@ -130,9 +130,12 @@ class DREReadDocs( object ):
 
         page_result['number'] = number
 
-        page_result['emiting_body'] = self.soup.find('td', 
+        try:
+            page_result['emiting_body'] = self.soup.find('td', 
                 { 'headers': 'entidadesEmitentesIDHeader' }
                 ).renderContents() 
+        except AttributeError:
+            page_result['emiting_body'] = 'Não Indicado'
 
         try:
             page_result['source'] = self.soup.find('td', 
