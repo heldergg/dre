@@ -21,3 +21,7 @@
   background: #6f94de;
   border-radius: 0.5em;
   }
+
+.tag_control, .tag  {
+  cursor: pointer;
+  }
