@@ -44,9 +44,10 @@ pre_delete.connect(check_object_deleted_notes)
 
 @login_required
 @is_ajax(template = 'notes_ops.html', referer = True )
-def create(request, ctype_id, object_id ):
+def manage(request, ctype_id, object_id ):
     context = {}
     context['success'] = False
+
 
     # Get the object
     content_type = ContentType.objects.get(id=ctype_id)
@@ -56,74 +57,49 @@ def create(request, ctype_id, object_id ):
         context['message'] = 'O objecto para aplicar a nota já não existe.'
         return context
 
-    # Process the form
-    form = NoteForm(request.POST) 
-    if form.is_valid():
-        txt = form.cleaned_data['txt']
-        if not txt.strip():
-            context['message'] = 'Nota vazia. Não vou criar uma nota vazia'
-            return context
-
-        note = Note( user = request.user,
-                     content_object = obj,
-                     txt = txt ,
-                     public = form.cleaned_data['public'])
-        note.save()
-
-        context['success'] = True
-        context['html'] = note.html()
-        context['message'] = 'Nota criada para o objecto'
-        return context
-
-    context['message'] = 'Input inválido. Não vou criar a nota.'
-    return context
-    
-
-@login_required
-@is_ajax(template = 'notes_ops.html', referer = True )
-def edit(request, note_id):
-    context = {}
-    context['success'] = False
-
-    # Get the note
+    # Check if there's a note associated to the object    
     try:
-        note = Note.objects.get( id = int(note_id) )
-    except ValueError:
-        context['message'] = 'Nota inválida.'
-        return context
+        note = Note.objects.get( user = request.user, 
+                                 content_type = content_type,
+                                 object_id = obj.id )
     except ObjectDoesNotExist:
-        context['message'] = 'A nota não existe.'
-        return context
+        note = None
 
-    # Check the user
-    if request.user != note.user:    
-        raise PermissionDenied
-
-    # Get and process the form:
+    # Process the form
     form = NoteForm(request.POST) 
     if form.is_valid():
         txt = form.cleaned_data['txt']
         public = form.cleaned_data['public']
 
-        # Delete the note
-        if not txt.strip():
+        if not txt.strip() and not note:
+            context['message'] = 'Nota vazia. Não vou criar uma nota vazia'
+            return context
+        elif not txt.strip() and note:
+            # Delete the note:
             note.delete()
             context['success'] = True
             context['html'] = '' 
             context['message'] = 'Nota apagada'
             return context
 
-        # Save changes
-        note.txt = txt
-        note.public = public
+        if note:
+            note.txt = txt
+            note.public = public
+            context['message'] = 'Nota editada'
+        else:
+            note = Note( user = request.user,
+                         content_object = obj,
+                         txt = txt ,
+                         public = public)
+            context['message'] = 'Nota criada para o objecto'
         note.save()
 
         context['success'] = True
         context['html'] = note.html()
-        context['message'] = 'Nota editada'
         return context
 
-    
-    context['success'] = False
-    context['message'] = 'Deu porcaria'
+    context['message'] = 'Input inválido. Não vou criar a nota.'
+    if note:
+        context['html'] = note.html()
     return context
+    

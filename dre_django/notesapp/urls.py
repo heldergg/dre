@@ -7,10 +7,7 @@ urlpatterns = patterns('notesapp.views',
     # Notes management
 
     # Create note
-    url( r'create/(?P<ctype_id>\d+)/(?P<object_id>\d+)/$', 'create', name= 'create_note' ),
-
-    # Edit note
-    url( r'edit/(?P<note_id>\d+)/$', 'edit', name= 'edit_note' ),
+    url( r'manage/(?P<ctype_id>\d+)/(?P<object_id>\d+)/$', 'manage', name= 'manage_note' ),
     
     )
 

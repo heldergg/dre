@@ -60,19 +60,18 @@ class NoteFormNode(NoteNode):
                 note = Note.objects.get( user = user, 
                                           content_type = content_type,
                                           object_id = obj.id )
-                form_view = reverse( 'edit_note', kwargs={ 
-                                         'note_id': note.id, })
                 public = 'on' if note.public else 'off'
                 checked = 'checked' if note.public else ''
                 note = note.txt
             except ObjectDoesNotExist:
                 note = ''
-                form_view = reverse( 'create_note', kwargs={ 
-                                         'ctype_id': content_type.id,
-                                         'object_id': obj.id })
                 edit = False
                 public = 'on' 
                 checked = 'checked'
+
+            form_view = reverse( 'manage_note', kwargs={ 
+                                 'ctype_id': content_type.id,
+                                 'object_id': obj.id })
 
             form = '''
             <div class="add_note">
@@ -80,14 +79,13 @@ class NoteFormNode(NoteNode):
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
               <textarea class="note_name_input" type="text" name="txt" maxlength="20480">%(note)s</textarea>
               <input type="checkbox" name="public" id="id_public" value="%(public)s" %(checked)s /> Nota p&uacute;blica | 
-              <button type="submit" value="Submit">%(button)s</button>
+              <button type="submit" value="Submit">Aplicar</button>
             </form></div>
             ''' % { 'form_view': form_view, 
                     'csrf': csrf.get_token(context['request']),
                     'note': note,
                     'public': public,
-                    'checked': checked,
-                    'button': 'Modificar nota' if edit else 'Adicionar Nota',  }
+                    'checked': checked, }
 
             return form
         except template.VariableDoesNotExist:
