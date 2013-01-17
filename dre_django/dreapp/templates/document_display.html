@@ -16,6 +16,7 @@
   {% if document.dre_key %}<li><strong>Chave DRE</strong>: {{ document.dre_key }}{% endif %}
   {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
+  {% if document.processing %}<li><strong style="color:red;">Em tratamento</strong>{% endif %}
 </ul>
 
 <h2>Notas</h2>

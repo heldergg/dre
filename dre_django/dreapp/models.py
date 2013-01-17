@@ -89,6 +89,7 @@ class Document(models.Model):
     dre_key = models.CharField(max_length=32)
     in_force = models.BooleanField(default=True)
     conditional = models.BooleanField(default=False)
+    processing = models.BooleanField(default=False)
     date = models.DateField()
 
     notes = models.CharField(max_length=20480)

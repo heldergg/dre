@@ -155,10 +155,12 @@ class DREReadDocs( object ):
 
 
         # date
+        page_result['processing'] = False
         try:
             date_str = self.soup.find('td', 
                     { 'headers': 'dataAssinaturaIDHeader' }
                     ).renderContents()
+            page_result['processing'] = ('em tratamento' in date_str.lower())
         except AttributeError:
             # Tries to get the date from the legend header
             date_str = self.soup.find('legend').renderContents()
@@ -207,6 +209,7 @@ class DREReadDocs( object ):
         txt += ' dre_key: %s\n' % du( page_result['dre_key'] )
         txt += ' in_force: %s\n' %  page_result['in_force']
         txt += ' conditional: %s\n' %  page_result['conditional']
+        txt += ' processing: %s\n' %  page_result['processing']
         txt += ' date: %s\n' % page_result['date']
         txt += ' notes: %s\n' % du( page_result['notes'] )
         txt += ' plain_text: %s\n' % du( page_result['plain_text'] )
@@ -227,6 +230,7 @@ class DREReadDocs( object ):
         document.dre_key = page_result['dre_key']
         document.in_force = page_result['in_force']
         document.conditional = page_result['conditional']
+        document.processing = page_result['processing']
         document.date = page_result['date']
         document.notes = page_result['notes']
         document.plain_text = page_result['plain_text']
@@ -234,6 +238,8 @@ class DREReadDocs( object ):
         document.pdf_error = page_result['pdf_error']
 
         document.save()
+
+        logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
 
 
     def check_dirs(self):
@@ -292,7 +298,7 @@ class DREReadDocs( object ):
         logger.debug('Document saved.')
 
 MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
-MAX_ERROR_DOCUMENT = 1000 # Max number of consecutive documents with error
+MAX_ERROR_DOCUMENT = 10 # Max number of consecutive documents with error
 
 class DREScrap( object ):
     '''Read the documents from the site. Stores the last publiched document.
