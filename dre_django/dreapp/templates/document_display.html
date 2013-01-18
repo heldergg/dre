@@ -1,14 +1,22 @@
 {% extends "base.html" %}
+{% load bookmarks %}
+{% load notes %}
 
 {% block title %}Diários da República{% endblock %}
 
 {% block header %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tag_style.css">
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
 {% endblock %}
 
 {% block body_content %}
 <div class="content-text">
 
 <h1>{{ document.doc_type.title }} {{ document.number }} de {{ document.date|date:"Y-m-d" }}</h1>
+
+{% if user.is_authenticated %}
+<p style="text-align:right;"><a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
+{% endif %}
 
 <ul>
   <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
@@ -47,6 +55,11 @@ quaisquer incorrecções produzidas na transcrição do original para este forma
 <p>Pode consultar o DR original em:
 <p>{{ document.dre_pdf }}
 </div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<h2>Notas do utilizador</h2>
+{% show_note document user %}
 {% endif %}
 
 </div>
