@@ -59,13 +59,13 @@
           {% if user == bookmarks_user %}<span class="tag_control"><img src="{{ STATIC_URL }}img/add-tag.png"></span> <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png"></span>{% endif %}
           <span class="tags">
             Etiquetas: 
-            {% show_tags document bookmarks_user %}
+            {% show_tags result bookmarks_user %}
           </span> <!-- tags -->
         </div> <!-- deco_toolbar -->
 
-        {% if user == bookmarks_user %}{% tag_object document bookmarks_user %}{% endif %}
-        {% show_note document bookmarks_user %}
-        {% if user == bookmarks_user %}{% create_note document bookmarks_user %}{% endif %}
+        {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
+        {% show_note result bookmarks_user %}
+        {% if user == bookmarks_user %}{% create_note result bookmarks_user %}{% endif %}
       </div> <!-- decoration -->
 
     {% endwith %}
