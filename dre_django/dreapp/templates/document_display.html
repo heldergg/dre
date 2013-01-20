@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load bookmarks %}
 
 {% block title %}Diários da República{% endblock %}
 
@@ -7,6 +8,10 @@
 
 {% block body_content %}
 <div class="content-text">
+
+{% if user.is_authenticated %}
+<p style="text-align:right;"><a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
+{% endif %}
 
 <h1>{{ document.doc_type.title }} {{ document.number }} de {{ document.date|date:"Y-m-d" }}</h1>
 
