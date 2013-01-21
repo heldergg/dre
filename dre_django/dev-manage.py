@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os, sys
 
-sys.path.append('/home/helder/prg/dre/lib/')
+sys.path.append(os.path.abspath('../lib/'))
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dre_django.settings")
