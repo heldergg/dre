@@ -145,6 +145,12 @@ class Document(models.Model):
         html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
         html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
         html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
+
+        # NOTE: we have some badly formed links on the original PDFs. Sometimes
+        # we have latin-1 characters on the 'href' attribute of the link. This
+        # originates problems when displaying the document since we're going
+        # to have a document with two encodings (utf-8 and latin-1). 
+        html = re.sub( r'<a href.*?>(.*?)</a>', r'\1', html)
         html = html.replace('</b><br>','</b><br><p>')
 
         # "Decreto-Lei" recognition
