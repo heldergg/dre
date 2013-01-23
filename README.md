@@ -23,45 +23,44 @@ Example:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': '<some_existing\_path>/dre.db',
+            'NAME': '<some_existing_path>/dre.db',
         }
     }
     # reCAPTCHA
-    RECAPTCHA_PUB_KEY = ''
-    RECAPTCHA_PRIV_KEY = ''
+    RECAPTCHA_PUB_KEY = 'XXXX'
+    RECAPTCHA_PRIV_KEY = 'XXXX'
 
 iii) Create the database:
 
     cd dre_django
     ./dev-manage.py syncdb
 
-You can create the superuser.
+You should create the superuser, for testing purposes, you can use it as a regular user.
 
 iv) Download a few documents from dre.pt:
 
     cd ../bin
-    ./dre.py --read\_docs 
+    ./dre.py --read_docs 
 
 Please note that sometimes the dre.pt will be overloaded or otherwise not 
 responding, you'll have to wait a bit to get your documents.
 
 v) Index the documents using the Xapian library:
 
-  cd ../dre\_django
-  ./dev-manage.py index --verbose --rebuild
+    cd ../dre_django
+    ./dev-manage.py index --verbose --rebuild
 
 vi) Run the dev server:
 
-  ./dev-manage.py runserver
+    ./dev-manage.py runserver
 
 Every time you add new documents you'll have to index them. You can have a 
 long running process to do this:
 
-  ./manage.py index --verbose --loop --time-out=600
+    ./manage.py index --verbose --loop --time-out=600
 
 Usually this is not needed on a development server.
 
 ----
 
-Since you have few documents com the database, make a wide enough search, 
-[this](http://127.0.0.1:8000/?q=a) for instance.
+Since you have few documents on the database, you have to make a wide enough search to get results, use something like [this](http://127.0.0.1:8000/?q=a).
