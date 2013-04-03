@@ -19,7 +19,20 @@ class TagError(Exception):
 # Tags 
 ##
 
+class TagManager(models.Manager):
+    def user_tags( self, user, public_only ):
+        '''Returns the tags available to a given user'''
+        if public_only:
+            return super(TagManager, self).get_query_set().filter(
+                user__exact = user).filter(
+                public__exact = True).order_by('name')
+        else:
+            return super(TagManager, self).get_query_set().filter(
+                user__exact = user).order_by('name')
+
 class Tag(models.Model):
+    objects = TagManager()
+
     user =  models.ForeignKey(User)
     timestamp = models.DateTimeField(default=datetime.datetime.now)
 
