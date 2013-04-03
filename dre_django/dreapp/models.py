@@ -6,6 +6,9 @@ import re
 from datetime import datetime
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes import generic
+
+from bookmarksapp.models import Bookmark
 
 # select distinct doc_type from dreapp_document order by doc_type;
 doc_type = (
@@ -100,6 +103,9 @@ class Document(models.Model):
 
     timestamp = models.DateTimeField(default=datetime.now())
 
+    # Reverse generic relations
+    bookmarks = generic.GenericRelation(Bookmark)
+
     # Display in lists
     def note_abrv(self):
         if len(self.notes) < 512:
@@ -118,7 +124,7 @@ class Document(models.Model):
         return self.date.day
 
     def date_to_index (self):
-        return '%d%02d%02d' % ( 
+        return '%d%02d%02d' % (
             self.date.year,
             self.date.month,
             self.date.day, )
@@ -131,10 +137,10 @@ class Document(models.Model):
                             '%02d' % self.day() )
 
     def plain_pdf_filename(self):
-        return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint) 
+        return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint)
 
     def plain_html(self):
-        '''Converts the plain_pdf pdf to html''' 
+        '''Converts the plain_pdf pdf to html'''
         # TODO: substitute this regexes for compiled regexes
 
         command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
@@ -149,7 +155,7 @@ class Document(models.Model):
         # NOTE: we have some badly formed links on the original PDFs. Sometimes
         # we have latin-1 characters on the 'href' attribute of the link. This
         # originates problems when displaying the document since we're going
-        # to have a document with two encodings (utf-8 and latin-1). 
+        # to have a document with two encodings (utf-8 and latin-1).
         html = re.sub( r'<a href.*?>(.*?)</a>', r'\1', html)
         html = html.replace('</b><br>','</b><br><p>')
 
@@ -158,12 +164,12 @@ class Document(models.Model):
                        r'<a href="/?q=tipo:\2 número:\3">\1</a>', html)
 
         return html
-         
+
     def plain_txt(self):
-        '''Converts the plain_pdf pdf to txt''' 
+        '''Converts the plain_pdf pdf to txt'''
         filename = self.plain_pdf_filename()
         if os.path.exists(filename):
-            command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename 
+            command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
             return os.popen(command).read()
         else:
             return ''
