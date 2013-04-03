@@ -1,0 +1,12 @@
+#filter_control {
+  padding: 0.5em;
+  background-color: #6f94de;
+  border-radius: 1em;
+  }
+
+#filter_control table {
+  }
+
+#filter_control table td {
+  vertical-align: top;
+  }
