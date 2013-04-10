@@ -4,6 +4,7 @@
 import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -11,7 +12,7 @@ from django.template import RequestContext
 # Local Imports:
 import dreapp.index
 from bookmarksapp.models import Bookmark
-from dreapp.forms import QueryForm
+from dreapp.forms import QueryForm, BookmarksFilterForm
 from dreapp.models import Document
 
 def search(request):
@@ -71,7 +72,7 @@ def browse( request ):
 
 def browse_day( request, year, month, day ):
     context = {}
-    year, month, day = int(year), int(month), int(day) 
+    year, month, day = int(year), int(month), int(day)
     context['query_date'] = '%d,%d,%d' % ( year, month-1, day )
 
     # Query the document table
@@ -110,13 +111,28 @@ def bookmark_display( request, userid ):
     context = {}
     user = get_object_or_404(User, pk=userid)
 
+    # Bookmark Filter Form
+    f = context['filter_form'] = BookmarksFilterForm(request.GET, tags_user = user,
+            public_only = user != request.user )
+
+    ##
     # Select the bookmarks
-    results = Bookmark.objects.filter(user__exact = user) 
+    results = Document.objects.filter(bookmarks__user__exact = user)
 
     if user != request.user:
         # Show only public bookmarks from other people
-        results = results.filter(public__exact = True )
+        results = results.filter(bookmarks__public__exact = True )
 
+    if f.is_valid():
+        # Filter the results
+        order      = f.cleaned_data['order']
+        invert     = f.cleaned_data['invert']
+        query      = f.cleaned_data['query']
+        start_date = f.cleaned_data['start_date']
+        end_date   = f.cleaned_data['end_date']
+        tags       = [ int(tag_id) for tag_id in f.cleaned_data['tags'] ]
+
+    ##
     # Pagination
     page = request.GET.get('page', 1)
     try:
@@ -130,6 +146,12 @@ def bookmark_display( request, userid ):
     if page > paginator.num_pages:
         page = paginator.num_pages
 
+    # Get the bookmark objects:
+    for doc in paginator.page(page).object_list:
+        doc.bm = doc.bookmark( user )
+        print doc.bm
+
+    # Finish the context:
     context['page'] = paginator.page(page)
     context['query'] = '?'
     context['bookmarks_user'] = user

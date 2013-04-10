@@ -6,11 +6,12 @@
 {% block title %}Diários da República - Marcadores{% endblock %}
 
 {% block header %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bookmarks.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tag_style.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/start/jquery-ui.css">
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
   <script>
     var STATIC_URL="{{ STATIC_URL }}";
     var is_owner = "{{ bookmarks_user.username }}"=="{{ user.username }}";
@@ -21,17 +22,67 @@
 
 {% block body_content %}
 <div class="content-text"><div id="search_results">
-  <h1>Marcadores de {{ bookmarks_user.username }}</h1>
+  <div id="filter_control">
+    <form>
+    <table width=100%>
+      <tr>
+        <td>
+          <table>
+            <tr>
+              <td>Ordenar por:</td>
+            </tr>
+            <tr>
+              <td>{{ filter_form.order }}</td>
+            </tr>
+            <tr>
+              <td>Inverter: {{ filter_form.invert }}</td>
+            </tr>
+          </table>
+        </td>
+        <td style="border: solid; border-width: 0 2px 0 2px;">
+          <table>
+            <tr>
+              <td>Data inicial:</td>
+              <td>{{ filter_form.start_date }}</td>
+            </tr>
+            <tr>
+              <td>Data final:</td>
+              <td>{{ filter_form.end_date }}</td>
+            </tr>
+            <tr>
+              <td>Procurar por:</td>
+              <td>{{ filter_form.query }}</td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table>
+            <tr>
+              <td>Etiquetas:</td>
+            </tr>
+            <tr>
+              <td>{{ filter_form.tags }}</td>
+            </tr>
+            <tr>
+              <td colspan=2><p style="text-align:right;"><button type="submit" name="submit" value="true">Filtrar</button></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    </form>
+  </div>
+
+  <h1>Marcadores - {{ bookmarks_user.username }}</h1>
 
   <ul>
-    {% for result in page.object_list %}
+    {% for document in page.object_list %}
     <li class="result_item">
-    {% with result.content_object as document %}
       <div class="result_header">
         {% if user.is_authenticated %}
           <a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
           {% if user == bookmarks_user %}
-          <a href="{% url 'toggle_public' result.content_type.id result.object_id %}?next={{ request.get_full_path|urlencode }}">{% if result.public %}<img width=16 height=16 title="Marcador público" src="{{ STATIC_URL }}img/unlocked.png">{% else %}<img width=16 height=16 title="Marcador privado" src="{{ STATIC_URL }}img/locked.png">{% endif %}</a>{% endif %}
+          <a href="{% url 'toggle_public' document.bm.content_type.id document.bm.object_id %}?next={{ request.get_full_path|urlencode }}">{% if document.bm.public %}<img width=16 height=16 title="Marcador público" src="{{ STATIC_URL }}img/unlocked.png">{% else %}<img width=16 height=16 title="Marcador privado" src="{{ STATIC_URL }}img/locked.png">{% endif %}</a>{% endif %}
         {% endif %}
         {% if document.plain_text or document.dre_pdf %}
           <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
@@ -60,16 +111,15 @@
           {% if user == bookmarks_user %}<span class="tag_control"><img src="{{ STATIC_URL }}img/add-tag.png"></span> <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png"></span>{% endif %}
           <span class="tags">
             Etiquetas: 
-            {% show_tags result bookmarks_user %}
+            {% show_tags document.bm bookmarks_user %}
           </span> <!-- tags -->
         </div> <!-- deco_toolbar -->
 
-        {% if user == bookmarks_user %}{% tag_object result bookmarks_user %}{% endif %}
-        {% show_note result bookmarks_user %}
-        {% if user == bookmarks_user %}{% create_note result bookmarks_user %}{% endif %}
+        {% if user == bookmarks_user %}{% tag_object result.bm bookmarks_user %}{% endif %}
+        {% show_note document.bm bookmarks_user %}
+        {% if user == bookmarks_user %}{% create_note document.bm bookmarks_user %}{% endif %}
       </div> <!-- decoration -->
 
-    {% endwith %}
     </li>
     {% empty %}
     <li>Não tem bookmarks definidos.

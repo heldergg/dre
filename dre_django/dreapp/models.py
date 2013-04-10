@@ -7,6 +7,8 @@ from datetime import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from bookmarksapp.models import Bookmark
 
@@ -105,6 +107,15 @@ class Document(models.Model):
 
     # Reverse generic relations
     bookmarks = generic.GenericRelation(Bookmark)
+
+    def bookmark(self, user):
+        '''Return the bookmark associated to this document if it exists'''
+        try:
+            content_type = ContentType.objects.get_for_model(Document)
+            return Bookmark.objects.get(user=user, object_id=self.id,
+                    content_type = content_type )
+        except ObjectDoesNotExist:
+            return False
 
     # Display in lists
     def note_abrv(self):
