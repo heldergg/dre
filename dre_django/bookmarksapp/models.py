@@ -22,8 +22,8 @@ class Bookmark(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     def __unicode__(self):
-        return '%s - %s - model: %s' % (self.user.username, 
-                                        self.id, 
+        return '<bm: %s - %s - model: %s>' % (self.user.username,
+                                        self.id,
                                         self.content_type.name)
 
     class Meta:
