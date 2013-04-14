@@ -147,12 +147,13 @@ def bookmark_display( request, userid ):
         page = paginator.num_pages
 
     # Get the bookmark objects:
-    for doc in paginator.page(page).object_list:
+    results = list(paginator.page(page).object_list)
+    for doc in results:
         doc.bm = doc.bookmark( user )
-        print doc.bm
 
     # Finish the context:
     context['page'] = paginator.page(page)
+    context['results'] = results
     context['query'] = '?'
     context['bookmarks_user'] = user
 
