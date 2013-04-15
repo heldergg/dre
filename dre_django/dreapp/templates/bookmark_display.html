@@ -115,7 +115,7 @@
         </span> <!-- tags -->
       </div> <!-- deco_toolbar -->
 
-      {% if user == bookmarks_user %}{% tag_object result.bm bookmarks_user %}{% endif %}
+      {% if user == bookmarks_user %}{% tag_object document.bm bookmarks_user %}{% endif %}
       {% show_note document.bm bookmarks_user %}
       {% if user == bookmarks_user %}{% create_note document.bm bookmarks_user %}{% endif %}
     </div> <!-- decoration -->
