@@ -11,6 +11,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
 from bookmarksapp.models import Bookmark
+from tagsapp.models import TaggedItem
+from notesapp.models import Note
 
 # select distinct doc_type from dreapp_document order by doc_type;
 doc_type = (
@@ -107,6 +109,8 @@ class Document(models.Model):
 
     # Reverse generic relations
     bookmarks = generic.GenericRelation(Bookmark)
+    tags = generic.GenericRelation(TaggedItem)
+    notes = generic.GenericRelation(Note)
 
     def bookmark(self, user):
         '''Return the bookmark associated to this document if it exists'''
