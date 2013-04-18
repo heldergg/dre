@@ -8,10 +8,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.db.models import Q
 
 # Local Imports:
 import dreapp.index
 from bookmarksapp.models import Bookmark
+from tagsapp.models import Tag
 from dreapp.forms import QueryForm, BookmarksFilterForm
 from dreapp.models import Document
 
@@ -130,7 +132,17 @@ def bookmark_display( request, userid ):
         query      = f.cleaned_data['query']
         start_date = f.cleaned_data['start_date']
         end_date   = f.cleaned_data['end_date']
-        tags       = [ int(tag_id) for tag_id in f.cleaned_data['tags'] ]
+        tags       = [ Tag.objects.get(pk=int(tag_id)) for tag_id in f.cleaned_data['tags'] ]
+
+        # Date filter
+        if start_date:
+            results = results.filter(date__gte = start_date)
+        if end_date:
+            results = results.filter(date__lte = end_date)
+
+        # Tag filter
+        if tags:
+            results = results.filter( tags__tag__in = tags )
 
     ##
     # Pagination
