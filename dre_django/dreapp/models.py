@@ -110,7 +110,7 @@ class Document(models.Model):
     # Reverse generic relations
     bookmarks = generic.GenericRelation(Bookmark)
     tags = generic.GenericRelation(TaggedItem)
-    notes = generic.GenericRelation(Note)
+    user_notes = generic.GenericRelation(Note)
 
     def bookmark(self, user):
         '''Return the bookmark associated to this document if it exists'''
