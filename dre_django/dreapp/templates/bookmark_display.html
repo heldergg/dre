@@ -42,6 +42,9 @@
         <td style="border: solid; border-width: 0 2px 0 2px;">
           <table>
             <tr>
+              <td>Documento:</td>
+            </tr>
+            <tr>
               <td>Data inicial:</td>
               <td>{{ filter_form.start_date }}</td>
             </tr>
@@ -63,13 +66,11 @@
             <tr>
               <td>{{ filter_form.tags }}</td>
             </tr>
-            <tr>
-              <td colspan=2><p style="text-align:right;"><button type="submit" name="submit" value="true">Filtrar</button></td>
-            </tr>
           </table>
         </td>
       </tr>
     </table>
+    <p style="text-align:right;"><a href='.'>Limpar busca</a> <button type="submit" name="submit" value="true">Filtrar</button>
     </form>
   </div>
 

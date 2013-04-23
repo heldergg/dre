@@ -140,9 +140,32 @@ def bookmark_display( request, userid ):
         if end_date:
             results = results.filter(date__lte = end_date)
 
+        # Query filter
+        if query:
+            results = results.filter(
+                    Q(number__icontains = query ) |
+                    Q(doc_type__icontains = query ) |
+                    Q(emiting_body__icontains = query ) |
+                    Q(source__icontains = query ) |
+                    Q(dre_key__icontains = query ) |
+                    Q(notes__icontains = query )
+                    )
+
         # Tag filter
         if tags:
             results = results.filter( tags__tag__in = tags )
+
+        # Order:
+        sign = '' if invert else '-'
+
+        if order:
+            results = results.order_by('%s%s' % ( sign,
+                'bookmarks__timestamp' if order == 1 else 'date') )
+        else:
+            results = results.order_by('-bookmarks__timestamp')
+
+
+    results = results.distinct()
 
     ##
     # Pagination
