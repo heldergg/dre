@@ -9,15 +9,18 @@
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bookmarks.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tag_style.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/start/jquery-ui.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+  <link rel="stylesheet" href="/static/css/jquery.multiselect.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.min.js"></script>
+  <script src="/static/js/jquery.multiselect.min.js"></script>
   <script>
     var STATIC_URL="{{ STATIC_URL }}";
     var is_owner = "{{ bookmarks_user.username }}"=="{{ user.username }}";
   </script>
   <script src="{{ STATIC_URL }}js/tags.js"></script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
+  <script src="{{ STATIC_URL }}js/dre.js"></script>
 {% endblock %}
 
 {% block body_content %}
@@ -39,11 +42,8 @@
             </tr>
           </table>
         </td>
-        <td style="border: solid; border-width: 0 2px 0 2px;">
+        <td style="border: solid; border-width: 0 0 0 2px;">
           <table>
-            <tr>
-              <td>Documento:</td>
-            </tr>
             <tr>
               <td>Data inicial:</td>
               <td>{{ filter_form.start_date }}</td>
@@ -56,14 +56,8 @@
               <td>Procurar por:</td>
               <td>{{ filter_form.query }}</td>
             </tr>
-          </table>
-        </td>
-        <td>
-          <table>
             <tr>
               <td>Etiquetas:</td>
-            </tr>
-            <tr>
               <td>{{ filter_form.tags }}</td>
             </tr>
           </table>
