@@ -324,6 +324,29 @@ def wait(log_sleep = True):
         else:
             break
 
+class DRECheck( object ):
+    '''Re-reads and updates a list of documents'''
+    def __init__(self, get_doc_list ):
+        self.get_doc_list = get_doc_list
+
+    def update(self, doc):
+        reader = self.reader
+        reader.read_document(doc, mode=MODIFY)
+
+    def run(self):
+        self.reader = DREReadDocs( DRESession() )
+        for doc in self.get_doc_list():
+            # Checks the STOPTIME list
+            wait()
+
+            # Update the document
+            self.update(doc)
+
+            # Wait a bit before trying the next doc
+            t = 20.0 * random.random() + 5
+            logger.debug('Geting ready to get the next doc. Sleeping %ds' % t)
+            time.sleep( t )
+
 class DREScrap( object ):
     '''Read the documents from the site. Stores the last publiched document.
     '''
