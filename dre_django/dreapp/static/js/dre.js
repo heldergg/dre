@@ -21,7 +21,5 @@ function dre_filter_setup() {
 
 
 $(function() {
-    if (is_owner) {
-        dre_filter_setup();
-    };
+    dre_filter_setup();
 });
