@@ -34,6 +34,13 @@ from dreerror import DREError
 import bs4
 
 
+##
+## CONST
+##
+
+NEW = 1
+DUPLICATE = 2
+MODIFY = 3
 
 ##
 ## Scrap the entire site
