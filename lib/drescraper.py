@@ -39,8 +39,7 @@ import bs4
 ##
 
 NEW = 1
-DUPLICATE = 2
-MODIFY = 3
+MODIFY = 2
 
 ##
 ## Scrap the entire site
@@ -225,8 +224,15 @@ class DREReadDocs( object ):
         logger.debug(txt)
 
 
-    def save(self):
-        document = Document()
+    def save(self, mode):
+        if mode == MODIFY:
+            try:
+                document = Document.objects.get(claint = page_result['claint'] )
+            except ObjectDoesNotExist:
+                mode == NEW
+        if mode == NEW:
+            document = Document()
+
         page_result = self.page_result
 
         document.claint = page_result['claint']
@@ -291,7 +297,7 @@ class DREReadDocs( object ):
                            'dre-%d.pdf' % page_result['claint']))
 
 
-    def read_document( self, claint ):
+    def read_document( self, claint, mode=NEW ):
         logger.debug('*** Getting %d' % claint)
         self.claint = claint
 
@@ -300,7 +306,7 @@ class DREReadDocs( object ):
         self.parse()
 
         self.save_pdfs()
-        self.save()
+        self.save(mode)
 
         logger.debug('Document saved.')
 
