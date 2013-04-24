@@ -31,7 +31,7 @@ from drelog import logger
 # Local Imports
 from mix_utils import fetch_url, du
 from dreerror import DREError
-import bs4 
+import bs4
 
 
 
@@ -73,10 +73,10 @@ class DRESession( object ):
             self.renew_cookie()
             self.renew_marker()
 
-        url, html, cj  =  fetch_url(url % { 
+        url, html, cj  =  fetch_url(url % {
             'unique_marker': self.unique_marker, })
 
-        return html 
+        return html
 
 
 class DREReadDocs( object ):
@@ -86,10 +86,10 @@ class DREReadDocs( object ):
         self.dre_session = dre_session
         self.pdf_error = False
 
-    def fetch_document(self, claint):    
+    def fetch_document(self, claint):
         base_url = 'http://digestoconvidados.dre.pt/digesto/(S(%(unique_marker)s))/Paginas'
-        url =  base_url + '/DiplomaDetalhado.aspx?claint=%(claint)d' % { 'claint': claint } 
-        url_pdf =  base_url + '/DiplomaTexto.aspx' 
+        url =  base_url + '/DiplomaDetalhado.aspx?claint=%(claint)d' % { 'claint': claint }
+        url_pdf =  base_url + '/DiplomaTexto.aspx'
 
         self.html = self.dre_session.download_page( url )
 
@@ -104,24 +104,24 @@ class DREReadDocs( object ):
             logger.error('Error while trying to read the PDF page. Document %d.' % claint )
 
     def soupify(self):
-        self.soup = bs4.BeautifulSoup(self.html) 
-        self.soup_pdf = bs4.BeautifulSoup(self.html_pdf) 
-        
+        self.soup = bs4.BeautifulSoup(self.html)
+        self.soup_pdf = bs4.BeautifulSoup(self.html_pdf)
+
     def parse(self):
         page_result = {}
 
         page_result['claint'] = self.claint
 
-        page_result['doc_type'] = self.soup.find('td', 
+        page_result['doc_type'] = self.soup.find('td',
                 { 'headers': 'tipoDescricaoIDHeader' }
-                ).renderContents() 
+                ).renderContents()
 
-        number = self.soup.find('td', 
+        number = self.soup.find('td',
                 { 'headers': 'numeroIDHeader' }
-                ).renderContents() 
+                ).renderContents()
 
         # Clean html tags and set the flags
-        number = re.sub(r'(?:<[a-zA-Z]+.*?>)|(?:</[a-zA-Z]+.*?>)', '', number)        
+        number = re.sub(r'(?:<[a-zA-Z]+.*?>)|(?:</[a-zA-Z]+.*?>)', '', number)
         page_result['in_force'] = not ('Diploma não vigente' in number)
         page_result['conditional'] = ('Vigência condicional' in number)
         number = number.replace('Diploma não vigente','')
@@ -131,25 +131,25 @@ class DREReadDocs( object ):
         page_result['number'] = number
 
         try:
-            page_result['emiting_body'] = self.soup.find('td', 
+            page_result['emiting_body'] = self.soup.find('td',
                 { 'headers': 'entidadesEmitentesIDHeader' }
-                ).renderContents() 
+                ).renderContents()
         except AttributeError:
             page_result['emiting_body'] = 'Não Indicado'
 
         try:
-            page_result['source'] = self.soup.find('td', 
+            page_result['source'] = self.soup.find('td',
                     { 'headers': 'fonteIDHeader' }
-                    ).renderContents() 
+                    ).renderContents()
         except AttributeError:
             page_result['source'] = ''
 
 
-        # dre_key 
+        # dre_key
         try:
-            page_result['dre_key'] = self.soup.find('td', 
+            page_result['dre_key'] = self.soup.find('td',
                     { 'headers': 'ChaveDreIDHeader' }
-                    ).renderContents() 
+                    ).renderContents()
         except AttributeError:
             page_result['dre_key'] = ''
 
@@ -157,7 +157,7 @@ class DREReadDocs( object ):
         # date
         page_result['processing'] = False
         try:
-            date_str = self.soup.find('td', 
+            date_str = self.soup.find('td',
                     { 'headers': 'dataAssinaturaIDHeader' }
                     ).renderContents()
             page_result['processing'] = ('em tratamento' in date_str.lower())
@@ -174,25 +174,25 @@ class DREReadDocs( object ):
             raise DREError('Can\' find the date string.')
 
         # notes
-        notes = self.soup.find('fieldset', 
+        notes = self.soup.find('fieldset',
                 { 'id': 'FieldsetResumo' }
                 ).find('div').renderContents().strip()
         notes = re.sub(r'(?:<[a-zA-Z]+.*?>)|(?:</[a-zA-Z]+.*?>)', '', notes)
         page_result['notes'] = notes
 
         try:
-            page_result['plain_text'] = self.soup_pdf.find('span', 
+            page_result['plain_text'] = self.soup_pdf.find('span',
                     { 'id': 'textoIntegral_textoIntegralResidente',
                       'class': 'TextoIntegralMargin' }
-                    ).find('a')['href']  
+                    ).find('a')['href']
         except (TypeError, AttributeError):
             page_result['plain_text'] = ''
-                    
+
         try:
-            page_result['dre_pdf'] = self.soup_pdf.find('span', 
+            page_result['dre_pdf'] = self.soup_pdf.find('span',
                     { 'id': 'textoIntegral_imagemDoDre',
                       'class': 'TextoIntegralMargin' }
-                    ).find('a')['href']  
+                    ).find('a')['href']
         except (TypeError, AttributeError):
             page_result['dre_pdf'] = ''
 
@@ -214,13 +214,13 @@ class DREReadDocs( object ):
         txt += ' notes: %s\n' % du( page_result['notes'] )
         txt += ' plain_text: %s\n' % du( page_result['plain_text'] )
         txt += ' dre_pdf: %s\n' % du( page_result['dre_pdf'] )
-        txt += ' pdf_error: %s' % page_result['pdf_error'] 
+        txt += ' pdf_error: %s' % page_result['pdf_error']
         logger.debug(txt)
 
 
     def save(self):
         document = Document()
-        page_result = self.page_result 
+        page_result = self.page_result
 
         document.claint = page_result['claint']
         document.doc_type = page_result['doc_type']
@@ -244,7 +244,7 @@ class DREReadDocs( object ):
 
     def check_dirs(self):
         date = self.page_result['date']
-        archive_dir = os.path.join( settings.ARCHIVEDIR, 
+        archive_dir = os.path.join( settings.ARCHIVEDIR,
                                     '%d' % date.year,
                                     '%02d' % date.month,
                                     '%02d' % date.day )
@@ -252,7 +252,7 @@ class DREReadDocs( object ):
         if not os.path.exists( archive_dir ):
             os.makedirs( archive_dir )
 
-        return archive_dir    
+        return archive_dir
 
     def save_file(self, url, filename):
         try:
@@ -263,7 +263,7 @@ class DREReadDocs( object ):
                 url,
                 self.page_result['claint']))
             return
-        
+
         with open(filename, 'wb') as f:
             f.write(data_blob)
             f.close()
@@ -277,16 +277,16 @@ class DREReadDocs( object ):
         archive_dir = self.check_dirs()
 
         if page_result['plain_text']:
-            self.save_file(page_result['plain_text'], os.path.join(archive_dir, 
-                           'plain-%d.pdf' % page_result['claint'])) 
+            self.save_file(page_result['plain_text'], os.path.join(archive_dir,
+                           'plain-%d.pdf' % page_result['claint']))
         if page_result['dre_pdf']:
-            self.save_file(page_result['dre_pdf'], os.path.join(archive_dir, 
-                           'dre-%d.pdf' % page_result['claint'])) 
+            self.save_file(page_result['dre_pdf'], os.path.join(archive_dir,
+                           'dre-%d.pdf' % page_result['claint']))
 
 
     def read_document( self, claint ):
         logger.debug('*** Getting %d' % claint)
-        self.claint = claint 
+        self.claint = claint
 
         self.fetch_document(claint)
         self.soupify()
@@ -315,7 +315,7 @@ class DREScrap( object ):
     def log_failed_read(self, claint):
         try:
            fdoc = FailedDoc.objects.get(claint=claint)
-           fdoc.tries += 1 
+           fdoc.tries += 1
         except ObjectDoesNotExist:
             fdoc = FailedDoc()
             fdoc.claint = claint
@@ -340,13 +340,13 @@ class DREScrap( object ):
                         break
                 if wait:
                     if log_sleep:
-                        logger.debug('Sleeping for a while, until %s.' % end) 
+                        logger.debug('Sleeping for a while, until %s.' % end)
                         log_sleep = False
                     time.sleep(60)
                 else:
                     break
-                   
-            # Get the document:       
+
+            # Get the document:
             try:
                 self.reader.read_document( last_claint )
                 error_condition = 0
@@ -369,13 +369,13 @@ class DREScrap( object ):
                         raise
                     logger.error('Error in document %d. Going to try the next doc. This is the #%d skipped doc.' % (
                         last_claint,error_document ))
-                    self.log_failed_read( last_claint )    
-                        
+                    self.log_failed_read( last_claint )
+
             except Exception, msg:
-                raise 
+                raise
                 break
-                
-            t = 20.0 * random.random() + 5   
+
+            t = 20.0 * random.random() + 5
             logger.debug('Incrementing the counter. Sleeping %ds' % t)
             last_claint += 1
             time.sleep( t )
