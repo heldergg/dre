@@ -28,6 +28,9 @@ def usage():
         --read_single <document_id>
                             Reads a single document from the site
 
+        -t
+        --read_processing   Re-reads the documents marked as "processing"
+
         -h
         --help              This help screen
 
@@ -37,8 +40,9 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   'hru:v',
-                                   ['help', 'read_docs','read_single=','verbose'])
+                                   'hru:vt',
+                                   ['help', 'read_processing', 'read_docs',
+                                    'read_single=','verbose'])
     except getopt.GetoptError, err:
         print str(err)
         print
@@ -46,10 +50,16 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Commands
-    for o, a in opts: 
+    for o, a in opts:
         if o in ('-r', '--read_docs'):
-            from drescraper import DREScrap
-            scraper = DREScrap()
+            from drescraper import DREScrap, last_claint
+            scraper = DREScrap(last_claint)
+            scraper.run()
+            sys.exit()
+
+        elif o in ('-t', '--read_processing'):
+            from drescraper import DREScrap, processing_docs
+            scraper = DREScrap(processing_docs)
             scraper.run()
             sys.exit()
 

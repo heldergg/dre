@@ -225,15 +225,15 @@ class DREReadDocs( object ):
 
 
     def save(self, mode):
+        page_result = self.page_result
+
         if mode == MODIFY:
             try:
                 document = Document.objects.get(claint = page_result['claint'] )
             except ObjectDoesNotExist:
-                mode == NEW
+                mode = NEW
         if mode == NEW:
             document = Document()
-
-        page_result = self.page_result
 
         document.claint = page_result['claint']
         document.doc_type = page_result['doc_type']
@@ -330,40 +330,25 @@ def wait(log_sleep = True):
         else:
             break
 
-class DRECheck( object ):
-    '''Re-reads and updates a list of documents'''
-    def __init__(self, get_doc_list ):
-        self.get_doc_list = get_doc_list
+def processing_docs():
+    docs = Document.objects.filter(processing__exact = True
+            ).filter(date__lte = datetime.now() - timedelta(10))
 
-    def update(self, doc):
-        reader = self.reader
-        reader.read_document(doc, mode=MODIFY)
+    for doc in docs:
+        yield doc.claint
 
-    def run(self):
-        self.reader = DREReadDocs( DRESession() )
-        for doc in self.get_doc_list():
-            # Checks the STOPTIME list
-            wait()
-
-            # Update the document
-            self.update(doc)
-
-            # Wait a bit before trying the next doc
-            t = 20.0 * random.random() + 5
-            logger.debug('Geting ready to get the next doc. Sleeping %ds' % t)
-            time.sleep( t )
+def last_claint():
+    max_claint = Document.objects.aggregate(Max('claint'))['claint__max']
+    i = max_claint if max_claint else 0
+    while True:
+        yield i+1
 
 class DREScrap( object ):
-    '''Read the documents from the site. Stores the last publiched document.
-    '''
-
-    def __init__(self):
+    '''Re-reads and updates a list of documents'''
+    def __init__(self, doc_list, mode=MODIFY ):
+        self.doc_list = doc_list
         self.reader = DREReadDocs( DRESession() )
-
-    def last_read_doc(self):
-        '''Gets the claint of the last read document'''
-        max_claint = Document.objects.aggregate(Max('claint'))['claint__max']
-        return max_claint if max_claint else 0
+        self.mode = mode
 
     def log_failed_read(self, claint):
         try:
@@ -375,18 +360,21 @@ class DREScrap( object ):
         fdoc.save()
         logger.error('Failure to read document %d. Making a log entry.' % claint)
 
+    def update(self, doc):
+        self.reader.read_document(doc, mode=self.mode)
+
     def run(self):
-        last_claint = self.last_read_doc() + 1
         error_condition = 0
         error_document = 0
-
-        while True:
+        for doc in self.doc_list():
             # Checks the STOPTIME list
             wait()
 
             # Get the document:
             try:
-                self.reader.read_document( last_claint )
+                # Update the document
+                self.update(doc)
+
                 error_condition = 0
                 error_document = 0
             except DREError, msg:
@@ -396,7 +384,7 @@ class DREScrap( object ):
                 if error_condition <= MAX_ERROR_CONDITION:
                     t = 20.0 * random.random() + 5
                     logger.warn('DRE error condition #%d on the site claint %d. Sleeping %ds.' % (
-                        error_condition, last_claint, t) )
+                        error_condition, doc, t) )
                     time.sleep( t )
                     continue
                 else:
@@ -406,14 +394,14 @@ class DREScrap( object ):
                         logger.critical('#%d failed atempts to get documents. Giving up.' % MAX_ERROR_DOCUMENT)
                         raise
                     logger.error('Error in document %d. Going to try the next doc. This is the #%d skipped doc.' % (
-                        last_claint,error_document ))
-                    self.log_failed_read( last_claint )
+                        doc,error_document ))
+                    self.log_failed_read( doc )
 
             except Exception, msg:
                 raise
                 break
 
+            # Wait a bit before trying the next doc
             t = 20.0 * random.random() + 5
-            logger.debug('Incrementing the counter. Sleeping %ds' % t)
-            last_claint += 1
+            logger.debug('Geting ready to get the next doc. Sleeping %ds' % t)
             time.sleep( t )
