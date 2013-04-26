@@ -17,6 +17,51 @@
   color: #892d2d;
   }
 
+.user_notes h1 {
+  margin: 0;
+}
+
+.user_notes ul {
+  list-style-type: disc !important;
+}
+
+.user_notes li {
+  padding: 0 !important;
+  line-height: 120% !important;
+  margin-left: 2em;
+}
+
+.user_notes table {
+  border-collapse: collapse;
+  background-color: whitesmoke;
+  border: solid !important;
+  border-width: 1px !important;
+  margin-left:auto; 
+  margin-right:auto;
+}
+
+.user_notes td, .user_notes th {
+  padding: 0.3em;
+  border-collapse: collapse;
+  background-color: whitesmoke;
+  border: solid !important;
+  border-width: 1px !important;
+}
+
+.user_notes blockquote {
+  border-left:solid 2px ;
+  padding-left:0.5em ;
+  margin-left:0.5em;
+}
+
+.user_notes pre {
+  padding: 0.3em;
+  margin-left: 2em;
+  margin-right: 2em;
+  border-radius: 0.5em;
+  background-color: whitesmoke;
+}
+
 .note_control {
   cursor: pointer;
   }

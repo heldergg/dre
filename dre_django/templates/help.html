@@ -9,6 +9,7 @@
 <div class="content-text">
   <h1>Ajuda</h1>
 
+  <hr>
   <h2>Procurar</h2>
 
   <p>Os documentos, extraídos do Diário da República Electrónico são indexados neste site. Para realizar uma busca basta usar termos que sejam adequados. Realizaremos então uma busca sobre todo o texto disponível da legislação assim como sobre os metadados disponibilizados no site oficial do DR Electrónico (<a href="http://dre.pt/">dre.pt</a>).
@@ -107,6 +108,56 @@
   <p>Procurar portarias de Maio de 1989:
 
   <p><tt>ano:1989 mês:5 tipo:portaria</tt>
+
+  <hr>
+  <h2>Notas</h2>
+
+  <p>Os utilizadores registados podem criar notas para cada documento. Essas notas podem conter até vinte mil caracteres cada uma. Para além de texto simples podem ser formatadas utilizando a linguagem '<a href="http://daringfireball.net/projects/markdown/" target="_blank">markdown</a>'. Esta é uma linguagem extremamente simples. Por exemplo se quiser realçar com negrito uma dada palavra, apenas tem de envolver essa palavra em '**', a frase seguinte:
+
+  <pre>
+  Este é um **texto** de exemplo.</pre>
+
+Ficaria:
+
+  <p style="padding-left:2em;">Este é um <strong>texto</strong> de exemplo.</p>
+
+  <p>Na tabela seguinte pode encontrar uma lista de opções de formatação para empregar com as notas:
+
+  <table border=1 cellspacing=0 style="margin-right:auto;margin-left:auto;">
+    <tr>
+      <th>Se utilizar:</th>
+      <th>Obtém:</th>
+    </tr>
+    <tr>
+      <td>*Itálico*</td>
+      <td><em>Itálico</em></td>
+    </tr>
+    <tr>
+      <td>**Negrito**</td>
+      <td><strong>Negrito</strong></td>
+    </tr>
+    <tr>
+      <td>[Tretas](http://tretas.org/)</td>
+      <td><a href="http://tretas.org/">Tretas</a></td>
+    </tr>
+    <tr>
+      <td>* Item 1<br>* Item 2<br>* Item 3</td>
+      <td><ul><li>Item 1<li>Item 2<li>Item 3</ul></td>
+    </tr>
+    <tr>
+      <td>1. Item 1<br>1. Item 2<br>1. Item 3</td>
+      <td><ol><li>Item 1<li>Item 2<li>Item 3</ol></td>
+    </tr>
+    <tr>
+      <td>&gt; Citar texto</td>
+      <td><blockquote style="border-left:solid 2px;padding-left:0.5em;margin-left:0;">Citar texto</blockquote></td>
+    </tr>
+    <tr>
+      <td>████Texto 4 esp<br>████████Mais 4<br> </td>
+      <td><pre style="border:none;margin:0;">Texto 4 esp 
+    Mais 4</pre></td>
+    </tr>
+  </table>
 
 </div>
 {% endblock %}

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import markdown
+
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -24,13 +26,17 @@ class Note(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     def html(self):
+        note_html = markdown.markdown(self.txt,
+                safe_mode='remove',
+                output_format='html5',
+                extensions=['tables', 'footnotes'])
         return '<p>%(txt)s</p><p>(Nota %(public)s)</p>' % {
-            'txt': self.txt,
+            'txt': note_html,
             'public': 'p&uacute;blica' if self.public else 'privada' }
 
     def __unicode__(self):
-        return 'Note: %s - %s - model: %s' % (self.user.username, 
-                                        self.id, 
+        return 'Note: %s - %s - model: %s' % (self.user.username,
+                                        self.id,
                                         self.content_type.name)
 
     class Meta:
