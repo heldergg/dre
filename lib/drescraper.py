@@ -297,7 +297,7 @@ class DREReadDocs( object ):
                            'dre-%d.pdf' % page_result['claint']))
 
 
-    def read_document( self, claint, mode=NEW ):
+    def read_document( self, claint, mode=MODIFY ):
         logger.debug('*** Getting %d' % claint)
         self.claint = claint
 
@@ -311,7 +311,7 @@ class DREReadDocs( object ):
         logger.debug('Document saved.')
 
 MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
-MAX_ERROR_DOCUMENT = 2 # Max number of consecutive documents with error
+MAX_ERROR_DOCUMENT = 5 # Max number of consecutive documents with error
 
 def wait(log_sleep = True):
     stop_periods = settings.STOPTIME
