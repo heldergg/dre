@@ -311,7 +311,7 @@ class DREReadDocs( object ):
         logger.debug('Document saved.')
 
 MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
-MAX_ERROR_DOCUMENT = 10 # Max number of consecutive documents with error
+MAX_ERROR_DOCUMENT = 2 # Max number of consecutive documents with error
 
 def wait(log_sleep = True):
     stop_periods = settings.STOPTIME
@@ -341,7 +341,8 @@ def last_claint():
     max_claint = Document.objects.aggregate(Max('claint'))['claint__max']
     i = max_claint if max_claint else 0
     while True:
-        yield i+1
+        i += 1
+        yield i
 
 class DREScrap( object ):
     '''Re-reads and updates a list of documents'''
@@ -371,35 +372,37 @@ class DREScrap( object ):
             wait()
 
             # Get the document:
-            try:
-                # Update the document
-                self.update(doc)
+            while True:
+                try:
+                    # Update the document
+                    self.update(doc)
 
-                error_condition = 0
-                error_document = 0
-            except DREError, msg:
-                # Error reading the document. Will sleep 20 seconds and then
-                # we try again.
-                error_condition += 1
-                if error_condition <= MAX_ERROR_CONDITION:
-                    t = 20.0 * random.random() + 5
-                    logger.warn('DRE error condition #%d on the site claint %d. Sleeping %ds.' % (
-                        error_condition, doc, t) )
-                    time.sleep( t )
-                    continue
-                else:
                     error_condition = 0
-                    error_document += 1
-                    if error_document > MAX_ERROR_DOCUMENT:
-                        logger.critical('#%d failed atempts to get documents. Giving up.' % MAX_ERROR_DOCUMENT)
-                        raise
-                    logger.error('Error in document %d. Going to try the next doc. This is the #%d skipped doc.' % (
-                        doc,error_document ))
-                    self.log_failed_read( doc )
+                    error_document = 0
+                    break
 
-            except Exception, msg:
-                raise
-                break
+                except DREError, msg:
+                    # Error reading the document. Will sleep 20 seconds and then
+                    # we try again.
+                    error_condition += 1
+                    if error_condition <= MAX_ERROR_CONDITION:
+                        t = 20.0 * random.random() + 5
+                        logger.warn('DRE error condition #%d on the site claint %d. Sleeping %ds.' % (
+                            error_condition, doc, t) )
+                        time.sleep( t )
+                        continue
+                    else:
+                        error_condition = 0
+                        error_document += 1
+                        if error_document > MAX_ERROR_DOCUMENT:
+                            logger.critical('#%d failed atempts to get documents. Giving up.' % MAX_ERROR_DOCUMENT)
+                            raise
+                        logger.error('Error in document %d. Going to try the next doc. This is the #%d skipped doc.' % ( doc,error_document ))
+                        self.log_failed_read( doc )
+                        break
+
+                except Exception, msg:
+                    raise
 
             # Wait a bit before trying the next doc
             t = 20.0 * random.random() + 5
