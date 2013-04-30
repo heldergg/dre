@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import markdown
+try:
+    import markdown
+    md = True
+except ImportError:
+    md = False
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
@@ -26,10 +30,13 @@ class Note(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     def html(self):
-        note_html = markdown.markdown(self.txt,
-                safe_mode='remove',
-                output_format='html5',
-                extensions=['tables', 'footnotes'])
+        if md:
+            note_html = markdown.markdown(self.txt,
+                    safe_mode='remove',
+                    output_format='html',
+                    extensions=['tables', 'footnotes'])
+        else:
+            note_html = self.txt
         return '<p>%(txt)s</p><p>(Nota %(public)s)</p>' % {
             'txt': note_html,
             'public': 'p&uacute;blica' if self.public else 'privada' }
