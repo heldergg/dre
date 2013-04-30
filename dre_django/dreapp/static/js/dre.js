@@ -6,16 +6,20 @@
 
 
 function dre_filter_setup() {
-    $("#id_start_date").datepicker({
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true
-    });
-    $("#id_end_date").datepicker({
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true
-    });
+    var datefield=document.createElement("input");
+    datefield.setAttribute("type", "date");
+    if (datefield.type!="date"){ // Test browser for type="date" support
+        $("#id_start_date").datepicker({
+            dateFormat: "yy-mm-dd",
+            changeMonth: true,
+            changeYear: true
+        });
+        $("#id_end_date").datepicker({
+            dateFormat: "yy-mm-dd",
+            changeMonth: true,
+            changeYear: true
+        });
+    };
     $("#id_tags").multiselect()
 };
 

@@ -8,6 +8,11 @@ from django import forms
 # Local imports:
 from tagsapp.models import Tag
 
+class DateInput(forms.widgets.TextInput):
+    '''This widget uses the <input type="date" ... > from html5
+    '''
+    input_type = 'date'
+
 class QueryForm(forms.Form):
     """
     General Xapian Query
@@ -45,17 +50,19 @@ class BookmarksFilterForm(forms.Form):
     query = forms.CharField(
         label = 'Procurar texto',
         required=False,
-        max_length=1000,)    
+        max_length=1000,)
 
     start_date = forms.DateTimeField(
         label = 'Data inicial:',
-        required=False )
+        required=False,
+        widget = DateInput() )
 
     end_date = forms.DateTimeField(
         label = 'Data final:',
-        required=False )
+        required=False,
+        widget = DateInput() )
 
     tags = forms.MultipleChoiceField(
         label = 'Etiquetas:',
         required=False,
-        widget = forms.SelectMultiple(attrs = {'title':'Filtro por tags'}))    
+        widget = forms.SelectMultiple(attrs = {'title':'Filtro por tags'}))
