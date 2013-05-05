@@ -25,14 +25,14 @@ from tagsapp.models import Tag, TaggedItem, del_tagged_item, delete_tag
 from decorators import is_ajax, only_ajax
 
 ##
-# Signals 
+# Signals
 ##
 
 def check_object_deleted_tags(sender, **kwargs):
     '''Each object that gets deleted is checked for association with tags. If
     this associations exist they are deleted'''
 
-    # Get the tagged items list 
+    # Get the tagged items list
     obj = kwargs['instance']
     content_type = ContentType.objects.get_for_model(obj)
     try:
@@ -59,14 +59,14 @@ def get_tag_from_request(request):
 
     user = request.user
     form = TagForm(request.POST)
- 
+
     if form.is_valid():
         name = form.cleaned_data['name']
         if not name.strip():
             # Do not create empty tags
             return None
         try:
-            tag = Tag.objects.get( user=user, name=name ) 
+            tag = Tag.objects.get( user=user, name=name )
         except ObjectDoesNotExist:
             tag = Tag( user=user, name=name )
             tag.save()
@@ -109,7 +109,7 @@ def tag_object(request, ctype_id, object_id ):
 
     context['success'] = True
     context['message'] = 'Etiqueta aplicada!'
-    context['tag_remove_url'] = reverse( 'untag_object', 
+    context['tag_remove_url'] = reverse( 'untag_object',
         kwargs={ 'item_id': tagged_item.id } )
     return context
 
@@ -129,7 +129,7 @@ def untag_object(request, item_id ):
     user = tagged_item.tag.user
 
     if request.user != user:
-        raise PermissionDenied 
+        raise PermissionDenied
 
     del_tagged_item( tagged_item )
 
@@ -142,12 +142,12 @@ def untag_object(request, item_id ):
 def suggest( request ):
     '''Creates the tags suggestions for the autocomplete field.
     '''
-    suggestions = [] 
+    suggestions = []
     q = request.GET.get('term', '')
 
     try:
-        result = Tag.objects.filter( user__exact = request.user, 
-                                     name__icontains = q 
+        result = Tag.objects.filter( user__exact = request.user,
+                                     name__icontains = q
                                    ).order_by('name')
         suggestions = [ tag.name for tag in result ]
     except ObjectDoesNotExist:
@@ -164,10 +164,10 @@ def create_edit( request, tag_edit=None ):
     context = {}
     context['title'] = 'Editar Etiqueta' if tag_edit else 'Criar Etiqueta'
     redirect_to = request.REQUEST.get('next', '')
-    
+
     if request.method == 'POST':
-        form = ( TagEditForm(request.POST, instance=tag_edit) 
-                 if tag_edit else 
+        form = ( TagEditForm(request.POST, instance=tag_edit)
+                 if tag_edit else
                  TagEditForm(request.POST) )
 
         if form.is_valid():
@@ -180,14 +180,14 @@ def create_edit( request, tag_edit=None ):
                 if redirect_to:
                     return redirect( redirect_to )
                 else:
-                    return HttpResponse('<h1>Etiqueta modificada</h1>' 
+                    return HttpResponse('<h1>Etiqueta modificada</h1>'
                                     if tag_edit else
-                                    '<h1>Etiqueta criada</h1>' ) 
+                                    '<h1>Etiqueta criada</h1>' )
             except IntegrityError:
                 form.errors['__all__'] = '<span class="error">A etiqueta está duplicada!</span>'
     else:
         form = TagEditForm(instance=tag_edit) if tag_edit else TagEditForm()
-    
+
     context['form'] = form
     return render_to_response('create.html', context,
                 context_instance=RequestContext(request))
@@ -199,9 +199,9 @@ def create( request ):
 @login_required
 def edit( request, tag_id ):
     tag = get_object_or_404(Tag, id=tag_id)
-    
+
     if tag.user != request.user:
-        raise PermissionDenied 
+        raise PermissionDenied
 
     return create_edit(request, tag )
 
@@ -214,7 +214,7 @@ def delete( request, tag_id ):
     user = tag.user
 
     if request.user != user:
-        raise PermissionDenied 
+        raise PermissionDenied
 
     logger.info('User %s is going to detete tag "%s"' % (tag.user.username, tag.name))
     delete_tag( tag )
@@ -226,12 +226,12 @@ def delete( request, tag_id ):
         return redirect( redirect_to )
     else:
         return HttpResponse('<h1>Etiqueta apagada</h1>')
-    
+
 @login_required
 def display( request ):
     context = {}
 
-    context['tag_list'] = Tag.objects.filter(user__exact = request.user)
-    
+    context['tag_list'] = Tag.objects.filter(user__exact = request.user).order_by('name')
+
     return render_to_response('display.html', context,
                 context_instance=RequestContext(request))
