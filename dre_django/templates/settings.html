@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block header %}
+  <link rel="stylesheet" type="text/css" href="/static/css/settings.css">
+{% endblock %}
+
+{% block body_content %}
+<div id="wrap">
+  <div id="sidebar">
+    <ul class="sidemenu">
+      <li><a href="">Dados Pessoais</a></li>
+      <li><a href="{% url 'password_change' %}">Mudar Palavra-Passe</a></li>
+      <li><a href="{% url 'tag_display' %}">Etiquetas</a></li>
+      <li><a href="">Configurações</a></li>
+  </div>
+  <div id="content_column">
+    {% block content_column %}{% endblock %}
+  </div>
+  <div style="clear:both;"></div>
+</div>
+{% endblock %}

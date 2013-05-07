@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Django settings for dre_django project.
 
 DEBUG = True
@@ -32,7 +34,7 @@ SITE_ID = 1
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', 
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': '',
     }
 }
@@ -46,7 +48,7 @@ DJAPIAN_STEMMING_LANG = 'pt'
 
 TIME_ZONE = 'Europe/Lisbon'
 LANGUAGE_CODE = 'pt-PT'
-USE_I18N = False
+USE_I18N = True
 USE_L10N = False
 
 ##
@@ -69,7 +71,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join( project_dir, 'collected_static' ) 
+STATIC_ROOT = os.path.join( project_dir, 'collected_static' )
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -77,7 +79,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(django_dir, 'static'), 
+    os.path.join(django_dir, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -116,17 +118,17 @@ TEMPLATE_LOADERS = (
 
 
 TEMPLATE_DIRS = (
-    os.path.join( django_dir, 'templates'), 
+    os.path.join( django_dir, 'templates'),
     # Don't forget to use absolute paths, not relative paths.
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth', 
-    'django.core.context_processors.debug', 
-    'django.core.context_processors.i18n', 
-    'django.core.context_processors.media', 
-    'django.core.context_processors.static', 
-    'django.core.context_processors.tz', 
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
 )
@@ -138,7 +140,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 ##
 
 INSTALLED_APPS = (
-    ## 
+    ##
     ## Django apps
     ##
 
@@ -152,10 +154,11 @@ INSTALLED_APPS = (
     ##
     ## DRE apps
     ##
-    
+
     'bookmarksapp',
     'tagsapp',
     'notesapp',
+    'settingsapp',
     'authapp',
     'dreapp',
 
@@ -186,10 +189,10 @@ LOGGING = {
             'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(log_dir, 'dre_django.log'),
-            'maxBytes': 1024*1024*50, # 50MB 
+            'maxBytes': 1024*1024*50, # 50MB
             'backupCount': 5,
             'formatter':'standard',
-        },  
+        },
         'request_handler': {
                 'level':'DEBUG',
                 'class':'logging.handlers.RotatingFileHandler',
@@ -274,6 +277,17 @@ STOPTIME = ((datetime.time(23,50), datetime.time(23,59, 59)),
 # Result config
 RESULTS_PER_PAGE = 10
 ORPHANS = 5
+
+# User settings config
+
+USER_SETTINGS = [
+        { 'name'        : 'profile_public',
+          'description' : 'Quer o seu perfil público por omissão?',
+          'group'       : 'privacy',
+          'value'       : True,
+          'type'        : 'boolean'
+        },
+        ]
 
 ##
 ## LOCAL
