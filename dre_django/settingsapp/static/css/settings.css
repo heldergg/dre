@@ -53,6 +53,15 @@ ul.sidemenu a:active {
 }
 
 ul.sidemenu a:visited {
-    color: #022263;
+    color: #0000ee;
     }
 
+a.highlight {
+  background-color: #022263;
+  color: white !important;
+}
+
+a.highlight:visited {
+  background-color: #022263;
+  color: white !important;
+}

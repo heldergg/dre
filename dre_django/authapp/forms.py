@@ -87,3 +87,17 @@ class RegistrationForm(RecaptchaForm):
 
         return cleaned_data
 
+class PersonalDataForm(forms.Form):
+    '''Change user's personal data
+    '''
+    first_name = forms.CharField(
+        label = 'Primeiro nome',
+        required=False,
+        max_length=30,)
+    last_name = forms.CharField(
+        label = 'Último nome',
+        required=False,
+        max_length=30,)
+    email = forms.EmailField(
+        label = 'Email',
+        required=False, )

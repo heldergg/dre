@@ -4,6 +4,7 @@
 
 # Global imports
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout, REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
@@ -16,7 +17,7 @@ from django.views.decorators.csrf import csrf_protect
 import datetime, time
 
 # Local imports
-from forms import AuthFormPersistent, RegistrationForm
+from forms import AuthFormPersistent, RegistrationForm, PersonalDataForm
 from models import AccessAttempt
 
 @csrf_protect
@@ -142,4 +143,30 @@ def registration(request):
         context['form']=form
 
     return render_to_response('registration.html',
+        context, context_instance=RequestContext(request))
+
+@login_required
+def personal_data(request):
+    '''Personal data'''
+    context = {}
+    context['saved'] = False
+    user = request.user
+
+    if request.method == 'POST':
+        form = PersonalDataForm(request.POST.copy())
+        if form.is_valid():
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
+            context['saved'] = True
+    else:
+        form = PersonalDataForm( {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email } )
+
+    context['form'] = form
+
+    return render_to_response('personal_data.html',
         context, context_instance=RequestContext(request))
