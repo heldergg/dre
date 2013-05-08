@@ -281,11 +281,10 @@ ORPHANS = 5
 # User settings config
 
 USER_SETTINGS = [
-        { 'name'        : 'profile_public',
-          'description' : 'Quer o seu perfil público por omissão?',
-          'group'       : 'privacy',
-          'value'       : True,
-          'type'        : 'boolean'
+        { 'name'    : 'profile_public',
+          'label'   : 'Quer o seu perfil público por omissão?',
+          'default' : True,
+          'type'    : 'boolean'
         },
         ]
 
