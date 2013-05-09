@@ -119,11 +119,11 @@ def bookmark_display( request, userid ):
 
     ##
     # Select the bookmarks
-    results = Document.objects.filter(bookmarks__user__exact = user)
-
     if user != request.user:
-        # Show only public bookmarks from other people
-        results = results.filter(bookmarks__public__exact = True )
+        results = Document.objects.filter( Q(bookmarks__user__exact = user) &
+                                           Q(bookmarks__public__exact = True))
+    else:
+        results = Document.objects.filter(bookmarks__user__exact = user)
 
     if f.is_valid():
         # Filter the results

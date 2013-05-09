@@ -282,10 +282,15 @@ ORPHANS = 5
 
 USER_SETTINGS = [
         { 'name'      : 'profile_public',
-          'label'     : 'Quer o seu perfil público por omissão?',
+          'label'     : 'Quer o seu perfil público?',
           'default'   : True,
           'type'      : 'boolean',
-          'help_text' : 'Determina a visibilidade dos marcadores, notas e etiquetas',
+          'help_text' : '<div style="width:20em;">Determina a visibilidade dos marcadores, notas e etiquetas. <strong>ATENÇÃO</strong>, isto apenas se aplica a novos marcadores, notas e etiquetas.</div>',
+        },
+        { 'name'      : 'newsletter',
+          'label'     : 'Quer receber informações deste site via mail?',
+          'default'   : False,
+          'type'      : 'boolean',
         },
         ]
 

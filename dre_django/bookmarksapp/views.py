@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # Local Imports
 from models import Bookmark
+from settingsapp.models import get_setting
 
 ##
 # Add bookmark
@@ -17,17 +18,18 @@ from models import Bookmark
 
 def get_bookmark( user, obj ):
     content_type = ContentType.objects.get_for_model(obj)
-    try: 
+    try:
         bookmark = Bookmark.objects.get( user = user,
                                          object_id  = obj.id,
-                                         content_type = content_type ) 
-        return bookmark 
+                                         content_type = content_type )
+        return bookmark
     except ObjectDoesNotExist:
-        return False 
+        return False
 
 def add_bookmark( user, obj ):
-    bookmark = Bookmark( user=user, 
-                         content_object=obj) 
+    bookmark = Bookmark( user=user,
+            content_object=obj,
+            public = get_setting(user, 'profile_public'))
     bookmark.save()
     return bookmark
 
@@ -46,7 +48,7 @@ def toggle_bookmark( request, ctype_id, object_id ):
 
     bookmark = get_bookmark( user, obj )
 
-    if bookmark: 
+    if bookmark:
         # Only the owner of the bookmark can delete it
         if bookmark.user != request.user:
             raise Http404
@@ -57,9 +59,9 @@ def toggle_bookmark( request, ctype_id, object_id ):
     if redirect_to:
         return redirect(redirect_to)
     else:
-        return HttpResponse('<h1>Bookmark toggled</h1>') 
+        return HttpResponse('<h1>Bookmark toggled</h1>')
 
- 
+
 @login_required
 def toggle_public( request, ctype_id, object_id ):
     user = request.user
@@ -74,10 +76,10 @@ def toggle_public( request, ctype_id, object_id ):
 
     bookmark = get_bookmark( user, obj )
 
-    if not bookmark: 
+    if not bookmark:
         raise Http404
     if bookmark.user != request.user:
-        # Only the owner of the bookmark can change its status 
+        # Only the owner of the bookmark can change its status
         raise Http404
 
     # Toggle the public flag
@@ -87,4 +89,4 @@ def toggle_public( request, ctype_id, object_id ):
     if redirect_to:
         return redirect(redirect_to)
     else:
-        return HttpResponse('<h1>Bookmark status toggled</h1>') 
+        return HttpResponse('<h1>Bookmark status toggled</h1>')

@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Local imports:
 from tagsapp.forms import TagEditForm, TagForm
 from tagsapp.models import Tag, TaggedItem, del_tagged_item, delete_tag
+from settingsapp.models import get_setting
 
 from decorators import is_ajax, only_ajax
 
@@ -68,7 +69,9 @@ def get_tag_from_request(request):
         try:
             tag = Tag.objects.get( user=user, name=name )
         except ObjectDoesNotExist:
-            tag = Tag( user=user, name=name )
+            tag = Tag( user=user,
+                       name=name,
+                       public = get_setting(user, 'profile_public'))
             tag.save()
             logger.info('User %s created tag "%s"' % (tag.user.username, tag.name))
     else:

@@ -31,7 +31,7 @@
     </div>
     <div id="header_right">
       {% if user.is_authenticated %}
-      <a href="{% url 'password_change' %}">Perfil ({{ user.username }})</a> |
+      <a href="{% url 'personal_data' %}">Perfil ({{ user.username }})</a> |
       {% endif %}
       <a href="{% url 'about' %}">Acerca</a><!-- | 
       <a class="rss_link" href="{% url 'not_implemented' %}">RSS</a> --> |
