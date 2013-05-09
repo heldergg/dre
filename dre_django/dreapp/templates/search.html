@@ -15,7 +15,6 @@
   <form method="GET" action="">
       <p>
         <input id="id_query_string" type="search" name="q" value="{{ form.cleaned_data.q }}" maxlength="1000" placeholder="Escreva aqui a sua busca" />
-        
       </p>
       <p><button class="big_center"  style="width:8em" type="submit" value="Submit">Busca</button></p>
   </form>
@@ -24,6 +23,16 @@
 {% if page.object_list %}
 <div class="content-text">
   {% include "results.html" %}
+</div>
+{% else %}
+<div class="information">
+  <p>Para procurar diplomas com um determinado número (por exemplo "66-B/2012"), 
+  é mais eficaz filtrar usando:
+  <div class="code">
+    <p><a href="/?q=número%3A66-B%2F2012"><strong>número</strong>:66-B/2012</a></p>
+  </div>
+  <p>Para saber acerca de mais opções de procura, não deixe de ler a nossa
+  <a href="{% url 'help' %}">ajuda</a>.
 </div>
 {% endif %}
 

@@ -233,3 +233,27 @@ a.user {
   display: none;
 }
 
+/***************/
+/* Information */
+/***************/
+
+.information {
+  background-image: url('/static/img/light_bulb.png');
+  background-repeat: no-repeat;
+  background-position: 1em center; 
+  margin: 3em auto 0 auto;
+  padding: 1em 1em 1em 130px;
+  width: 40em;
+  min-height: 130px;
+  background-color: whitesmoke;
+  border-radius: 2em;
+  opacity: 0.8;
+}
+
+.code a {
+  text-decoration: none;
+}
+
+.code a:visited {
+  color: #022263;
+}
