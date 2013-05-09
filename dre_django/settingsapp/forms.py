@@ -32,22 +32,25 @@ class SettingsForm(forms.Form):
                 self.fields[setting['name']] = forms.BooleanField(
                         label = setting['label'],
                         required = False,
+                        help_text = setting.get( 'help_text', None ),
                         )
                 continue
             elif setting['type'].lower() == 'integer':
                 self.fields[setting['name']] = forms.IntegerField(
                         label = setting['label'],
                         required = False,
-                        max_value = getattr( setting, 'max_value', None ),
-                        min_value = getattr( setting, 'min_value', None ),
+                        max_value = setting.get( 'max_value', None ),
+                        min_value = setting.get( 'min_value', None ),
+                        help_text = setting.get( 'help_text', None ),
                         )
                 continue
             elif setting['type'].lower() == 'char':
                 self.fields[setting['name']] = forms.CharField(
                         label = setting['label'],
                         required = False,
-                        max_length = getattr( setting, 'max_length', None ),
-                        min_length = getattr( setting, 'min_length', None ),
+                        max_length = setting.get( 'max_length', None ),
+                        min_length = setting.get( 'min_length', None ),
+                        help_text  = setting.get( 'help_text',  None ),
                         )
                 continue
 

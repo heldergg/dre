@@ -281,10 +281,11 @@ ORPHANS = 5
 # User settings config
 
 USER_SETTINGS = [
-        { 'name'    : 'profile_public',
-          'label'   : 'Quer o seu perfil público por omissão?',
-          'default' : True,
-          'type'    : 'boolean'
+        { 'name'      : 'profile_public',
+          'label'     : 'Quer o seu perfil público por omissão?',
+          'default'   : True,
+          'type'      : 'boolean',
+          'help_text' : 'Determina a visibilidade dos marcadores, notas e etiquetas',
         },
         ]
 
