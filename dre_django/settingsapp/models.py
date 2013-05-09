@@ -2,7 +2,8 @@
 
 # Global imports
 
-import pickle
+import pickle as serialize
+import base64
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -25,7 +26,7 @@ class Settings(models.Model):
 def get_setting( user, name ):
     try:
         value = Settings.objects.get( user = user, name = name ).value
-        value = pickle.loads(value)
+        value = serialize.loads(base64.b64decode(value))
     except ObjectDoesNotExist:
         settings = dict( ( (xi['name'], xi) for xi in USER_SETTINGS ) )
         if name in settings:
@@ -35,7 +36,7 @@ def get_setting( user, name ):
     return value
 
 def set_setting( user, name, value ):
-    value = pickle.dumps(value)
+    value = base64.b64encode(serialize.dumps(value))
     try:
         setting = Settings.objects.get( user = user, name = name )
         setting.value = value
