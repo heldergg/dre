@@ -16,7 +16,8 @@
 
 <div class="center_text">
 {% if auth_error %}
-<p class="warning">O seu nome e/ou passwords estão errados. Por favor tente de novo.</p>
+<p class="warning">O seu nome e/ou palavra-passe estão errados. Por favor tente de novo.<br>
+Clique <a href="{% url 'password_reset' %}">aqui</a> para recuperar a sua palavra-passe.</p>
 {% endif %}
 <form method="post" action="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
 <table>
@@ -25,7 +26,7 @@
     <td>{{ form.username }}</td>
   </tr>
   <tr>
-    <th><label for="id_password">Senha:</label></th>
+    <th><label for="id_password">Palavra-Passe:</label></th>
     <td>{{ form.password }}</td>
   </tr>
   <tr>
