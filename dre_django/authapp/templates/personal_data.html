@@ -1,9 +1,13 @@
 {% extends "settings.html" %}
+{% load auth %}
 
 {% block title %}Dados pessoais{% endblock %}
 
 {% block content_column %}
     <h1>Dados Pessoais</h1>
+    
+    <div class="center_text"><img src='{% avatar user.email '128' %}' height="128" width="128" style="margin:auto"></div>
+
     <form method="post" action="{% url 'personal_data' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
       <table>
         {{ form }}

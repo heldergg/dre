@@ -1,4 +1,5 @@
 {% load url from future %} <!doctype html>
+{% load auth %}
 
 <html lang="pt">
 <head>
@@ -31,6 +32,11 @@
     </div>
     <div id="header_right">
       {% if user.is_authenticated %}
+      <span class="noback">
+      <a href="http://gravatar.com/{% gravatar user.email %}/"> 
+        <img src='{% avatar user.email '32' %}' height="32" width="32">
+      </a>
+      </span>
       <a href="{% url 'personal_data' %}">Perfil ({{ user.username }})</a> |
       {% endif %}
       <a href="{% url 'about' %}">Acerca</a><!-- | 
