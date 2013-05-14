@@ -180,7 +180,7 @@ class Document(models.Model):
         html = re.sub( r'((Decreto-Lei|Lei)(?: | n.º )([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))',
                        r'<a href="/?q=tipo:\2 número:\3">\1</a>', html)
 
-        return html
+        return unicode(html, 'utf-8', 'ignore')
 
     def plain_txt(self):
         '''Converts the plain_pdf pdf to txt'''
