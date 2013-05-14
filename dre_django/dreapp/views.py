@@ -18,12 +18,8 @@ import dreapp.index
 from bookmarksapp.models import Bookmark
 from tagsapp.models import Tag
 from dreapp.forms import QueryForm, BookmarksFilterForm
-from dreapp.models import Document, doc_type
+from dreapp.models import Document, doc_ref_re
 
-# Query optimization
-doc_type = '|'.join([ xi.lower().replace(' ','\s+') for xi in doc_type ])
-query_re = re.compile( ur'((%s)(?:\s+|\s+n\.º\s+|\s+n\.\s+|\s+n\s+)([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))' % doc_type,
-            flags= re.UNICODE)
 
 def search(request):
     context = {}
@@ -51,14 +47,22 @@ def search(request):
 
         # Query optimization
         if mquery == 'T':
-            mod_query = query_re.sub( ur'tipo:\2 número:\3', query.lower())
-            if mod_query != query:
+            # Try to optimize the query
+            mod_query = doc_ref_re.sub( ur'tipo:\2 número:\3', query.lower())
+
+            if mod_query.lower() == query.lower():
+                # No optimization
+                results = indexer.search(query)
+            else:
+                # The query string was modified
                 results = indexer.search(mod_query)
-                if not results.count():
-                    context['query_modified'] = False
-                    results = indexer.search(query)
+
+                if results.count(): # Did we get results?
+                    # Yap
+                    context['query_modified'] = query
                 else:
-                    context['query_modified'] = urllib.quote(query)
+                    # Nope, will try to get results with the user's query string
+                    results = indexer.search(query)
         else:
             results = indexer.search(query)
 

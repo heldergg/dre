@@ -85,6 +85,8 @@ doc_type = (
     u'RESOLUÇÃO DA ASSEMBLEIA NACIONAL',
 )
 
+doc_type_str = '|'.join([ xi.lower().replace(' ','\s+') for xi in doc_type ])
+doc_ref_re = re.compile( ur'((%s)(?:\s+|\s+n\.º\s+|\s+n\.\s+|\s+n\s+)([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))' % doc_type_str, flags= re.UNICODE)
 
 class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
