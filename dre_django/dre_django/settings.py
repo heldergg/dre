@@ -177,45 +177,59 @@ INSTALLED_APPS = (
 log_dir = os.path.join( project_dir, 'log' )
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s',
-        },
-    },
-    'handlers': {
-        'default': {
-            'level':'INFO',
-            'class':'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(log_dir, 'dre_django.log'),
-            'maxBytes': 1024*1024*50, # 50MB
-            'backupCount': 5,
-            'formatter':'standard',
-        },
-        'request_handler': {
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters': {
+            'standard': {
+                'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+                },
+            },
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+                }
+            },
+        'handlers': {
+            'default': {
+                'level':'INFO',
+                'class':'logging.handlers.RotatingFileHandler',
+                'filename': os.path.join(log_dir, 'dre_django.log'),
+                'maxBytes': 1024*1024*50, # 50MB
+                'backupCount': 5,
+                'formatter':'standard',
+                },
+            'request_handler': {
                 'level':'DEBUG',
                 'class':'logging.handlers.RotatingFileHandler',
                 'filename': os.path.join(log_dir, 'django_request.log'),
                 'maxBytes': 1024*1024*5, # 5 MB
                 'backupCount': 5,
                 'formatter':'standard',
-        },
-    },
-    'loggers': {
-
-        '': {
-            'handlers': ['default'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-        'django.request': {
-            'handlers': ['request_handler'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
-    }
-}
+                },
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+                },
+            },
+        'loggers': {
+            '': {
+                'handlers': ['default'],
+                'level': 'DEBUG',
+                'propagate': True
+                },
+            'django.request': {
+                'handlers': ['request_handler'],
+                'level': 'DEBUG',
+                'propagate': False
+                },
+            'django.request': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': True,
+                }
+            }
+        }
 
 ##
 ## Authentication and sessions
