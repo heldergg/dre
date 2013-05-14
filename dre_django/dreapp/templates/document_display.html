@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% load bookmarks %}
+{% load notes %}
 
 {% block title %}Diários da República{% endblock %}
 
 {% block header %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
+  {% if user.is_authenticated %}
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script>
+    var STATIC_URL="{{ STATIC_URL }}";
+    var is_owner = true;
+  </script>
+  <script src="{{ STATIC_URL }}js/notes.js"></script>
+  {% endif %}
 {% endblock %}
 
 {% block body_content %}
@@ -28,6 +38,17 @@
 <div class="result_notes">
 {{ document.notes }}
 </div>
+
+{% if user.is_authenticated and show_user_notes %}
+<h2>Notas do utilizador: {{ user.username }}</h2>
+    <div class="decoration">
+      <div class="deco_toolbar">
+        <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png" title="Editar nota" alt="Editar nota"></span>
+      </div> <!-- deco_toolbar -->
+      {% show_note document user %}
+      {% create_note document user %}
+    </div> <!-- decoration -->
+{% endif %}
 
 {% if document.plain_text %}
 <h2>Texto do documento</h2>

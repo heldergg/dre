@@ -270,3 +270,8 @@ a.user {
 .code a:visited {
   color: #022263;
 }
+
+
+/* Mix */
+
+.hidden {display: none;}

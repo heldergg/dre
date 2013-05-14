@@ -292,6 +292,12 @@ USER_SETTINGS = [
           'default'   : False,
           'type'      : 'boolean',
         },
+        { 'name'      : 'show_user_notes',
+          'label'     : 'Quer visualizar as suas notas?',
+          'default'   : True,
+          'type'      : 'boolean',
+          'help_text' : '<div style="width:20em;">Quando visualiza um documento pode associar-lhe notas se tiver esta opção ligada.</div>',
+        },
         ]
 
 ##

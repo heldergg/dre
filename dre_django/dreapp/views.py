@@ -19,6 +19,7 @@ from bookmarksapp.models import Bookmark
 from tagsapp.models import Tag
 from dreapp.forms import QueryForm, BookmarksFilterForm
 from dreapp.models import Document, doc_ref_re
+from settingsapp.models import get_setting
 
 abreviation_list = (
     ('dl', 'decreto-lei'),
@@ -147,6 +148,9 @@ def document_display( request, docid ):
     document = get_object_or_404(Document, pk=docid )
 
     context['document'] = document
+
+    if request.user.is_authenticated():
+        context['show_user_notes'] = get_setting(request.user, 'show_user_notes')
 
     return render_to_response('document_display.html', context,
                 context_instance=RequestContext(request))
