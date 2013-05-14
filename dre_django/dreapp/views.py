@@ -19,6 +19,7 @@ from dreapp.models import Document
 
 def search(request):
     context = {}
+    context['success'] = True
 
     query = ''
     results = []
@@ -37,6 +38,8 @@ def search(request):
         indexer = Document.indexer
         results = indexer.search(query)
         context['result_count'] = results.count()
+        if not context['result_count']:
+            context['success'] = False
     else:
         form = QueryForm()
 

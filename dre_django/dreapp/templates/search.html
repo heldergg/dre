@@ -25,6 +25,11 @@
   {% include "results.html" %}
 </div>
 {% else %}
+{% if not success %}
+<div class="center_text error">
+  <p>Não consegui encontrar resultados com: "{{ form.cleaned_data.q }}"</p>
+</div> 
+{% endif %}
 <div class="information">
   <p>Para procurar diplomas com um determinado número e tipo (por exemplo "Lei 66-B/2012"), 
   é mais eficaz filtrar usando:
