@@ -22,7 +22,8 @@ from dreapp.models import Document, doc_ref_re
 from settingsapp.models import get_setting
 
 abreviation_list = (
-    ('dl', 'decreto-lei'),
+    (r'dl', 'decreto-lei'),
+    (r'd\.l\.', 'decreto-lei'),
 )
 
 def search(request):
