@@ -20,6 +20,9 @@ from tagsapp.models import Tag
 from dreapp.forms import QueryForm, BookmarksFilterForm
 from dreapp.models import Document, doc_ref_re
 
+abreviation_list = (
+    ('dl', 'decreto-lei'),
+)
 
 def search(request):
     context = {}
@@ -47,8 +50,15 @@ def search(request):
 
         # Query optimization
         if mquery == 'T':
+            query = query.lower()
+
+            # Expand normal abreviations
+            for abr, expanded in abreviation_list:
+                query = re.sub( r'(?:^|\s+)' + abr + r'(?:$|\s+)', ' ' + expanded + ' ', query)
+            query = re.sub(r'\s\s+', ' ', query).strip()
+
             # Try to optimize the query
-            mod_query = doc_ref_re.sub( ur'tipo:\2 número:\3', query.lower())
+            mod_query = doc_ref_re.sub( ur'tipo:"\2" número:\3', query.lower())
 
             if mod_query.lower() == query.lower():
                 # No optimization
