@@ -2,6 +2,9 @@
 
 # Global Imports:
 import datetime
+import re
+import urllib
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -15,11 +18,17 @@ import dreapp.index
 from bookmarksapp.models import Bookmark
 from tagsapp.models import Tag
 from dreapp.forms import QueryForm, BookmarksFilterForm
-from dreapp.models import Document
+from dreapp.models import Document, doc_type
+
+# Query optimization
+doc_type = '|'.join([ xi.lower().replace(' ','\s+') for xi in doc_type ])
+query_re = re.compile( ur'((%s)(?:\s+|\s+n\.º\s+|\s+n\.\s+|\s+n\s+)([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))' % doc_type,
+            flags= re.UNICODE)
 
 def search(request):
     context = {}
     context['success'] = True
+    context['query_modified'] = False
 
     query = ''
     results = []
@@ -33,10 +42,26 @@ def search(request):
     except:
         page = 1
 
+    # Try to optimize the user's query?
+    mquery = request.GET.get('m','T')
+
     if form.is_valid():
         query = form.cleaned_data['q']
         indexer = Document.indexer
-        results = indexer.search(query)
+
+        # Query optimization
+        if mquery == 'T':
+            mod_query = query_re.sub( ur'tipo:\2 número:\3', query.lower())
+            if mod_query != query:
+                results = indexer.search(mod_query)
+                if not results.count():
+                    context['query_modified'] = False
+                    results = indexer.search(query)
+                else:
+                    context['query_modified'] = urllib.quote(query)
+        else:
+            results = indexer.search(query)
+
         context['result_count'] = results.count()
         if not context['result_count']:
             context['success'] = False

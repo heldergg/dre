@@ -22,6 +22,10 @@
 
 {% if page.object_list %}
 <div class="content-text">
+  {% if query_modified %}
+  <p style="color:blue">Os resultados seguintes são produto de uma busca optimizada. Para ver os resultados de busca não optimizados, clique <a href="/?q={{ query_modified }}&m=F">aqui</a> 
+  {% endif %}
+
   {% include "results.html" %}
 </div>
 {% else %}
