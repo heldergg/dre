@@ -46,7 +46,7 @@
   <div class="result_notes">
     <div class="decoration">
       <div class="deco_toolbar result_notes deco_tb_inlaid noprint">
-        <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png" title="Editar nota" alt="Editar nota" style="margin:-1em 0 -0.3em 0;"></span> - {{ user.first_name }} {{ user.last_name }} - {{ user.username }}
+        <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png" title="Editar nota" alt="Editar nota" style="margin:-1em 0 -0.3em 0;"></span> &nbsp;{% if user.first_name %}{{ user.first_name }} {{ user.last_name }} ({{ user.username }}){% else %}{{ user.username }}{% endif %}
       </div> <!-- deco_toolbar -->
       {% show_note document user %}
       {% create_note document user %}
@@ -86,7 +86,7 @@
         <div class="deco_toolbar result_notes deco_tb_inlaid noprint">
           <a href="http://gravatar.com/{% gravatar note.user.email %}/">
             <img src='{% avatar note.user.email '48' %}' height="48" width="48"></a>
-          &nbsp;{% if note.user.first_name %}{{ note.user.first_name }} {{ note.user.last_name }} - {% endif %}{{ note.user.username }}
+          &nbsp;{% if note.user.first_name %}{{ note.user.first_name }} {{ note.user.last_name }} ({{ note.user.username }}){% else %}{{ note.user.username }}{% endif %}
           - {{ note.timestamp|date:"Y-m-d H:i" }}
         </div> <!-- deco_toolbar -->
         <div class="user_notes">
