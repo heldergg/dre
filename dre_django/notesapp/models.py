@@ -37,9 +37,8 @@ class Note(models.Model):
                     extensions=['tables', 'footnotes'])
         else:
             note_html = self.txt
-        return '<p>%(txt)s</p><p>(Nota %(public)s)</p>' % {
-            'txt': note_html,
-            'public': 'p&uacute;blica' if self.public else 'privada' }
+
+        return note_html
 
     def __unicode__(self):
         return 'Note: %s - %s - model: %s' % (self.user.username,
