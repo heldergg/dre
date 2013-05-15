@@ -14,10 +14,10 @@ The following notes are defined:
 # Global imports
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django import template
 from django.middleware import csrf
-from django.core.exceptions import ObjectDoesNotExist
 
 register = template.Library()
 
@@ -114,6 +114,41 @@ class ShowNotesNode(NoteNode):
         except template.VariableDoesNotExist:
             return ''
 
+class ShowPublicNotesNode(template.Node):
+    def __init__(self, object_name):
+        self.obj = template.Variable(object_name)
+
+    def resolve_vars(self, context):
+        obj = self.obj.resolve(context)
+        content_type = ContentType.objects.get_for_model(obj)
+        return obj, content_type
+
+    def render(self, context):
+        try:
+            obj, content_type = self.resolve_vars(context)
+            remote_user = context['request'].user
+
+            if remote_user.is_authenticated():
+                note_list = Note.objects.filter( content_type__exact=content_type,
+                                             object_id__exact=obj.id
+                                           ).filter( public__exact=True
+                                           ).exclude(user__exact = remote_user
+                                           ).order_by('timestamp')
+            else:
+                note_list = Note.objects.filter( content_type__exact=content_type,
+                                             object_id__exact=obj.id
+                                           ).filter( public__exact=True
+                                           ).order_by('timestamp')
+
+            # This sets the context vairable 'note_list' on the template
+            context['note_list'] = note_list
+            return ''
+
+        except template.VariableDoesNotExist:
+            context['note_list'] = []
+            return ''
+
+
 
 @register.tag(name="create_note")
 def do_note_form(parser, token):
@@ -132,3 +167,13 @@ def do_show_notes(parser, token):
         raise template.TemplateSyntaxError, "%r note requires exactly two arguments" % token.contents.split()[0]
 
     return ShowNotesNode(object_name, user)
+
+@register.tag(name="show_public_notes")
+def do_show_public_notes(parser, token):
+    user = None
+    try:
+        note_name, object_name = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError, "%r this tag must have only one argument" % token.contents.split()[0]
+
+    return ShowPublicNotesNode(object_name)
