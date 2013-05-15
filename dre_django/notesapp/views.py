@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Global imports:
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
@@ -31,7 +33,7 @@ def check_object_deleted_notes(sender, **kwargs):
         # The django session objects have no id attribute
         return
 
-    # Delete the notes 
+    # Delete the notes
     for note in note_list:
         note.delete()
 
@@ -57,16 +59,16 @@ def manage(request, ctype_id, object_id ):
         context['message'] = 'O objecto para aplicar a nota já não existe.'
         return context
 
-    # Check if there's a note associated to the object    
+    # Check if there's a note associated to the object
     try:
-        note = Note.objects.get( user = request.user, 
+        note = Note.objects.get( user = request.user,
                                  content_type = content_type,
                                  object_id = obj.id )
     except ObjectDoesNotExist:
         note = None
 
     # Process the form
-    form = NoteForm(request.POST) 
+    form = NoteForm(request.POST)
     if form.is_valid():
         txt = form.cleaned_data['txt']
         public = form.cleaned_data['public']
@@ -78,13 +80,14 @@ def manage(request, ctype_id, object_id ):
             # Delete the note:
             note.delete()
             context['success'] = True
-            context['html'] = '' 
+            context['html'] = ''
             context['message'] = 'Nota apagada'
             return context
 
         if note:
             note.txt = txt
             note.public = public
+            note.timestamp = datetime.datetime.now()
             context['message'] = 'Nota editada'
         else:
             note = Note( user = request.user,
@@ -102,4 +105,4 @@ def manage(request, ctype_id, object_id ):
     if note:
         context['html'] = note.html()
     return context
-    
+
