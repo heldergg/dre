@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load bookmarks %}
 {% load notes %}
+{% load auth %}
 
 {% block title %}Diários da República{% endblock %}
 
@@ -28,13 +29,14 @@
 <ul>
   <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
   <li><strong>Fonte</strong>: {{ document.source }}
+  <li><strong>ID no dre.pt</strong>: {{ document.claint }}
   {% if document.dre_key %}<li><strong>Chave DRE</strong>: {{ document.dre_key }}{% endif %}
   {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
   {% if document.processing %}<li><strong style="color:red;">Em tratamento</strong>{% endif %}
 </ul>
 
-<h2>Notas</h2>
+<h2>Sumário</h2>
 <div class="result_notes">
 {{ document.notes }}
 </div>
@@ -63,10 +65,8 @@
     <p><a href="{{ document.plain_text }}"><img src="{{ STATIC_URL }}/img/pdf.png"> Versão em PDF deste documento</a>
   </div>
 </div>
-<p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
-leitura do Diário da República correspondente. Não nos responsabilizamos por
-quaisquer incorrecções produzidas na transcrição do original para este formato.
 {% endif %}
+
 {% if document.dre_pdf %}
 <div class="noprint">
 <p>Pode consultar o DR original <a href="{{ document.dre_pdf }}">aqui</a>.
@@ -76,6 +76,32 @@ quaisquer incorrecções produzidas na transcrição do original para este forma
 <p>{{ document.dre_pdf }}
 </div>
 {% endif %}
+
+{% show_public_notes document %}
+{% if note_list %}
+  <h2>Notas dos utilizadores</h2>
+  {% for note in note_list %}
+    <div class="result_notes" style="margin-top:2em;">
+      <div class="decoration">
+        <div class="deco_toolbar result_notes deco_tb_inlaid noprint">
+          <a href="http://gravatar.com/{% gravatar note.user.email %}/">
+            <img src='{% avatar note.user.email '48' %}' height="48" width="48"></a>
+          &nbsp;{% if note.user.first_name %}{{ note.user.first_name }} {{ note.user.last_name }} - {% endif %}{{ note.user.username }}
+          - {{ note.timestamp|date:"Y-m-d H:i" }}
+        </div> <!-- deco_toolbar -->
+        <div class="user_notes">
+        {{ note.html|safe }}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<h2>Aviso</h2>
+
+<p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
+leitura do Diário da República correspondente. Não nos responsabilizamos por
+quaisquer incorrecções produzidas na transcrição do original para este formato.
 
 </div>
 {% endblock %}
