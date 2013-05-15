@@ -205,7 +205,11 @@ a.user {
 .deco_toolbar {
   margin-top: 0.3em;
   margin-bottom: 0.3em;
+}
 
+.deco_tb_inlaid {
+  padding:0.5em 0 0.5em 0.5em;
+  margin:-1.5em 0 0 0;
 }
 
 /********/

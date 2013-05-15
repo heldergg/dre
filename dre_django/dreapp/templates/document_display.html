@@ -38,16 +38,18 @@
 <div class="result_notes">
 {{ document.notes }}
 </div>
-
 {% if user.is_authenticated and show_user_notes %}
-<h2>Notas do utilizador: {{ user.username }}</h2>
+
+<h2>Notas do utilizador: </h2>
+  <div class="result_notes">
     <div class="decoration">
-      <div class="deco_toolbar">
-        <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png" title="Editar nota" alt="Editar nota"></span>
+      <div class="deco_toolbar result_notes deco_tb_inlaid noprint">
+        <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png" title="Editar nota" alt="Editar nota" style="margin:-1em 0 -0.3em 0;"></span> - {{ user.first_name }} {{ user.last_name }} - {{ user.username }}
       </div> <!-- deco_toolbar -->
       {% show_note document user %}
       {% create_note document user %}
     </div> <!-- decoration -->
+  </div>
 {% endif %}
 
 {% if document.plain_text %}

@@ -75,7 +75,7 @@ class NoteFormNode(NoteNode):
                                  'object_id': obj.id })
 
             form = '''
-            <div class="add_note">
+            <div class="add_note noprint">
             <form method="POST" action="%(form_view)s">
               <input type='hidden' name='csrfmiddlewaretoken' value='%(csrf)s' />
               <textarea class="note_name_input" type="text" name="txt" maxlength="20480">%(note)s</textarea>
