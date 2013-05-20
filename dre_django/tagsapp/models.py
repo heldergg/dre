@@ -16,7 +16,7 @@ class TagError(Exception):
     pass
 
 ##
-# Tags 
+# Tags
 ##
 
 class TagManager(models.Manager):
@@ -47,10 +47,10 @@ class Tag(models.Model):
                                        self.name)
 
     def style(self):
-        return 'color:#%x;background:#%x;' % (self.color, self.background)
+        return 'color:#%06x;background:#%06x;' % (self.color, self.background)
 
     class Meta:
-        # Will raise an IntegrityError exception in the user tries to create 
+        # Will raise an IntegrityError exception in the user tries to create
         # two tags with the same name
         unique_together = ('user', 'name')
 
@@ -58,7 +58,7 @@ class Tag(models.Model):
 
 @commit_on_success
 def delete_tag(tag):
-    # Get the objects where the tag is used 
+    # Get the objects where the tag is used
     tagged_list = TaggedItem.objects.filter( tag__exact = tag )
     for obj in tagged_list:
         # delete t
@@ -72,7 +72,7 @@ def delete_tag(tag):
 # Connect the tags to the objects
 ##
 
-class TaggedItem(models.Model): 
+class TaggedItem(models.Model):
     tag = models.ForeignKey(Tag)
 
     # Object:
@@ -90,7 +90,7 @@ class TaggedItem(models.Model):
 
 
 @commit_on_success
-def del_tagged_item( tagged_item ): 
+def del_tagged_item( tagged_item ):
     # Detele the tag from the item
     tag = tagged_item.tag
     tagged_item.delete()
