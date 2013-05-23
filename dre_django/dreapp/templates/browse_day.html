@@ -5,11 +5,12 @@
 {% block header %}
   <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/start/jquery-ui.css">
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
-  
   <script type="text/javascript">
     var default_date = new Date( {{ query_date }} );
   </script>
   <script type="text/javascript" src="{{ STATIC_URL }}/js/browse_day.js"></script>
+  <meta name="keywords" content="documento, navegar por data">
+  <meta name="description" content="Consultar os diplomas publicados numa dada data.">
 {% endblock %}
 
 {% block body_content %}
