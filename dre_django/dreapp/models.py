@@ -85,8 +85,9 @@ doc_type = (
     u'RESOLUÇÃO DA ASSEMBLEIA NACIONAL',
 )
 
-doc_type_str = '|'.join([ xi.lower().replace(' ','(?:\s+|-)') for xi in doc_type ])
-doc_ref_re = re.compile( ur'((%s)(?:\s+|\s+n\.º\s+|\s+n\.\s+|\s+n\s+|\s+nº\s+)([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))' % doc_type_str, flags= re.UNICODE)
+doc_type_str = '|'.join([ xi.lower().replace(' ','(?:\s+|-)') for xi in sorted(doc_type, key=len, reverse=True) ])
+
+doc_ref_re = re.compile( ur'(?P<doc_type>%s)(?:\s+número\s+|\s+n\.º\s+|\s+n\.\s+|\s+nº\s+|\s+n\s+|\s+)?(?P<number>[/\-a-zA-Z0-9]+)' % doc_type_str, flags= re.UNICODE)
 
 class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id

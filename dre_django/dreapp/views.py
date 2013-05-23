@@ -22,8 +22,13 @@ from dreapp.models import Document, doc_ref_re
 from settingsapp.models import get_setting
 
 abreviation_list = (
-    (r'dl', 'decreto-lei'),
-    (r'd\.l\.', 'decreto-lei'),
+    # Use lower case abreviations and expansions
+    # ( <abreviation>, <expansion> )
+    (r'd\.?l\.?', 'decreto-lei'),
+    (r'dec\.?\s*lei\.?', 'decreto-lei'),
+    (r'd\.?\s*lei\.?', 'decreto-lei'),
+    (r'dec\s*lei', 'decreto-lei'),
+    (r'decreto\s*lei', 'decreto-lei'),
 )
 
 def search(request):
@@ -57,10 +62,11 @@ def search(request):
             # Expand normal abreviations
             for abr, expanded in abreviation_list:
                 query = re.sub( r'(?:^|\s+)' + abr + r'(?:$|\s+)', ' ' + expanded + ' ', query)
+            # Remove extra spaces:
             query = re.sub(r'\s\s+', ' ', query).strip()
 
             # Try to optimize the query
-            mod_query = doc_ref_re.sub( ur'tipo:"\2" número:\3', query.lower())
+            mod_query = doc_ref_re.sub( ur'tipo:"\1" número:\2', query.lower())
 
             if mod_query.lower() == query.lower():
                 # No optimization
