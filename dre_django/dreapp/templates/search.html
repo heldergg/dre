@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load tips %}
 
 {% block title %}Diários da República - Procura de Documentos{% endblock %}
 
 {% block header %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tips.css">
   <meta name="keywords" content="procura,diplomas,documentos,diário da república">
   <meta name="description" content="Procura de diplomas no Diário da República Electrónico">
 {% endblock %}
@@ -36,15 +38,7 @@
   <p>Não consegui encontrar resultados com: "{{ form.cleaned_data.q }}"</p>
 </div> 
 {% endif %}
-<div class="information">
-  <p>Para procurar diplomas com um determinado número e tipo (por exemplo "Lei 66-B/2012"), 
-  é mais eficaz filtrar usando:
-  <div class="code">
-    <p><a href="/?q=tipo%3Alei+número%3A66-B%2F2012"><strong>tipo:</strong>lei <strong>número</strong>:66-B/2012</a></p>
-  </div>
-  <p>Para saber acerca de mais opções de procura, não deixe de ler a nossa
-  <a href="{% url 'help' %}">ajuda</a>.
-</div>
+{% show_tips %}
 {% endif %}
 
 {% endblock %}

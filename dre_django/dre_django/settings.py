@@ -158,6 +158,7 @@ INSTALLED_APPS = (
     'bookmarksapp',
     'tagsapp',
     'notesapp',
+    'tipsapp',
     'settingsapp',
     'authapp',
     'dreapp',
@@ -312,7 +313,62 @@ USER_SETTINGS = [
           'type'      : 'boolean',
           'help_text' : '<div style="width:20em;">Quando visualiza um documento pode associar-lhe notas se tiver esta opção ligada.</div>',
         },
+        { 'name'      : 'show_tips',
+          'label'     : 'Quer visualizar as dicas?',
+          'default'   : True,
+          'type'      : 'boolean',
+        },
         ]
+
+# Tips:
+
+TIPS = [
+    # Search tips:
+    '''
+    <p>O sistema de procura tenta optimizar a busca por forma a dar-lhe os
+    melhores resultados. No entanto pode refinar a sua busca
+    utilizando modificadores de busca. Por exempo para procurar diplomas com um
+    determinado número e tipo (por exemplo "Lei 66-B/2012"), pode filtrar usando:
+    <div class="code">
+    <p><a href="/?q=tipo:lei+número:66-B/2012"><strong>tipo:</strong>lei <strong>número</strong>:66-B/2012</a></p>
+    </div>
+    <p>Para saber acerca de mais opções de procura, não deixe de ler a nossa
+    <a href="/help">ajuda</a>.
+    ''',
+    '''
+    <p>O sistema de buscas admite alguns modificadores que, se utilizados
+    correctamente, podem produzir melhores resultados.
+
+    <p>Por exemplo, se quiser
+    visualizar uma lista de diplomas publicados num dado dia pode usar o
+    modificador <strong>data</strong>. Os diplomas constantes na
+    base de dados do dia 17 de Maio de 1937 são devolvidos por:
+
+    <div class="code">
+    <p><a href="/?q=data:19370517"><strong>data:</strong>19370517</a></p>
+    </div>
+
+    <p>O formato da data é: <em>AAAAMMDD</em>.
+
+    <p>Para saber acerca de mais opções de procura, não deixe de ler a nossa
+    <a href="/help">ajuda</a>.
+    ''',
+
+    # Bookmark tips:
+    '''<p>Os utilizadores registados podem criar colecções de diplomas, para tal
+    basta simplesmente clicar no simbolo de marcador
+    (<img src="%(static)simg/bookmark_off.png" style="margin:-0.3em;">).
+    <p>Estas colecções podem depois ser organizadas de várias maneiras por forma
+    a encontrar sempre todos os documentos que deseje.
+    ''' % { 'static': STATIC_URL, },
+    '''
+    <p>Os utilizadores registados podem anotar todos os diplomas. Basta, para
+    tal, clicar em <img src="%(static)simg/edit-note.png" style="margin:-0.3em 0 -0.3em 0;">.
+    <p>As notas criadas desta forma podem ser públicas, em cujo caso todos os
+    visitantes do site as podem visualizar, ou então, podem ser marcadas como
+    privadas, neste caso apenas o utilizador tem permissão para as visualizar.
+    ''' % { 'static': STATIC_URL, },
+    ]
 
 ##
 ## LOCAL
