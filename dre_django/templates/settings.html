@@ -10,7 +10,7 @@
   <div id="sidebar">
     <ul class="sidemenu">
       <li><a {% if request.path == '/auth/personal_data/' %}class="highlight" {% endif %}href="{% url 'personal_data' %}">Dados Pessoais</a></li>
-      <li><a {% if request.path == '/auth/password_change/' %}class="highlight" {% endif %}href="{% url 'password_change' %}">Mudar Palavra-Passe</a></li>
+      <li><a {% if request.path == '/auth/password_change/' %}class="highlight" {% endif %}href="{% url 'password_change' %}">Palavra-Passe</a></li>
       <li><a {% if request.path == '/tag/display/' %}class="highlight" {% endif %}href="{% url 'tag_display' %}">Etiquetas</a></li>
       <li><a {% if request.path == '/settings/' %}class="highlight" {% endif %}href="{% url 'settings_form' %}">Definições</a></li>
   </div>
