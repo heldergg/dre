@@ -84,6 +84,10 @@ def search(request):
         else:
             results = indexer.search(query)
 
+        spell_correction = results.spell_correction()
+        spell_correction = spell_correction.get_corrected_query_string()
+        context['spell_correction'] = spell_correction.strip()
+
         context['result_count'] = results.count()
         if not context['result_count']:
             context['success'] = False

@@ -38,6 +38,11 @@
   <p>Não consegui encontrar resultados com: "{{ form.cleaned_data.q }}"</p>
 </div> 
 {% endif %}
+{% if spell_correction %}
+<div class="center_text">
+  <p>Será que queria dizer: <a href="/?q={{ spell_correction }}">{{ spell_correction }}</a>?</p>
+</div> 
+{% endif %}
 {% show_tips %}
 {% endif %}
 
