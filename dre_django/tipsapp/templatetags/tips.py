@@ -32,11 +32,7 @@ class TipNode(template.Node):
     def render(self, context):
         user = context['request'].user
 
-        print "#" * 80
-        print user
-
         if not user.is_authenticated() or get_setting( user, 'show_tips'):
-            print [random.choice(TIPS)]
             return '<div class="tip">%s</div>' % random.choice(TIPS)
         else:
             return ''
