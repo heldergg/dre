@@ -192,6 +192,27 @@ class Document(models.Model):
         else:
             return ''
 
+    def dict_repr(self):
+        '''Dictionary representation'''
+
+        return {
+            'claint'       : self.claint,
+            'doc_type'     : self.doc_type,
+            'number'       : self.number,
+            'emiting_body' : self.emiting_body.split(';'),
+            'source'       : self.source,
+            'dre_key'      : self.dre_key,
+            'in_force'     : self.in_force,
+            'conditional'  : self.conditional,
+            'processing'   : self.processing,
+            'date'         : self.date.isoformat(),
+            'notes'        : self.notes,
+            'plain_text'   : self.plain_text,
+            'dre_pdf'      : self.dre_pdf,
+            'pdf_error'    : self.pdf_error,
+            'timestamp'    : self.timestamp.isoformat(sep=' '),
+        }
+
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
     tries = models.IntegerField(default=1)
