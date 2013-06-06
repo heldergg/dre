@@ -90,11 +90,16 @@ if __name__ == '__main__':
             from dreapp.models import Document
 
             outfile = sys.stdout
+            page_size = 5000
+
+            results = Document.objects.all()
 
             outfile.write('[\n')
-            for doc in Document.objects.all():
-                json.dump(doc.dict_repr(), outfile, indent=4)
-                outfile.write(',\n')
+            for i in range(0,results.count(), page_size):
+                j = i + page_size
+                for doc in results[i:j]:
+                    json.dump(doc.dict_repr(), outfile, indent=4)
+                    outfile.write(',\n')
             outfile.write(']')
 
             sys.exit()
