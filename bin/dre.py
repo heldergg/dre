@@ -90,9 +90,13 @@ if __name__ == '__main__':
             from dreapp.models import Document
 
             outfile = sys.stdout
-            json.dump( [ doc.dict_repr() for doc in Document.objects.all()],
-                       outfile,
-                       indent=4)
+
+            outfile.write('[\n')
+            for doc in Document.objects.all():
+                json.dump(doc.dict_repr(), outfile, indent=4)
+                outfile.write(',\n')
+            outfile.write(']')
+
             sys.exit()
 
 
