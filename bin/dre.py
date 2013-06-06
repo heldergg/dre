@@ -14,6 +14,7 @@ import os.path
 
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('../lib/'))
+sys.path.append(os.path.abspath('../dre_django/'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 
@@ -31,6 +32,9 @@ def usage():
         -t
         --read_processing   Re-reads the documents marked as "processing"
 
+        -d
+        --dump              Dump the documents to stdout as a JSON list
+
         -h
         --help              This help screen
 
@@ -40,14 +44,21 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   'hru:vt',
+                                   'hru:vtd',
                                    ['help', 'read_processing', 'read_docs',
-                                    'read_single=','verbose'])
+                                    'read_single=','verbose', 'dump'])
     except getopt.GetoptError, err:
         print str(err)
         print
         usage()
         sys.exit(1)
+
+    # Defaults
+    verbose = False
+
+    for o, a in opts:
+        if o in ('-v', '--verbose'):
+            verbose = True
 
     # Commands
     for o, a in opts:
@@ -73,6 +84,17 @@ if __name__ == '__main__':
                 print 'Please specify the document number (integer).'
                 sys.exit(1)
             sys.exit()
+
+        elif o in ('-d', '--dump'):
+            import json
+            from dreapp.models import Document
+
+            outfile = sys.stdout
+            json.dump( [ doc.dict_repr() for doc in Document.objects.all()],
+                       outfile,
+                       indent=4)
+            sys.exit()
+
 
         elif o in ('-h', '--help'):
             usage()
