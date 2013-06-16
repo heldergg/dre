@@ -4,11 +4,12 @@ import os
 import re
 
 from datetime import datetime
-from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.db import models
 
 from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
@@ -157,6 +158,7 @@ class Document(models.Model):
     def plain_pdf_filename(self):
         return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint)
 
+    # Representation
     def plain_html(self):
         '''Converts the plain_pdf pdf to html'''
         # TODO: substitute this regexes for compiled regexes
@@ -212,6 +214,11 @@ class Document(models.Model):
             'pdf_error'    : self.pdf_error,
             'timestamp'    : self.timestamp.isoformat(sep=' '),
         }
+
+    # Other
+    def get_absolute_url(self):
+        return reverse('document_display', kwargs={ 'docid':self.id })
+
 
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
