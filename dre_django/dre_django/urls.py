@@ -5,6 +5,10 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from django.conf import settings
 
+# Local Imports:
+from dre_django.sitemap import StaticViewSitemap
+from dreapp.sitemap import DocumentSitemap
+
 urlpatterns = patterns('',
     # Index:
     url(r'^$', 'dreapp.views.search'),
@@ -49,6 +53,16 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 )
+
+sitemaps = {
+        'static': StaticViewSitemap,
+        'documents': DocumentSitemap,
+        }
+
+urlpatterns += patterns('django.contrib.sitemaps.views',
+        url(r'^sitemap\.xml$', 'index', {'sitemaps': sitemaps}),
+        url(r'^sitemap-(?P<section>.+)\.xml$', 'sitemap', {'sitemaps': sitemaps}),
+        )
 
 
 if settings.DEBUG:
