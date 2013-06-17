@@ -28,6 +28,10 @@ SECRET_KEY = '8r_^#-*ycr1&=w3pfjhl#$$x#f.jkhgf7ghck&_ipg+8mz*u7tz_i4pd^szdtvg5x5
 
 SITE_ID = 1
 
+ALLOWED_HOSTS = [
+    '.tretas.org',
+    ]
+
 ##
 ## Database definition
 ##
