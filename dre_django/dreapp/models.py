@@ -230,7 +230,7 @@ class Document(models.Model):
 
     # Other
     def get_absolute_url(self):
-        return 'http://dre.tretas.org%s' % reverse('document_display', kwargs={ 'docid':self.id })
+        return reverse('document_display', kwargs={ 'docid':self.id })
 
 
 class FailedDoc(models.Model):
