@@ -16,7 +16,7 @@
   <script src="{{ STATIC_URL }}js/notes.js"></script>
   {% endif %}
   <meta name="keywords" content="documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}">
-  <meta name="description" content="{{ document.doc_type.title }} {{ document.number }}, de {{ document.date|date:"d" }} de {{ document.date|date:"F" }}"
+  <meta name="description" content="{{ document.doc_type.title }} {{ document.number }}, de {{ document.date|date:"d" }} de {{ document.date|date:"F" }}">
 {% endblock %}
 
 {% block body_content %}
