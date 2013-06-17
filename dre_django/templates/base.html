@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print">
   <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="{% url 'latest_entries_feed' %}">
   {% block header %}{% endblock %}
 </head>
 <body>
@@ -38,9 +39,9 @@
       </span>
       <a href="{% url 'personal_data' %}">Perfil ({{ user.username }})</a>
       {% endif %}
-      <a href="{% url 'about' %}">Acerca</a><!--
-      <a class="rss_link" href="{% url 'not_implemented' %}">RSS</a> -->
+      <a href="{% url 'about' %}">Acerca</a>
       <a href="{% url 'help' %}">Ajuda</a>
+      <a class="rss_link" href="{% url 'latest_entries_feed' %}">RSS</a>
       {% if user.is_authenticated %}
       &nbsp;&nbsp;<a href="{% url 'logout' %}?next=/">Sair</a>
       {% else %}

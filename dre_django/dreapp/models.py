@@ -194,6 +194,19 @@ class Document(models.Model):
         else:
             return ''
 
+    def title(self):
+        # Note: strftime requires years greater than 1899, even though we do not
+        # deal with year arithmetic in this method we are forced to find the
+        # full month name ourselves.
+        months = [ u'Janeiro', u'Fevereiro', u'Março', u'Abril', u'Maio',
+            u'Junho', u'Julho', u'Agosto', u'Setembro', u'Outubro',
+            u'Novembro', u'Dezembro' ]
+        return u'%s %s, de %d de %s' % (
+                    self.doc_type.title(),
+                    self.number,
+                    self.day(),
+                    months[self.month()-1] )
+
     def dict_repr(self):
         '''Dictionary representation'''
 

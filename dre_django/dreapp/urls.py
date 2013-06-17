@@ -16,3 +16,15 @@ urlpatterns = patterns('dreapp.views',
     # Display the bookmarked documents
     url(r'^marcador/(?P<userid>\d+)/$','bookmark_display', name='bookmark_display'),
     )
+
+##
+# Feeds
+##
+
+from dreapp.syndication import LatestEntriesFeed
+
+urlpatterns += patterns('',
+    # Latest feeds
+    url(r'^rss/$', LatestEntriesFeed(), name='latest_entries_feed'),
+
+    )
