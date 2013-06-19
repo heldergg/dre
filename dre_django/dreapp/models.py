@@ -161,29 +161,7 @@ class Document(models.Model):
     # Representation
     def plain_html(self):
         '''Converts the plain_pdf pdf to html'''
-        # TODO: substitute this regexes for compiled regexes
-
-        command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.plain_pdf_filename()
-        html = os.popen(command).read()
-        html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
-        html = html.replace('&nbsp;', ' ').replace('<hr>','')
-        html = re.sub( r' *<br>', '<br>', html)
-        html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
-        html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
-        html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
-
-        # NOTE: we have some badly formed links on the original PDFs. Sometimes
-        # we have latin-1 characters on the 'href' attribute of the link. This
-        # originates problems when displaying the document since we're going
-        # to have a document with two encodings (utf-8 and latin-1).
-        html = re.sub( r'<a href.*?>(.*?)</a>', r'\1', html)
-        html = html.replace('</b><br>','</b><br><p>')
-
-        # "Decreto-Lei" recognition
-        html = re.sub( r'((Decreto-Lei|Lei)(?: | n.º )([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))',
-                       r'<a href="/?q=tipo:\2 número:\3">\1</a>', html)
-
-        return unicode(html, 'utf-8', 'ignore')
+        return DocumentCache.objects.get_cache(self)
 
     def plain_txt(self):
         '''Converts the plain_pdf pdf to txt'''
@@ -231,6 +209,81 @@ class Document(models.Model):
     # Other
     def get_absolute_url(self):
         return reverse('document_display', kwargs={ 'docid':self.id })
+
+DOCUMENT_VERSION = getattr(settings, 'DOCUMENT_VERSION', 1)
+
+class CacheManager(models.Manager):
+    def get_cache(self, document):
+        try:
+            cache = super(CacheManager, self).get_query_set(
+                    ).get(document=document)
+        except ObjectDoesNotExist:
+            cache = DocumentCache()
+            cache.document = document
+            cache.version = 0
+            cache._html = ''
+            cache.save()
+
+        return cache.html
+
+class DocumentCache(models.Model):
+    '''This table is used to store a cached html representation of the
+    Document's 'plain_pdf' file. The 'version' field must be equal or greater
+    than the settings variable DOCUMENT_VERSION, this way, if it's necessary to
+    invalidate the Document cache we only have to increase the DOCUMENT_VERSION
+    value.
+    '''
+    document = models.ForeignKey(Document, unique=True)
+    version  = models.IntegerField()
+    _html    = models.TextField()
+    timestamp = models.DateTimeField(default=datetime.now())
+
+    objects = CacheManager()
+
+    def get_html(self):
+        if self.version >= DOCUMENT_VERSION and not settings.DEBUG:
+            return self._html
+
+        # Rebuild the cache
+        self.version = DOCUMENT_VERSION
+        self.timestamp = datetime.now()
+        filename = self.document.plain_pdf_filename()
+
+        if not os.path.exists(filename):
+            # No text to represent
+            self._html = ''
+            self.save()
+            return ''
+
+        # Convert the PDF to html
+        command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
+        # TODO: substitute this regexes for compiled regexes
+
+        command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.document.plain_pdf_filename()
+        html = os.popen(command).read()
+        html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
+        html = html.replace('&nbsp;', ' ').replace('<hr>','')
+        html = re.sub( r' *<br>', '<br>', html)
+        html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
+        html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
+        html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
+
+        # NOTE: we have some badly formed links on the original PDFs. Sometimes
+        # we have latin-1 characters on the 'href' attribute of the link. This
+        # originates problems when displaying the document since we're going
+        # to have a document with two encodings (utf-8 and latin-1).
+        html = re.sub( r'<a href.*?>(.*?)</a>', r'\1', html)
+        html = html.replace('</b><br>','</b><br><p>')
+
+        # "Decreto-Lei" recognition
+        html = re.sub( r'((Decreto-Lei|Lei)(?: | n.º )([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))',
+                       r'<a href="/?q=tipo:\2 número:\3">\1</a>', html)
+
+        self._html = unicode(html, 'utf-8', 'ignore')
+        self.save()
+        return self._html
+
+    html = property(get_html)
 
 
 class FailedDoc(models.Model):
