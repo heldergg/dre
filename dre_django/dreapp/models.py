@@ -2,6 +2,7 @@
 
 import os
 import re
+import cgi
 
 from datetime import datetime
 from django.conf import settings
@@ -236,17 +237,18 @@ def get_doc_url( doc_type, number ):
             Q(doc_type__iexact = doc_type.replace('-',' ') )
             ).filter(number__iexact = number)
         if len(document) == 1:
-            return document[0].get_absolute_url()
+            return ( document[0].get_absolute_url(),
+                     cgi.escape(document[0].note_abrv(), quote=True) )
     except Exception, msg:
         pass
-    return u'/?q=tipo:%s número:%s' % ( doc_type, number )
+    return ( u'/?q=tipo:%s número:%s' % ( doc_type, number ), '' )
 
 def make_links( match ):
     doc_type = match.groupdict()['doc_type']
     number = match.groupdict()['number']
-    url = get_doc_url( doc_type, number )
+    url, title = get_doc_url( doc_type, number )
 
-    return '<a href="%s">%s %s</a>' % (url, doc_type, number)
+    return '<a href="%s" title="%s">%s %s</a>' % (url, title, doc_type, number)
 
 class DocumentCache(models.Model):
     '''This table is used to store a cached html representation of the
