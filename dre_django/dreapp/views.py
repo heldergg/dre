@@ -18,7 +18,7 @@ import dreapp.index
 from bookmarksapp.models import Bookmark
 from tagsapp.models import Tag
 from dreapp.forms import QueryForm, BookmarksFilterForm
-from dreapp.models import Document, doc_ref_re
+from dreapp.models import Document, doc_ref_optimize_re
 from settingsapp.models import get_setting
 
 abreviation_list = (
@@ -66,7 +66,7 @@ def search(request):
             query = re.sub(r'\s\s+', ' ', query).strip()
 
             # Try to optimize the query
-            mod_query = doc_ref_re.sub( ur'tipo:"\1" número:\2', query.lower())
+            mod_query = doc_ref_optimize_re.sub( ur'tipo:"\1" número:\2', query.lower())
 
             if mod_query.lower() == query.lower():
                 # No optimization

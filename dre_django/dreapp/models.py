@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 
 from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
@@ -88,7 +89,9 @@ doc_type = (
 
 doc_type_str = '|'.join([ xi.lower().replace(' ','(?:\s+|-)') for xi in sorted(doc_type, key=len, reverse=True) ])
 
-doc_ref_re = re.compile( ur'(?P<doc_type>%s)(?:\s+número\s+|\s+n\.º\s+|\s+n\.\s+|\s+nº\s+|\s+n\s+|\s+)?(?P<number>[/\-a-zA-Z0-9]+)' % doc_type_str, flags= re.UNICODE)
+doc_ref_re = re.compile( ur'(?P<doc_type>%s)\s+(?P<mid>número\s+|n\.º\s+|n\.\s+|nº\s+|n\s+)(?P<number>(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*)' % doc_type_str, flags= re.UNICODE | re.IGNORECASE | re.MULTILINE)
+
+doc_ref_optimize_re = re.compile( ur'(?P<doc_type>%s)(?:\s+número\s+|\s+n\.º\s+|\s+n\.\s+|\s+nº\s+|\s+n\s+|\s+)?(?P<number>[/\-a-zA-Z0-9]+)' % doc_type_str, flags= re.UNICODE)
 
 class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
@@ -226,6 +229,25 @@ class CacheManager(models.Manager):
 
         return cache.html
 
+def get_doc_url( doc_type, number ):
+    try:
+        document = Document.objects.filter(
+            Q(doc_type__iexact = doc_type.replace(' ','-') ) |
+            Q(doc_type__iexact = doc_type.replace('-',' ') )
+            ).filter(number__iexact = number)
+        if len(document) == 1:
+            return document[0].get_absolute_url()
+    except Exception, msg:
+        pass
+    return u'/?q=tipo:%s número:%s' % ( doc_type, number )
+
+def make_links( match ):
+    doc_type = match.groupdict()['doc_type']
+    number = match.groupdict()['number']
+    url = get_doc_url( doc_type, number )
+
+    return '<a href="%s">%s %s</a>' % (url, doc_type, number)
+
 class DocumentCache(models.Model):
     '''This table is used to store a cached html representation of the
     Document's 'plain_pdf' file. The 'version' field must be equal or greater
@@ -275,13 +297,12 @@ class DocumentCache(models.Model):
         html = re.sub( r'<a href.*?>(.*?)</a>', r'\1', html)
         html = html.replace('</b><br>','</b><br><p>')
 
-        # "Decreto-Lei" recognition
-        html = re.sub( r'((Decreto-Lei|Lei)(?: | n.º )([\-a-zA-Z0-9]+/[a-zA-Z0-9]+))',
-                       r'<a href="/?q=tipo:\2 número:\3">\1</a>', html)
+        # Recognize other document names and link to them:
+        html = doc_ref_re.sub( make_links, unicode(html,'utf-8','ignore') )
 
-        self._html = unicode(html, 'utf-8', 'ignore')
+        self._html = html
         self.save()
-        return self._html
+        return html
 
     html = property(get_html)
 
