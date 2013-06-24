@@ -93,14 +93,20 @@ doc_type = (
     u'RESOLUÇÃO DA ASSEMBLEIA NACIONAL',
 )
 
-doc_type_str = '|'.join([ xi.lower().replace(' ','(?:\s+|-)') for xi in sorted(doc_type, key=len, reverse=True) ])
+space = ur'\s+'
 
-doc_ref_dtype = ur'(?P<doc_type>%s)\s+' % doc_type_str
+doc_type_str = '|'.join([ xi.lower().replace(' ','(?:%(space)s|-)' % { 'space': space }) for xi in sorted(doc_type, key=len, reverse=True) ])
+
+doc_ref_dtype = ur'(?P<doc_type>%(doc_type)s)%(space)s' % {
+        'doc_type': doc_type_str,
+        'space': space }
 doc_ref_mid   = ur'(?P<mid>número\s+|n\.º\s+|n\.\s+|nº\s+|n\s+)'
-doc_ref_number= ur'(?P<number>(?:(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*|\d+\s\d+))'
-doc_ref_date  = ur'(?P<date>,\s+de\s+[0-9]+\s+de\s+(?:%s))' % '|'.join(MONTHS)
+doc_ref_number= ur'(?P<number>(?:(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*|\d+\s\d+|\d+))'
+doc_ref_date  = ur'(?P<date>,%(space)sde%(space)s[0-9]+%(space)sde%(space)s(?:%(months)s))?' % {
+        'months': '|'.join(MONTHS),
+        'space': space }
 
-doc_ref_re_str = doc_ref_dtype + doc_ref_mid + doc_ref_number + '?' + doc_ref_date
+doc_ref_re_str = doc_ref_dtype + doc_ref_mid + doc_ref_number + doc_ref_date
 
 FLAGS_RE = re.UNICODE | re.IGNORECASE | re.MULTILINE
 
@@ -273,11 +279,10 @@ class DocumentCache(models.Model):
         if doc:
             url      = doc.get_absolute_url()
             title    = cgi.escape(doc.note_abrv(), quote = True)
-            link_txt = doc.title()
         else:
             url = u'/?q=tipo:%s número:%s' % ( doc_type, number.replace(' ',''))
             title = u'Não temos sumário disponível'
-            link_txt = u'%s %s%s' % (doc_type, number, date)
+        link_txt = u'%s %s%s' % (doc_type, number, date if date else '')
 
         return '<a href="%s" title="%s">%s</a>' % (url, title, link_txt)
 
@@ -303,11 +308,13 @@ class DocumentCache(models.Model):
                 filename )
         html = os.popen(command).read()
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
-        html = html.replace('&nbsp;', ' ').replace('<hr>','')
+        html = html.replace('&nbsp;', ' ').replace('<hr>','').replace('&#160;', ' ')
+        html = html.replace('<br/>','<br>')
         html = re.sub( r'\s+<br>', '<br>', html)
         html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
-        html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
         html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
+        # html = re.sub( r'([0-9a-zA-Z, ])<br>', r'\1 ', html)
+        html = html.replace('<br>', ' ')
 
         # NOTE: we have some badly formed links on the original PDFs. Sometimes
         # we have latin-1 characters on the 'href' attribute of the link. This
