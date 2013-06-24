@@ -17,6 +17,11 @@ from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
 from notesapp.models import Note
 
+# Needed for dates < 1899 (read note bellow)
+MONTHS = [ u'Janeiro', u'Fevereiro', u'Março', u'Abril', u'Maio',
+    u'Junho', u'Julho', u'Agosto', u'Setembro', u'Outubro',
+    u'Novembro', u'Dezembro' ]
+
 # select distinct doc_type from dreapp_document order by doc_type;
 doc_type = (
     u'ACÓRDÃO',
@@ -90,7 +95,16 @@ doc_type = (
 
 doc_type_str = '|'.join([ xi.lower().replace(' ','(?:\s+|-)') for xi in sorted(doc_type, key=len, reverse=True) ])
 
-doc_ref_re = re.compile( ur'(?P<doc_type>%s)\s+(?P<mid>número\s+|n\.º\s+|n\.\s+|nº\s+|n\s+)(?P<number>(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*)' % doc_type_str, flags= re.UNICODE | re.IGNORECASE | re.MULTILINE)
+doc_ref_dtype = ur'(?P<doc_type>%s)\s+' % doc_type_str
+doc_ref_mid   = ur'(?P<mid>número\s+|n\.º\s+|n\.\s+|nº\s+|n\s+)'
+doc_ref_number= ur'(?P<number>(?:(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*|\d+\s\d+))'
+doc_ref_date  = ur'(?P<date>,\s+de\s+[0-9]+\s+de\s+(?:%s))' % '|'.join(MONTHS)
+
+doc_ref_re_str = doc_ref_dtype + doc_ref_mid + doc_ref_number + '?' + doc_ref_date
+
+FLAGS_RE = re.UNICODE | re.IGNORECASE | re.MULTILINE
+
+doc_ref_re = re.compile( doc_ref_re_str, FLAGS_RE )
 
 doc_ref_optimize_re = re.compile( ur'(?P<doc_type>%s)(?:\s+número\s+|\s+n\.º\s+|\s+n\.\s+|\s+nº\s+|\s+n\s+|\s+)?(?P<number>[/\-a-zA-Z0-9]+)' % doc_type_str, flags= re.UNICODE)
 
@@ -180,14 +194,11 @@ class Document(models.Model):
         # Note: strftime requires years greater than 1899, even though we do not
         # deal with year arithmetic in this method we are forced to find the
         # full month name ourselves.
-        months = [ u'Janeiro', u'Fevereiro', u'Março', u'Abril', u'Maio',
-            u'Junho', u'Julho', u'Agosto', u'Setembro', u'Outubro',
-            u'Novembro', u'Dezembro' ]
         return u'%s %s, de %d de %s' % (
                     self.doc_type.title(),
                     self.number,
                     self.day(),
-                    months[self.month()-1] )
+                    MONTHS[self.month()-1] )
 
     def dict_repr(self):
         '''Dictionary representation'''
@@ -230,25 +241,6 @@ class CacheManager(models.Manager):
 
         return cache.html
 
-def get_doc_url( doc_type, number ):
-    try:
-        document = Document.objects.filter(
-            Q(doc_type__iexact = doc_type.replace(' ','-') ) |
-            Q(doc_type__iexact = doc_type.replace('-',' ') )
-            ).filter(number__iexact = number)
-        if len(document) == 1:
-            return ( document[0].get_absolute_url(),
-                     cgi.escape(document[0].note_abrv(), quote=True) )
-    except Exception, msg:
-        pass
-    return ( u'/?q=tipo:%s número:%s' % ( doc_type, number ), '' )
-
-def make_links( match ):
-    doc_type = match.groupdict()['doc_type']
-    number = match.groupdict()['number']
-    url, title = get_doc_url( doc_type, number )
-
-    return '<a href="%s" title="%s">%s %s</a>' % (url, title, doc_type, number)
 
 class DocumentCache(models.Model):
     '''This table is used to store a cached html representation of the
@@ -263,6 +255,31 @@ class DocumentCache(models.Model):
     timestamp = models.DateTimeField(default=datetime.now())
 
     objects = CacheManager()
+
+    def get_doc_from_title(self, doc_type, number):
+        document = Document.objects.filter(
+            Q(doc_type__iexact = doc_type.replace(' ','-') ) |
+            Q(doc_type__iexact = doc_type.replace('-',' ') )
+            ).filter(number__iexact = number.replace(' ',''))
+        if len(document) == 1:
+            return document[0]
+        return None
+
+    def make_links(self,  match ):
+        doc_type = match.groupdict()['doc_type']
+        number = match.groupdict()['number']
+        date = match.groupdict()['date']
+        doc = self.get_doc_from_title(doc_type, number)
+        if doc:
+            url      = doc.get_absolute_url()
+            title    = cgi.escape(doc.note_abrv(), quote = True)
+            link_txt = doc.title()
+        else:
+            url = u'/?q=tipo:%s número:%s' % ( doc_type, number.replace(' ',''))
+            title = u'Não temos sumário disponível'
+            link_txt = u'%s %s%s' % (doc_type, number, date)
+
+        return '<a href="%s" title="%s">%s</a>' % (url, title, link_txt)
 
     def get_html(self):
         if self.version >= DOCUMENT_VERSION and not settings.DEBUG:
@@ -280,14 +297,14 @@ class DocumentCache(models.Model):
             return ''
 
         # Convert the PDF to html
-        command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
         # TODO: substitute this regexes for compiled regexes
 
-        command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % self.document.plain_pdf_filename()
+        command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % (
+                filename )
         html = os.popen(command).read()
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
         html = html.replace('&nbsp;', ' ').replace('<hr>','')
-        html = re.sub( r' *<br>', '<br>', html)
+        html = re.sub( r'\s+<br>', '<br>', html)
         html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
         html = re.sub( r'([0-9a-zA-Z,])<br>', r'\1 ', html)
         html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
@@ -300,7 +317,7 @@ class DocumentCache(models.Model):
         html = html.replace('</b><br>','</b><br><p>')
 
         # Recognize other document names and link to them:
-        html = doc_ref_re.sub( make_links, unicode(html,'utf-8','ignore') )
+        html = doc_ref_re.sub( self.make_links, unicode(html,'utf-8','ignore') )
 
         self._html = html
         self.save()
