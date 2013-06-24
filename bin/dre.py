@@ -35,6 +35,9 @@ def usage():
         -d
         --dump              Dump the documents to stdout as a JSON list
 
+        -c
+        --update_cache      Refresh the document's html cache
+
         -h
         --help              This help screen
 
@@ -44,9 +47,10 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   'hru:vtd',
+                                   'hru:vtdc',
                                    ['help', 'read_processing', 'read_docs',
-                                    'read_single=','verbose', 'dump'])
+                                    'read_single=','verbose', 'dump',
+                                    'update_cache'])
     except getopt.GetoptError, err:
         print str(err)
         print
@@ -104,6 +108,20 @@ if __name__ == '__main__':
 
             sys.exit()
 
+
+        elif o in ('-c', '--update_cache'):
+            from dreapp.models import Document, DocumentCache
+            page_size = 5000
+
+            results = Document.objects.all()
+
+            for i in range(0,results.count(), page_size):
+                j = i + page_size
+                print '* Processing documents %d through %d' % (i,j)
+                for doc in results[i:j]:
+                    DocumentCache.objects.get_cache(doc)
+
+            sys.exit()
 
         elif o in ('-h', '--help'):
             usage()
