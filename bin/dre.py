@@ -113,7 +113,7 @@ if __name__ == '__main__':
             from dreapp.models import Document, DocumentCache
             page_size = 5000
 
-            results = Document.objects.filter( plain_text__exact = '' )
+            results = Document.objects.exclude( plain_text__exact = '' )
 
             for i in range(0,results.count(), page_size):
                 j = i + page_size
