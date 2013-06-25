@@ -101,7 +101,7 @@ doc_ref_dtype = ur'(?P<doc_type>%(doc_type)s)%(space)s' % {
         'doc_type': doc_type_str,
         'space': space }
 doc_ref_mid   = ur'(?P<mid>número\s+|n\.º\s+|n\.\s+|nº\s+|n\s+)'
-doc_ref_number= ur'(?P<number>(?:(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*|\d+\s\d+|\d+))'
+doc_ref_number= ur'(?P<number>(?:\d+\s\d+|(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*))'
 doc_ref_date  = ur'(?P<date>,%(space)sde%(space)s[0-9]+%(space)sde%(space)s(?:%(months)s))?' % {
         'months': '|'.join(MONTHS),
         'space': space }
@@ -139,6 +139,9 @@ class Document(models.Model):
     bookmarks = generic.GenericRelation(Bookmark)
     tags = generic.GenericRelation(TaggedItem)
     user_notes = generic.GenericRelation(Note)
+
+    # Connection to other documents
+    connects_to = models.ManyToManyField('self',  symmetrical=False)
 
     def bookmark(self, user):
         '''Return the bookmark associated to this document if it exists'''
@@ -268,6 +271,8 @@ class DocumentCache(models.Model):
             Q(doc_type__iexact = doc_type.replace('-',' ') )
             ).filter(number__iexact = number.replace(' ',''))
         if len(document) == 1:
+            if self.document != document[0]:
+                self.document.connects_to.add(document[0])
             return document[0]
         return None
 
@@ -275,10 +280,17 @@ class DocumentCache(models.Model):
         doc_type = match.groupdict()['doc_type']
         number = match.groupdict()['number']
         date = match.groupdict()['date']
-        doc = self.get_doc_from_title(doc_type, number)
+
+        # Try to get the referred document from the cache
+        doc = self.doc_cache.get( doc_type+number, None)
+        # If the doc isn't on the cache, try to get it from the database
+        if not doc:
+            doc = self.get_doc_from_title(doc_type, number)
+
         if doc:
             url      = doc.get_absolute_url()
             title    = cgi.escape(doc.note_abrv(), quote = True)
+            self.doc_cache[ doc_type+number ] = doc
         else:
             url = u'/?q=tipo:%s número:%s' % ( doc_type, number.replace(' ',''))
             title = u'Não temos sumário disponível'
@@ -287,6 +299,10 @@ class DocumentCache(models.Model):
         return '<a href="%s" title="%s">%s</a>' % (url, title, link_txt)
 
     def get_html(self):
+        '''This method does the following:
+        * Build the html cache for the plan text representation of the document;
+        * Creates a list of documents connected to the current document
+        '''
         if self.version >= DOCUMENT_VERSION and not settings.DEBUG:
             return self._html
 
@@ -294,6 +310,8 @@ class DocumentCache(models.Model):
         self.version = DOCUMENT_VERSION
         self.timestamp = datetime.now()
         filename = self.document.plain_pdf_filename()
+        self.doc_cache = {}
+        self.document.connects_to.clear()
 
         if not os.path.exists(filename):
             # No text to represent
@@ -303,13 +321,13 @@ class DocumentCache(models.Model):
 
         # Convert the PDF to html
         # TODO: substitute this regexes for compiled regexes
-
         command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % (
                 filename )
         html = os.popen(command).read()
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
         html = html.replace('&nbsp;', ' ').replace('<hr>','').replace('&#160;', ' ')
         html = html.replace('<br/>','<br>')
+        html = re.sub( r'^(.{0,50})<br>\n', r'<p><strong>\1</strong></p>\n', html, flags=re.MULTILINE)
         html = re.sub( r'\s+<br>', '<br>', html)
         html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
         html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
