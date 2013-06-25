@@ -327,7 +327,13 @@ class DocumentCache(models.Model):
         html = html[html.find('<BODY bgcolor="#A0A0A0" vlink="blue" link="blue">')+50:-17]
         html = html.replace('&nbsp;', ' ').replace('<hr>','').replace('&#160;', ' ')
         html = html.replace('<br/>','<br>')
-        html = re.sub( r'^(.{0,50})<br>\n', r'<p><strong>\1</strong></p>\n', html, flags=re.MULTILINE)
+
+        # The following will not work on python 2.6.6 (it works fine on 2.7.5):
+        # html = re.sub( r'^(.{0,50})<br>\n', r'<p><strong>\1</strong></p>\n', html, flags=re.MULTILINE)
+        # Instead the following must be used:
+        html = '\n'.join([ '<p><strong>%s</strong></p>' % l[:-4]
+                           if l[-4:] == '<br>' and len(l) < 50 else l
+                           for l in html.split('\n') ])
         html = re.sub( r'\s+<br>', '<br>', html)
         html = re.sub( r'([:.;])<br>', r'\1\n<p style="text-align:justify;">', html)
         html = re.sub( r'<b>(.*?)</b><br>', r'<p><strong>\1</strong></p><p style="text-align:justify;">', html)
