@@ -24,7 +24,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
 
-from dreapp.models import Document, FailedDoc
+from dreapp.models import Document, DocumentCache, FailedDoc
 import dreapp.index
 from drelog import logger
 
@@ -249,8 +249,13 @@ class DREReadDocs( object ):
         document.plain_text = page_result['plain_text']
         document.dre_pdf = page_result['dre_pdf']
         document.pdf_error = page_result['pdf_error']
+        document.timestamp = datetime.now()
 
         document.save()
+
+        # Create the document html cache
+        if document.plain_text:
+            DocumentCache.objects.get_cache(document)
 
         logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
 
