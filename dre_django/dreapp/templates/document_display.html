@@ -21,6 +21,7 @@
 {% endblock %}
 
 {% block body_content %}
+{% show_public_notes document %}
 <div class="content-text">
 
 {% if user.is_authenticated %}
@@ -38,15 +39,26 @@
   {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
   {% if document.processing %}<li><strong style="color:red;">Em tratamento</strong>{% endif %}
+  <li><strong>Secções deste documento:</strong>:
+    <ul>
+      <li><a href="#summary">Sumário</a>
+      {% if user.is_authenticated and show_user_notes %}<li><a href="#user_notes">As suas notas associadas a este documento</a>{% endif %}
+      {% if document.connects_to.all %}<li><a href="#out_links">Ligações deste documento</a>{% endif %}
+      {% if document.document_set.all %}<li><a href="#in_links">Ligações para este documento</a>{% endif %}
+      {% if document.plain_text %}<li><a href="#text">Texto do documento</a>{% endif %}
+      {% if note_list %}<li><a href="#notes">Notas dos utilizadores</a>{% endif %}
+      <li><a href="#warning">Aviso</a>
+    </ul>
+  </li>
 </ul>
 
-<h2>Sumário</h2>
+<h2><a name="summary">Sumário</a></h2>
 <div class="result_notes">
 {{ document.notes }}
 </div>
 {% if user.is_authenticated and show_user_notes %}
 
-<h2>Notas do utilizador: </h2>
+<h2><a name="user_notes">Notas do utilizador</a></h2>
   <div class="result_notes">
     <div class="decoration">
       <div class="deco_toolbar result_notes deco_tb_inlaid noprint">
@@ -58,8 +70,78 @@
   </div>
 {% endif %}
 
+{% if document.connects_to.all %}
+<h2><a name="out_links">Ligações deste documento</a></h2>
+
+<div class="result_notes">
+  <p>Este documento liga ao{{ document.connects_to.all.count|pluralize }} seguinte{{ document.connects_to.all.count|pluralize }} documento{{ document.connects_to.all.count|pluralize }}:
+  <ul style="list-style-type:none;padding:0.5em;">
+  {% for result in document.out_links %}
+    <li>
+      {% if user.is_authenticated %}
+      <a href="{% toggle_bookmark result %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon result %}</a>
+      {% endif %}
+      {% if result.plain_text or result.dre_pdf %}
+      <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+      {% else %}
+      <img src="{{ STATIC_URL }}/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+      {% endif %} 
+      {% if result.in_force %}
+      <img src="{{ STATIC_URL }}/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+      {% else %}
+      <img src="{{ STATIC_URL }}/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+      {% endif %} 
+      <span class="result_date">
+        <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
+      {{ result.date|date:"Y-m-d" }}</span></a> - 
+      <a href="{% url 'document_display' docid=result.id %}">
+      <span class="result_tipo">{{ result.doc_type.title }}</span>
+      <span class="result_number">{{ result.number }}</span></a> -
+      <span class="result_emiting">{{ result.emiting_body.title }}</span>
+      <p class="result_notes">{{ result.note_abrv }}</p>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if document.document_set.all %}
+<h2><a name="in_links">Ligações para documento</a></h2>
+
+<div class="result_notes">
+  <p>Este documento é referido no{{ document.document_set.all.count|pluralize }} seguinte{{ document.document_set.all.count|pluralize }} documento{{ document.document_set.all.count|pluralize }}:
+  <ul style="list-style-type:none;padding:0.5em;">
+  {% for result in document.in_links %}
+    <li>
+      {% if user.is_authenticated %}
+      <a href="{% toggle_bookmark result %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon result %}</a>
+      {% endif %}
+      {% if result.plain_text or result.dre_pdf %}
+      <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+      {% else %}
+      <img src="{{ STATIC_URL }}/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+      {% endif %} 
+      {% if result.in_force %}
+      <img src="{{ STATIC_URL }}/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+      {% else %}
+      <img src="{{ STATIC_URL }}/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+      {% endif %} 
+      <span class="result_date">
+        <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
+      {{ result.date|date:"Y-m-d" }}</span></a> - 
+      <a href="{% url 'document_display' docid=result.id %}">
+      <span class="result_tipo">{{ result.doc_type.title }}</span>
+      <span class="result_number">{{ result.number }}</span></a> -
+      <span class="result_emiting">{{ result.emiting_body.title }}</span>
+      <p class="result_notes">{{ result.note_abrv }}</p>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
 {% if document.plain_text %}
-<h2>Texto do documento</h2>
+<h2><a name="text">Texto do documento</a></h2>
 <div class="result_notes">
   {% autoescape off %}
   {{ document.plain_html }}
@@ -81,9 +163,8 @@
 </div>
 {% endif %}
 
-{% show_public_notes document %}
 {% if note_list %}
-  <h2>Notas dos utilizadores</h2>
+<h2><a name="notes">Notas dos utilizadores</a></h2>
   {% for note in note_list %}
     <div class="result_notes" style="margin-top:2em;">
       <div class="decoration">
@@ -101,7 +182,7 @@
   {% endfor %}
 {% endif %}
 
-<h2>Aviso</h2>
+<h2><a name="warning">Aviso</a></h2>
 
 <p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
 leitura do Diário da República correspondente. Não nos responsabilizamos por

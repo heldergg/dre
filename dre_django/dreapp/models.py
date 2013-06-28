@@ -143,6 +143,12 @@ class Document(models.Model):
     # Connection to other documents
     connects_to = models.ManyToManyField('self',  symmetrical=False)
 
+    def out_links(self):
+        return self.connects_to.all().order_by('date')
+
+    def in_links(self):
+        return self.document_set.all().order_by('date')
+
     def bookmark(self, user):
         '''Return the bookmark associated to this document if it exists'''
         try:
