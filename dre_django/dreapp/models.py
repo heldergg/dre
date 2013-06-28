@@ -162,6 +162,10 @@ class Document(models.Model):
     def note_escaped(self):
         return cgi.escape(self.note_abrv(), quote = True)
 
+    def c_emitting(self):
+        '''Comma separated emitting body list'''
+        return ', '.join( [ e.strip().title() for e in self.emiting_body.split(';') ])
+
     # Date methods
     def year(self):
         return self.date.year
