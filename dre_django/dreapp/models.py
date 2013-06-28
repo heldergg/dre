@@ -230,6 +230,9 @@ class Document(models.Model):
             'timestamp'    : self.timestamp.isoformat(sep=' '),
         }
 
+    def __unicode__(self):
+        return self.title()
+
     # Other
     def get_absolute_url(self):
         return reverse('document_display', kwargs={ 'docid':self.id })
