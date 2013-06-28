@@ -159,6 +159,9 @@ class Document(models.Model):
         else:
             return self.notes[:512] + ' (...)'
 
+    def note_escaped(self):
+        return cgi.escape(self.note_abrv(), quote = True)
+
     # Date methods
     def year(self):
         return self.date.year

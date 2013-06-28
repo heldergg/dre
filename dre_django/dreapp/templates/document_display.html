@@ -3,7 +3,7 @@
 {% load notes %}
 {% load auth %}
 
-{% block title %}Diários da República - {{ document.doc_type.title }} {{ document.number }}, de {{ document.date|date:"d" }} de {{ document.date|date:"F" }}{% endblock %}
+{% block title %}Diários da República - {{ document.title }}{% endblock %}
 
 {% block header %}
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
@@ -15,8 +15,9 @@
   </script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
   {% endif %}
-  <meta name="keywords" content="documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}">
-  <meta name="description" content="{{ document.doc_type.title }} {{ document.number }}, de {{ document.date|date:"d" }} de {{ document.date|date:"F" }}">
+  <meta name="keywords" content="diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.emiting_body.title }}, {{ document.date|date:"Y" }}">
+  <meta name="description" content="{{ document.note_escaped }}">
+  <meta name="author" content="{{ document.emiting_body.title }}">
 {% endblock %}
 
 {% block body_content %}
@@ -26,7 +27,7 @@
 <p style="text-align:right;"><a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
 {% endif %}
 
-<h1>{{ document.doc_type.title }} {{ document.number }}, de {{ document.date|date:"d" }} de {{ document.date|date:"F" }}</h1>
+<h1>{{ document.title }}</h1>
 
 <ul>
   <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
