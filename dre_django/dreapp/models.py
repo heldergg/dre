@@ -158,6 +158,24 @@ doc_ref_plural_re = re.compile( doc_ref_re_str_plural, FLAGS_RE )
 # regex used to transform the user's search queries
 doc_ref_optimize_re = re.compile( ur'(?P<doc_type>%s)(?:\s+número\s+|\s+n\.º\s+|\s+n\.\s+|\s+nº\s+|\s+n\s+|\s+)?(?P<number>[/\-a-zA-Z0-9]+)' % doc_type_str, flags= re.UNICODE)
 
+##
+## Utility functions
+##
+
+def title( st, exceptions = ['a','o','e','de','da','do']):
+    wl = []
+    for word in re.sub(r'\s+',' ', st.lower()).split(' '):
+        if word not in exceptions:
+            wl.append(word.capitalize())
+        else:
+            wl.append(word)
+    return ' '.join(wl)
+
+
+##
+## Models
+##
+
 class Document(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
     doc_type = models.CharField(max_length=64)
@@ -261,7 +279,7 @@ class Document(models.Model):
         # deal with year arithmetic in this method we are forced to find the
         # full month name ourselves.
         return u'%s %s, de %d de %s' % (
-                    self.doc_type.title(),
+                    title(self.doc_type),
                     self.number,
                     self.day(),
                     MONTHS[self.month()-1] )
@@ -387,8 +405,6 @@ class DocumentCache(models.Model):
 
 
         links_txt = ', '.join(links[:-1]) + u' e %s' % links[-1]
-
-        print "#" * 80
 
         return u'%s %s' % (g[0], links_txt )
 
