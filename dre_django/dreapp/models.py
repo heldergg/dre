@@ -22,6 +22,10 @@ MONTHS = [ u'Janeiro', u'Fevereiro', u'Março', u'Abril', u'Maio',
     u'Junho', u'Julho', u'Agosto', u'Setembro', u'Outubro',
     u'Novembro', u'Dezembro' ]
 
+##
+# Regular expressions - used to detect references to other documents
+##
+
 # select distinct doc_type from dreapp_document order by doc_type;
 doc_type = (
     u'ACÓRDÃO',
@@ -93,25 +97,65 @@ doc_type = (
     u'RESOLUÇÃO DA ASSEMBLEIA NACIONAL',
 )
 
-space = ur'\s+'
+doc_type_str = '|'.join([ xi.lower().replace(' ','(?:\s+|-)')
+    for xi in sorted(doc_type, key=len, reverse=True) ])
 
-doc_type_str = '|'.join([ xi.lower().replace(' ','(?:%(space)s|-)' % { 'space': space }) for xi in sorted(doc_type, key=len, reverse=True) ])
 
-doc_ref_dtype = ur'(?P<doc_type>%(doc_type)s)%(space)s' % {
-        'doc_type': doc_type_str,
-        'space': space }
+doc_ref_dtype = ur'(?P<doc_type>%s)\s+' % doc_type_str
+
 doc_ref_mid   = ur'(?P<mid>número\s+|n\.º\s+|n\.\s+|nº\s+|n\s+)'
-doc_ref_number= ur'(?P<number>(?:\d+\s\d+|(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*))'
-doc_ref_date  = ur'(?P<date>,%(space)sde%(space)s[0-9]+%(space)sde%(space)s(?:%(months)s))?' % {
-        'months': '|'.join(MONTHS),
-        'space': space }
+
+doc_ref_number = ur'(?P<number>(?:\d+\s\d+|(?:[\-A-Z0-9]+)(?:/[\-A-Z0-9]+)*))'
+
+doc_ref_date  = ur'(?P<date>,\s+de\s+[0-9]+\s+de\s+(?:%(months)s)(?:\s+de\s+\d{2,4})?)?' % {
+        'months': '|'.join(MONTHS), }
+
 
 doc_ref_re_str = doc_ref_dtype + doc_ref_mid + doc_ref_number + doc_ref_date
+
+## Plural
+
+doc_type_plural = (
+        u'Leis',
+        u'Decretos-Lei',
+        u'Decretos-Leis',
+        u'Portarias',
+        u'Despachos',
+        )
+
+doc_type_relation = {
+        u'Leis': u'Lei',
+        u'Decretos-Lei': u'Decreto-Lei',
+        u'Decretos-Leis': u'Decreto-Lei',
+        u'Portarias': u'Portaria',
+        u'Despachos': u'Despacho',
+        }
+
+doc_type_str_plural = '|'.join([ xi.lower()
+    for xi in sorted(doc_type_plural, key=len, reverse=True)])
+
+doc_ref_dtype_plural = ur'(%s)\s+' % doc_type_str_plural
+
+doc_ref_mid_plural = ur'(?:números|n\.os|n\.º|n\.|n)\s+'
+
+doc_ref_number_plural = ur'(?:\d+\s\d+|[\-A-Z0-9]+(?:/[\-A-Z0-9]+)*)'
+
+doc_ref_date_plural  = ur'(?:,\s+de\s+[0-9]+\s+de\s+(?:%(months)s)(?:\s+de\s+\d{2,4})?)?' % {
+        'months': '|'.join(MONTHS), }
+
+doc_ref_re_str_plural = ( doc_ref_dtype_plural + doc_ref_mid_plural +
+        r'((?:' + doc_ref_number_plural +  doc_ref_date_plural + r',\s+)+' +
+        r'e\s+' + doc_ref_number_plural + doc_ref_date_plural ) + r')'
+
+
+## Compile the regexes
 
 FLAGS_RE = re.UNICODE | re.IGNORECASE | re.MULTILINE
 
 doc_ref_re = re.compile( doc_ref_re_str, FLAGS_RE )
+doc_ref_plural_re = re.compile( doc_ref_re_str_plural, FLAGS_RE )
 
+# regex used to transform the user's search queries
 doc_ref_optimize_re = re.compile( ur'(?P<doc_type>%s)(?:\s+número\s+|\s+n\.º\s+|\s+n\.\s+|\s+nº\s+|\s+n\s+|\s+)?(?P<number>[/\-a-zA-Z0-9]+)' % doc_type_str, flags= re.UNICODE)
 
 class Document(models.Model):
@@ -314,6 +358,40 @@ class DocumentCache(models.Model):
 
         return '<a href="%s" title="%s">%s</a>' % (url, title, link_txt)
 
+    def make_links_plural(self, match ):
+        g = match.groups()
+
+        doc_type = doc_type_relation[g[0]]
+        n = [ xi.strip() for xi in g[1].replace(' e ',' ').split(',') ]
+        numbers = zip(n[::2],n[1::2])
+
+        links = []
+
+        for number, date in numbers:
+            # Try to get the referred document from the cache
+            doc = self.doc_cache.get( doc_type+number, None)
+            # If the doc isn't on the cache, try to get it from the database
+            if not doc:
+                doc = self.get_doc_from_title(doc_type, number)
+
+            if doc:
+                url      = doc.get_absolute_url()
+                title    = cgi.escape(doc.note_abrv(), quote = True)
+                self.doc_cache[ doc_type+number ] = doc
+            else:
+                url = u'/?q=tipo:%s número:%s' % ( doc_type, number.replace(' ',''))
+                title = u'Não temos sumário disponível'
+            link_txt = u'%s, %s' % (number, date if date else '')
+
+            links.append( '<a href="%s" title="%s">%s</a>' % (url, title, link_txt) )
+
+
+        links_txt = ', '.join(links[:-1]) + u' e %s' % links[-1]
+
+        print "#" * 80
+
+        return u'%s %s' % (g[0], links_txt )
+
     def get_html(self):
         '''This method does the following:
         * Build the html cache for the plan text representation of the document;
@@ -361,10 +439,13 @@ class DocumentCache(models.Model):
         # originates problems when displaying the document since we're going
         # to have a document with two encodings (utf-8 and latin-1).
         html = re.sub( r'<a href.*?>(.*?)</a>', r'\1', html)
+
         html = html.replace('</b><br>','</b><br><p>')
 
         # Recognize other document names and link to them:
         html = doc_ref_re.sub( self.make_links, unicode(html,'utf-8','ignore') )
+
+        html = doc_ref_plural_re.sub( self.make_links_plural , html )
 
         self._html = html
         self.save()
