@@ -9,9 +9,9 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
+from django.db.models import Q, Max, Min
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.db.models import Q
 
 # Local Imports:
 import dreapp.index
@@ -128,11 +128,18 @@ def browse( request ):
 
 def browse_day( request, year, month, day ):
     context = {}
-    year, month, day = int(year), int(month), int(day)
-    context['query_date'] = '%d,%d,%d' % ( year, month-1, day )
+
+    date = datetime.date( int(year), int(month), int(day) )
 
     # Query the document table
-    results = Document.objects.filter( date__exact = datetime.date( year, month, day ))
+    results = Document.objects.filter( date__exact = date )
+
+    # Dates
+    context['prev_date'] = Document.objects.filter( date__lt = date
+            ).aggregate(Max('date'))['date__max']
+    context['next_date'] = Document.objects.filter( date__gt = date
+            ).aggregate(Min('date'))['date__min']
+    context['date'] = date
 
     # Pagination
     page = request.GET.get('page', 1)

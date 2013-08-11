@@ -3,25 +3,24 @@
 {% block title %}Diários da República - Navegar por dia{% endblock %}
 
 {% block header %}
-  <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/start/jquery-ui.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
-  <script type="text/javascript">
-    var default_date = new Date( {{ query_date }} );
-  </script>
-  <script type="text/javascript" src="{{ STATIC_URL }}/js/browse_day.js"></script>
   <meta name="keywords" content="documento, navegar por data">
   <meta name="description" content="Consultar os diplomas publicados numa dada data.">
 {% endblock %}
 
 {% block body_content %}
-  <div style="
-    width: 45em;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0.5em;
-    padding: 0.4em 0 0.1em 0.4em;">
-  <div id="calendar"></div>
-  </div>
+<div class="content-text">
+  <h1>Resultados para o dia {{ date|date:"Y-m-d" }}</h1>
+
+  <div class="result_bar">
+    {% if prev_date %}
+    <a href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
+    {% endif %}
+  <div style="float:right;">
+    {% if next_date %}
+    <a href="{% url 'browse_day' year=next_date.year month=next_date.month day=next_date.day %}">Data seguinte {{ next_date|date:'Y-m-d' }}</a>
+    {% endif %}
+  </div></div>
+
   <div class="results">
     {% if page.object_list %}
       {% include "results.html" %}
@@ -29,4 +28,5 @@
       <p>Não temos documentos na nossa base de dados para este dia.</p>
     {% endif %}
   </div>
+</div>
 {% endblock %}
