@@ -234,6 +234,18 @@ a.user {
   display: inline-block; 
   vertical-align: middle; }
 
+/*************/
+/* Bookmarks */
+/*************/
+
+.result_item {
+  background: #f9f9f9;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+  opacity:0.9;
+}
+
+
 /*****************/
 /* Notifications */
 /*****************/
