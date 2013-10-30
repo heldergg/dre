@@ -5,12 +5,16 @@ You need a working [Django 1.5.x](https://www.djangoproject.com/download/)
 installation, and the python [Xapian 1.2.x](http://xapian.org/) bindings.
 
 
-i) Get the latest version of dre and extract its contents some place 
-appropriate:
+i) Get the latest version of dre:
 
-    wget -O dre-master.tar.gz https://github.com/heldergg/dre/tarball/master
+    git clone https://github.com/heldergg/dre.git dre
+    cd dre
+    git submodule init
+    git submodule update
 
 Create the 'log' directory inside the project directory.
+
+    mkdir log
 
 ii) Create a 'local_settings.py' in 'dre\_django/dre_django'. We have to have 
 defined on this file at least the database configuration and the reCAPTCHA
