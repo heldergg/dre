@@ -78,18 +78,19 @@
   {% endautoescape %}
   <div class="noprint">
     <hr>
-    <p><a href="{{ document.plain_text }}"><img src="{{ STATIC_URL }}/img/pdf.png"> Versão em PDF deste documento</a>
+    <p><a rel="nofollow" href="{{ document.plain_pdf_url }}"><img src="{{ STATIC_URL }}/img/pdf.png"> Versão em PDF deste documento</a> <!-- nofollow to save bandwidth -->
   </div>
 </div>
 {% endif %}
 
 {% if document.dre_pdf %}
 <div class="noprint">
-<p>Pode consultar o DR original <a href="{{ document.dre_pdf }}">aqui</a>.
+<p>Pode consultar o DR original <a rel="nofollow" href="{{ document.dre_pdf_url }}">aqui</a>. <!-- nofollow to save bandwidth -->
+<p>{{ document.dre_pdf_url }}
 </div>
 <div class="only_print">
 <p>Pode consultar o DR original em:
-<p>{{ document.dre_pdf }}
+<p>{{ document.dre_pdf_url }}
 </div>
 {% endif %}
 
