@@ -1,3 +1,0 @@
-[submodule "submodules/django-mobile"]
-	path = submodules/django-mobile
-	url = https://github.com/gregmuellegger/django-mobile.git
