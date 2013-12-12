@@ -12,14 +12,21 @@
   <h1>Resultados para o dia {{ date|date:"Y-m-d" }}</h1>
 
   <div class="result_bar">
-    {% if prev_date %}
-    <a href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
-    {% endif %}
-  <div style="float:right;">
-    {% if next_date %}
-    <a href="{% url 'browse_day' year=next_date.year month=next_date.month day=next_date.day %}">Data seguinte {{ next_date|date:'Y-m-d' }}</a>
-    {% endif %}
-  </div></div>
+    <div style="width:33%;float:left;">
+      {% if prev_date %}
+      <a href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
+      {% endif %}
+    </div>
+    <div style="width:33%;float:left;text-align:center;">
+      <a href="{% url 'browse' %}">Outras datas</a>
+    </div>
+    <div style="width:33%;float:left;text-align:right;">
+      {% if next_date %}
+      <a href="{% url 'browse_day' year=next_date.year month=next_date.month day=next_date.day %}">Data seguinte {{ next_date|date:'Y-m-d' }}</a>
+      {% endif %}
+    </div>
+    <div style="clear:both;"></div>
+  </div>
 
   <div class="results">
     {% if page.object_list %}

@@ -18,7 +18,7 @@ from django.core.urlresolvers import reverse
 import dreapp.index
 from bookmarksapp.models import Bookmark
 from tagsapp.models import Tag
-from dreapp.forms import QueryForm, BookmarksFilterForm
+from dreapp.forms import QueryForm, BookmarksFilterForm, ChooseDateForm
 from dreapp.models import Document, doc_ref_optimize_re
 from settingsapp.models import get_setting
 
@@ -123,6 +123,19 @@ def search(request):
 
 def browse( request ):
     context = {}
+
+    if request.method == 'POST':
+        form = ChooseDateForm( request.POST )
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            return redirect( reverse('browse_day',
+                kwargs= { 'year': date.year,
+                          'month': date.month,
+                          'day': date.day } ))
+    else:
+        form = ChooseDateForm()
+
+    context['form'] = form
 
     return render_to_response('browse.html', context,
                 context_instance=RequestContext(request))

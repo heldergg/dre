@@ -21,6 +21,13 @@ class QueryForm(forms.Form):
         required=True,
         max_length=1000,)
 
+class ChooseDateForm(forms.Form):
+    date = forms.DateTimeField(
+        label = 'Indique a data:',
+        required=True,
+        widget = DateInput(),
+        help_text = "Pode usar o formato AAAA-MM-DD" )
+
 class BookmarksFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user =  kwargs['tags_user']

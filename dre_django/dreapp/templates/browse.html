@@ -6,6 +6,22 @@
 {% endblock %}
 
 {% block body_content %}
-<h1>Test</h1>
+<div class="content-text">
+<h1>Resultados por data</h1>
+  <div class="center_text">
+  <form method="post" action="{% url 'browse' %}">{% csrf_token %}
+    <table>
+      {{ form }}
+      <tr>
+        <td colspan=2>
+          <div class="center_text">
+            <button style="width:12em" type="submit" value="Submit">Navegar para a data</button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
+  </div>
+</div>
 {% endblock %}
 
