@@ -12,14 +12,14 @@
       <a href="{% toggle_bookmark result %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon result %}</a>
       {% endif %}
       {% if result.plain_text or result.dre_pdf %}
-      <img src="{{ STATIC_URL }}/img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+      <img src="{{ STATIC_URL }}img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
       {% else %}
-      <img src="{{ STATIC_URL }}/img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+      <img src="{{ STATIC_URL }}img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
       {% endif %} 
       {% if result.in_force %}
-      <img src="{{ STATIC_URL }}/img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+      <img src="{{ STATIC_URL }}img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
       {% else %}
-      <img src="{{ STATIC_URL }}/img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+      <img src="{{ STATIC_URL }}img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
       {% endif %} 
       <span class="result_date">
         <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
