@@ -12,7 +12,7 @@
   <h1>Resultados para o dia {{ date|date:"Y-m-d" }}</h1>
 
   <div class="result_bar">
-    <div style="width:33%;float:left;">
+    <div style="width:33%;float:left;text-align:left;">
       {% if prev_date %}
       <a href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
       {% endif %}
