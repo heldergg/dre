@@ -10,8 +10,9 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.db.models import Q, Max, Min
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
 
 # Local Imports:
 import dreapp.index
@@ -125,6 +126,14 @@ def browse( request ):
 
     return render_to_response('browse.html', context,
                 context_instance=RequestContext(request))
+
+def today_results( request ):
+    date = datetime.date.today()
+
+    return redirect( reverse('browse_day',
+        kwargs= { 'year': date.year,
+                  'month': date.month,
+                  'day': date.day } ))
 
 def browse_day( request, year, month, day ):
     context = {}
