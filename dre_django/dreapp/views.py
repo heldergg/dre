@@ -13,6 +13,7 @@ from django.db.models import Q, Max, Min
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.http import Http404
 
 # Local Imports:
 import dreapp.index
@@ -151,7 +152,10 @@ def today_results( request ):
 def browse_day( request, year, month, day ):
     context = {}
 
-    date = datetime.date( int(year), int(month), int(day) )
+    try:
+        date = datetime.date( int(year), int(month), int(day) )
+    except ValueError:
+        raise Http404
 
     # Query the document table
     results = Document.objects.filter( date__exact = date )
