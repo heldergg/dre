@@ -129,6 +129,7 @@ doc_type_relation = {
         u'Decretos-Leis': u'Decreto-Lei',
         u'Portarias': u'Portaria',
         u'Despachos': u'Despacho',
+        u'despachos': u'Despacho',
         }
 
 doc_type_str_plural = '|'.join([ xi.lower()
