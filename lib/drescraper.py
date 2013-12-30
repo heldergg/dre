@@ -337,7 +337,8 @@ def wait(log_sleep = True):
 
 def processing_docs():
     docs = Document.objects.filter(processing__exact = True
-            ).filter(date__lte = datetime.now() - timedelta(10))
+            ).filter(date__lte = datetime.now() - timedelta(10)
+            ).order_by('date')
 
     for doc in docs:
         yield doc.claint
