@@ -343,12 +343,16 @@ def processing_docs():
     for doc in docs:
         yield doc.claint
 
+processing_docs.abort_on_error = False
+
 def last_claint():
     max_claint = Document.objects.aggregate(Max('claint'))['claint__max']
     i = max_claint if max_claint else 0
     while True:
         i += 1
         yield i
+
+last_claint.abort_on_error = True
 
 class DREScrap( object ):
     '''Re-reads and updates a list of documents'''
@@ -400,7 +404,7 @@ class DREScrap( object ):
                     else:
                         error_condition = 0
                         error_document += 1
-                        if error_document > MAX_ERROR_DOCUMENT:
+                        if self.doc_list.abort_on_error and error_document > MAX_ERROR_DOCUMENT:
                             logger.critical('#%d failed atempts to get documents. Giving up.' % MAX_ERROR_DOCUMENT)
                             raise
                         logger.error('Error in document %d. Going to try the next doc. This is the #%d skipped doc.' % ( doc,error_document ))
