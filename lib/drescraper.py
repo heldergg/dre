@@ -339,7 +339,6 @@ def check_gaps():
     docs = Document.objects.all().order_by('claint')
 
     max_claint = docs.aggregate(Max('claint'))['claint__max']
-    print max_claint
 
     k = 1
     for doc in docs:
