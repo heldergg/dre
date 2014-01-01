@@ -335,6 +335,21 @@ def wait(log_sleep = True):
         else:
             break
 
+def check_gaps():
+    docs = Document.objects.all().order_by('claint')
+
+    max_claint = docs.aggregate(Max('claint'))['claint__max']
+    print max_claint
+
+    k = 1
+    for doc in docs:
+        while k < doc.claint:
+            yield k
+            k += 1
+        k += 1
+
+check_gaps.abort_on_error = False
+
 def processing_docs():
     docs = Document.objects.filter(processing__exact = True
             ).filter(date__lte = datetime.now() - timedelta(10)

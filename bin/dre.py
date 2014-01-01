@@ -25,12 +25,15 @@ def usage():
         --read_docs         Reads documents from the site until no more
                             documents are available
 
+        -t
+        --read_processing   Re-reads the documents marked as "processing"
+
+        -g
+        --read_gaps         Checks the missing claints on sequence
+
         -u <document_id>
         --read_single <document_id>
                             Reads a single document from the site
-
-        -t
-        --read_processing   Re-reads the documents marked as "processing"
 
         -d
         --dump              Dump the documents to stdout as a JSON list
@@ -47,9 +50,10 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   'hru:vtdc',
+                                   'hru:vtdcg',
                                    ['help', 'read_processing', 'read_docs',
-                                    'read_single=','verbose', 'dump',
+                                    'read_gaps',
+                                    'read_single=', 'verbose', 'dump',
                                     'update_cache'])
     except getopt.GetoptError, err:
         print str(err)
@@ -75,6 +79,12 @@ if __name__ == '__main__':
         elif o in ('-t', '--read_processing'):
             from drescraper import DREScrap, processing_docs
             scraper = DREScrap(processing_docs)
+            scraper.run()
+            sys.exit()
+
+        elif o in ('-g', '--read_gaps'):
+            from drescraper import DREScrap, check_gaps
+            scraper = DREScrap(check_gaps)
             scraper.run()
             sys.exit()
 
