@@ -372,6 +372,13 @@ TIPS = [
     visitantes do site as podem visualizar, ou então, podem ser marcadas como
     privadas, neste caso apenas o utilizador tem permissão para as visualizar.
     ''' % { 'static': STATIC_URL, },
+
+    # General tips
+    '''
+    <p>Pode consultar os <a href="/dre/data/hoje/">documentos produzidos hoje</a>
+    escolhendo a opção a partir do menu. Note que pode consultar os documentos
+    produzidos em qualquer dia usando <a href="/dre/data/">esta ligação</a>.
+    ''' % { 'static': STATIC_URL, },
     ]
 
 ##
