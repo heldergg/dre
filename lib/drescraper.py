@@ -315,7 +315,6 @@ class DREReadDocs( object ):
 
         logger.debug('Document saved.')
 
-MAX_ERROR_CONDITION = 5 # Max number of retries on a given document
 MAX_ERROR_DOCUMENT = 5 # Max number of consecutive documents with error
 
 def wait(log_sleep = True):
@@ -348,6 +347,7 @@ def check_gaps():
         k += 1
 
 check_gaps.abort_on_error = False
+check_gaps.document_retries = 0 # Max number of retries on a given document
 
 def processing_docs():
     docs = Document.objects.filter(processing__exact = True
@@ -358,6 +358,7 @@ def processing_docs():
         yield doc.claint
 
 processing_docs.abort_on_error = False
+processing_docs.document_retries = 5
 
 def last_claint():
     max_claint = Document.objects.aggregate(Max('claint'))['claint__max']
@@ -367,6 +368,7 @@ def last_claint():
         yield i
 
 last_claint.abort_on_error = True
+last_claint.document_retries = 5
 
 class DREScrap( object ):
     '''Re-reads and updates a list of documents'''
@@ -409,7 +411,7 @@ class DREScrap( object ):
                     # Error reading the document. Will sleep 20 seconds and then
                     # we try again.
                     error_condition += 1
-                    if error_condition <= MAX_ERROR_CONDITION:
+                    if error_condition <= self.doc_list.document_retries :
                         t = 20.0 * random.random() + 5
                         logger.warn('DRE error condition #%d on the site claint %d. Sleeping %ds.' % (
                             error_condition, doc, t) )
