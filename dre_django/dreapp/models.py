@@ -129,7 +129,6 @@ doc_type_relation = {
         u'Decretos-Leis': u'Decreto-Lei',
         u'Portarias': u'Portaria',
         u'Despachos': u'Despacho',
-        u'despachos': u'Despacho',
         }
 
 doc_type_str_plural = '|'.join([ xi.lower()
@@ -260,22 +259,6 @@ class Document(models.Model):
 
     def plain_pdf_filename(self):
         return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint)
-
-    def plain_pdf_url(self):
-        return  os.path.join(
-                            '/pdfs',
-                            '%d' % self.year(),
-                            '%02d' % self.month(),
-                            '%02d' % self.day(),
-                            'plain-%s.pdf' % self.claint)
-
-    def dre_pdf_url(self):
-        return  os.path.join(
-                            '/pdfs',
-                            '%d' % self.year(),
-                            '%02d' % self.month(),
-                            '%02d' % self.day(),
-                            'dre-%s.pdf' % self.claint)
 
     # Representation
     def plain_html(self):
@@ -425,14 +408,7 @@ class DocumentCache(models.Model):
 
         return u'%s %s' % (g[0], links_txt )
 
-    def get_html(self):
-        '''This method does the following:
-        * Build the html cache for the plan text representation of the document;
-        * Creates a list of documents connected to the current document
-        '''
-        if self.version >= DOCUMENT_VERSION and not settings.DEBUG:
-            return self._html
-
+    def build_cache(self):
         # Rebuild the cache
         self.version = DOCUMENT_VERSION
         self.timestamp = datetime.now()
@@ -482,7 +458,16 @@ class DocumentCache(models.Model):
 
         self._html = html
         self.save()
-        return html
+
+    def get_html(self):
+        '''This method does the following:
+        * Build the html cache for the plan text representation of the document;
+        * Creates a list of documents connected to the current document
+        '''
+        if self.version < DOCUMENT_VERSION or settings.DEBUG:
+            self.build_cache()
+
+        return self._html
 
     html = property(get_html)
 
