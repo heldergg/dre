@@ -4,6 +4,7 @@
 import datetime
 import re
 import urllib
+import json
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +14,7 @@ from django.db.models import Q, Max, Min
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponse
 
 # Local Imports:
 import dreapp.index
@@ -198,6 +199,14 @@ def document_display( request, docid ):
 
     return render_to_response('document_display.html', context,
                 context_instance=RequestContext(request))
+
+def document_json( request, docid ):
+    document = get_object_or_404(Document, pk=docid )
+
+
+    # return HttpResponse(json.dumps(document.dict_repr()),
+    return HttpResponse(json.dumps([1,2,3,4,5]),
+            mimetype='application/json')
 
 def bookmark_display( request, userid ):
     context = {}
