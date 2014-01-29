@@ -204,8 +204,7 @@ def document_json( request, docid ):
     document = get_object_or_404(Document, pk=docid )
 
 
-    # return HttpResponse(json.dumps(document.dict_repr()),
-    return HttpResponse(json.dumps([1,2,3,4,5]),
+    return HttpResponse(json.dumps(document.dict_repr()),
             mimetype='application/json')
 
 def bookmark_display( request, userid ):
