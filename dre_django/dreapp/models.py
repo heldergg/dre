@@ -476,3 +476,10 @@ class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
     tries = models.IntegerField(default=1)
     timestamp = models.DateTimeField(default=datetime.now())
+
+class DocumentText(models.Model):
+    document  = models.ForeignKey(Document, unique = True)
+    timestamp = models.DateTimeField(default = datetime.now())
+    text_url  = models.URLField()
+
+    text = models.TextField()
