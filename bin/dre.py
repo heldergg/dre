@@ -40,7 +40,7 @@ def usage():
                             Reads the "integral text" from a document, this is
                             the table's 'id' field
 
-        --refresh_text      Re-reads the "integral text" for all suitable docs
+        --check_text        Reads the "integral text" for all suitable docs
                             on the database
 
         -d
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         opts, args = getopt.getopt(sys.argv[1:],
                                    'hru:vtdcg',
                                    ['help', 'read_processing', 'read_docs',
-                                    'read_gaps', 'read_text=', 'refresh_text',
+                                    'read_gaps', 'read_text=', 'check_text',
                                     'read_single=', 'verbose', 'dump',
                                     'update_cache'])
     except getopt.GetoptError, err:
@@ -125,11 +125,12 @@ if __name__ == '__main__':
                 sys.exit(2)
             sys.exit()
 
-        elif o == '--refresh_text':
+        elif o == '--check_text':
             import time
             import random
             from drescraper import TIReadDoc
             from dreapp.models import Document
+            from drelog import logger
 
             query = '''
                 select
@@ -142,9 +143,12 @@ if __name__ == '__main__':
             '''
 
             for document in Document.objects.raw(query):
-                reader = TIReadDoc(document)
-                reader.read()
-                t = 20.0 * random.random() + 5
+                try:
+                    reader = TIReadDoc(document)
+                    reader.read()
+                except DREError, msg:
+                    logger.critical('ID: %d - error getting the document: %s' % (document.id, msg) )
+                t = 10.0 * random.random() + 5
                 print "Sleeping %ds" % t
                 time.sleep(t)
 
