@@ -126,16 +126,27 @@ if __name__ == '__main__':
             sys.exit()
 
         elif o == '--refresh_text':
-            from time import sleep
-            from django.db.models import Q
+            import time
+            import random
             from drescraper import TIReadDoc
             from dreapp.models import Document
 
-            for document in Document.objects.filter( Q(dre_key__endswith = '@s1') |
-                    Q(dre_key__endswith = '@s2') ):
+            query = '''
+                select
+                    id
+                from
+                    dreapp_document
+                where
+                    id not in (select document_id from dreapp_documenttext) AND
+                    (dre_key like '%%@s1' OR dre_key like '%%@s2');
+            '''
+
+            for document in Document.objects.raw(query):
                 reader = TIReadDoc(document)
                 reader.read()
-                sleep(1)
+                t = 20.0 * random.random() + 5
+                print "Sleeping %ds" % t
+                time.sleep(t)
 
             sys.exit()
 
