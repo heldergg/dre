@@ -131,6 +131,7 @@ if __name__ == '__main__':
             from drescraper import TIReadDoc
             from dreapp.models import Document
             from drelog import logger
+            from dreerror import DREError
 
             query = '''
                 select
