@@ -257,6 +257,10 @@ class DREReadDocs( object ):
         if document.plain_text:
             DocumentCache.objects.get_cache(document)
 
+        # Check for plain text pages:
+        reader = TIReadDoc(document)
+        reader.read()
+
         logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
 
 
@@ -434,3 +438,118 @@ class DREScrap( object ):
             t = 20.0 * random.random() + 5
             logger.debug('Geting ready to get the next doc. Sleeping %ds' % t)
             time.sleep( t )
+
+################################################################################
+################################################################################
+################################################################################
+
+from dreapp.models import DocumentText
+
+TEXT_DOC        = 0
+TEXT_SUMMARY_PT = 1
+TEXT_SUMMARY_EN = 2
+
+class TIReadDoc( object ):
+    '''Reads the "integral text" from the page'''
+
+    def __init__(self, document):
+        '''
+        document - a document object
+        '''
+        self.document = document
+
+        if not document.dre_key:
+            raise DREError('No dre_key on this document. Aborting.')
+
+        if document.dre_key[-3:] not in ('@s1', '@s2'):
+            raise DREError('Serie not present. Aborting.')
+
+        dre_key  = self.document.dre_key.split('@')
+        self.serie    = dre_key[1][1]
+        self.key      = dre_key[0]
+
+    def get_url(self):
+
+        serie    = self.serie
+        key      = self.key
+        doc_type = self.document.doc_type
+        date     = self.document.date
+
+        if serie == '2':
+            # Second DR series
+            url='http://www.dre.pt/cgi/dr2s.exe?t=d2&cap=&doc=%s' % key
+        elif serie == '1':
+            # First DR series
+            args = [
+                't=d',                      # Possible values 'd' or 'dr'
+                'cap=',
+                'doc=%s' % key,             # dre_key
+                'v01=2',
+                'v02=%s' % date.isoformat(),# doc date YYYY-MM-DD
+                'v03=',                     # Minimum date
+                'v04=',                     # Max date
+                'v05=',
+                'v06=',
+                'v07=',
+                'v08=',
+                'v09=',
+                'v10=',
+                'v11=',                     # Doc type
+                'v12=',
+                'v13=',
+                'v14=',
+                'v15=',
+                'sort=0',
+                'submit=Pesquisar'
+                    ]
+
+            url = 'http://www.dre.pt/cgi/dr1s.exe?%s' % '&'.join(args)
+
+        return url
+
+    def is_empty(self, html):
+        return '<div id="doc_texto">' not in html
+
+    def get_text(self, soup):
+        text = soup.find('div', {'id':'doc_texto'}).prettify()
+        return text
+
+    def save(self, text, url, text_type):
+        try:
+            doc_text = DocumentText.objects.get(document=self.document,
+                    text_type = text_type)
+        except ObjectDoesNotExist:
+            doc_text = DocumentText()
+
+        doc_text.document  = self.document
+        doc_text.text_url  = url
+        doc_text.text_type = text_type
+        doc_text.text = text
+
+        doc_text.save()
+
+    def read(self):
+        url  = self.get_url()
+        url, html, cj  =  fetch_url(url)
+        soup = bs4.BeautifulSoup(html, "html.parser")
+        if not self.is_empty(html):
+            text = self.get_text(soup)
+            self.save(text, url, TEXT_DOC)
+
+            # Get clear language summary
+            if 'Resumo em linguagem clara' in html:
+                # NOTE: the following does not follow the DRY principle. This
+                # is only temporary (famous last words).
+                url = 'http://www.dre.pt/sug/1s/diplomas_resumo.asp?id=%s&lang=pt' % self.key
+                url, html, cj  =  fetch_url(url)
+                soup = bs4.BeautifulSoup(html, "html.parser")
+                text = soup.find('div', {'id':'centro_wide'}).prettify()
+                self.save(text, url, TEXT_SUMMARY_PT)
+
+                url = 'http://www.dre.pt/sug/1s/diplomas_resumo.asp?id=%s&lang=en' % self.key
+                url, html, cj  =  fetch_url(url)
+                soup = bs4.BeautifulSoup(html, "html.parser")
+                text = soup.find('div', {'id':'centro_wide'}).prettify()
+                self.save(text, url, TEXT_SUMMARY_EN)
+        else:
+            raise DREError('No text available')

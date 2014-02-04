@@ -33,7 +33,15 @@ def usage():
 
         -u <document_id>
         --read_single <document_id>
-                            Reads a single document from the site
+                            Reads a single document from the site, this is the
+                            table's 'claint' field
+
+        --read_text <document_id>
+                            Reads the "integral text" from a document, this is
+                            the table's 'id' field
+
+        --refresh_text      Re-reads the "integral text" for all suitable docs
+                            on the database
 
         -d
         --dump              Dump the documents to stdout as a JSON list
@@ -52,7 +60,7 @@ if __name__ == '__main__':
         opts, args = getopt.getopt(sys.argv[1:],
                                    'hru:vtdcg',
                                    ['help', 'read_processing', 'read_docs',
-                                    'read_gaps',
+                                    'read_gaps', 'read_text=', 'refresh_text',
                                     'read_single=', 'verbose', 'dump',
                                     'update_cache'])
     except getopt.GetoptError, err:
@@ -97,6 +105,38 @@ if __name__ == '__main__':
             except ValueError:
                 print 'Please specify the document number (integer).'
                 sys.exit(1)
+            sys.exit()
+
+        elif o == '--read_text':
+            from django.core.exceptions import ObjectDoesNotExist
+            from drescraper import TIReadDoc
+            from dreapp.models import Document
+
+            try:
+                document_id = int(a.strip())
+                document    = Document.objects.get(pk=document_id)
+                reader = TIReadDoc(document)
+                reader.read()
+            except ValueError:
+                print 'Please specify the document number (integer).'
+                sys.exit(1)
+            except ObjectDoesNotExist:
+                print 'The document does not exist.'
+                sys.exit(2)
+            sys.exit()
+
+        elif o == '--refresh_text':
+            from time import sleep
+            from django.db.models import Q
+            from drescraper import TIReadDoc
+            from dreapp.models import Document
+
+            for document in Document.objects.filter( Q(dre_key__endswith = '@s1') |
+                    Q(dre_key__endswith = '@s2') ):
+                reader = TIReadDoc(document)
+                reader.read()
+                sleep(1)
+
             sys.exit()
 
         elif o in ('-d', '--dump'):

@@ -477,9 +477,22 @@ class FailedDoc(models.Model):
     tries = models.IntegerField(default=1)
     timestamp = models.DateTimeField(default=datetime.now())
 
+TEXT_DOC        = 0
+TEXT_SUMMARY_PT = 1
+TEXT_SUMMARY_EN = 2
+
 class DocumentText(models.Model):
-    document  = models.ForeignKey(Document, unique = True)
+    '''
+    This table is used to store raw html retrieved from dre.pt
+    '''
+    document  = models.ForeignKey(Document)
     timestamp = models.DateTimeField(default = datetime.now())
     text_url  = models.URLField()
+    text_type = models.IntegerField(default=0)
 
     text = models.TextField()
+
+    class Meta:
+        unique_together = ('document', 'text_type')
+
+
