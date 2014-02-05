@@ -408,20 +408,7 @@ class DocumentCache(models.Model):
 
         return u'%s %s' % (g[0], links_txt )
 
-    def build_cache(self):
-        # Rebuild the cache
-        self.version = DOCUMENT_VERSION
-        self.timestamp = datetime.now()
-        filename = self.document.plain_pdf_filename()
-        self.doc_cache = {}
-        self.document.connects_to.clear()
-
-        if not os.path.exists(filename):
-            # No text to represent
-            self._html = ''
-            self.save()
-            return ''
-
+    def build_cache_from_pdf(self, filename):
         # Convert the PDF to html
         # TODO: substitute this regexes for compiled regexes
         command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % (
@@ -451,9 +438,27 @@ class DocumentCache(models.Model):
 
         html = html.replace('</b><br>','</b><br><p>')
 
+        return html
+
+    def build_cache(self):
+        # Rebuild the cache
+        self.version = DOCUMENT_VERSION
+        self.timestamp = datetime.now()
+        filename = self.document.plain_pdf_filename()
+        self.doc_cache = {}
+        self.document.connects_to.clear()
+
+
+        # Build the html from the plain text html
+        if not os.path.exists(filename):
+            # No text to represent
+            self._html = ''
+            self.save()
+            return ''
+        html = self.build_cache_from_pdf(filename)
+
         # Recognize other document names and link to them:
         html = doc_ref_re.sub( self.make_links, unicode(html,'utf-8','ignore') )
-
         html = doc_ref_plural_re.sub( self.make_links_plural , html )
 
         self._html = html
