@@ -472,7 +472,7 @@ class DocumentCache(models.Model):
         self.timestamp = datetime.now()
         filename = self.document.plain_pdf_filename()
         try:
-            doc_text = DocumentText.objects.get( document = self, text_type = 0)
+            doc_text = DocumentText.objects.get( document = self.document, text_type = 0)
         except ObjectDoesNotExist:
             doc_text = None
 
