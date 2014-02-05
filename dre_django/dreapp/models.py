@@ -482,6 +482,7 @@ class DocumentCache(models.Model):
             html = re.sub( r'(Artigo \d+\..)\n',r'<strong>\1</strong>', html)
             html = re.sub( u'(CAPÍTULO [IVXLD]+)\n',r'<strong>\1</strong>', html)
             html = re.sub( u'(SECÇÃO [IVXLD]+)\n',r'<strong>\1</strong>', html)
+            html = html.replace('TEXTO :','')
         elif os.path.exists(filename):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
