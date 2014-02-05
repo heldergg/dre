@@ -258,8 +258,11 @@ class DREReadDocs( object ):
             DocumentCache.objects.get_cache(document)
 
         # Check for plain text pages:
-        reader = TIReadDoc(document)
-        reader.read()
+        try:
+            reader = TIReadDoc(document)
+            reader.read()
+        except DREError, msg:
+            logger.warn(msg)
 
         logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
 
