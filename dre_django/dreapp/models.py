@@ -290,6 +290,16 @@ class Document(models.Model):
 
         return text
 
+    def has_text(self):
+        try:
+            doc_text = DocumentText.objects.get( document = self, text_type = 0)
+        except ObjectDoesNotExist:
+            doc_text = None
+
+        if self.plain_text or doc_text:
+            return True
+        return False
+
     def title(self):
         # Note: strftime requires years greater than 1899, even though we do not
         # deal with year arithmetic in this method we are forced to find the

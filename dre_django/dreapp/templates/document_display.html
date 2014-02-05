@@ -43,7 +43,7 @@
     <ul>
       <li><a href="#summary">Sumário</a>
       {% if user.is_authenticated and show_user_notes %}<li><a href="#user_notes">As suas notas associadas a este documento</a>{% endif %}
-      {% if document.plain_text %}<li><a href="#text">Texto do documento</a>{% endif %}
+      {% if document.has_text %}<li><a href="#text">Texto do documento</a>{% endif %}
       {% if note_list %}<li><a href="#notes">Notas dos utilizadores</a>{% endif %}
       {% if document.connects_to.all %}<li><a href="#out_links">Ligações deste documento</a>{% endif %}
       {% if document.document_set.all %}<li><a href="#in_links">Ligações para este documento</a>{% endif %}
@@ -70,16 +70,18 @@
   </div>
 {% endif %}
 
-{% if document.plain_text %}
+{% if document.has_text %}
 <h2><a name="text">Texto do documento</a></h2>
 <div class="result_notes">
   {% autoescape off %}
   {{ document.plain_html }}
   {% endautoescape %}
+  {% if document.plain_text %} 
   <div class="noprint">
     <hr>
     <p><a href="{{ document.plain_text }}"><img src="{{ STATIC_URL }}img/pdf.png"> Versão em PDF deste documento</a>
   </div>
+  {% endif %}
 </div>
 {% endif %}
 
