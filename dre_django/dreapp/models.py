@@ -268,11 +268,27 @@ class Document(models.Model):
     def plain_txt(self):
         '''Converts the plain_pdf pdf to txt'''
         filename = self.plain_pdf_filename()
-        if os.path.exists(filename):
+        try:
+            doc_text = DocumentText.objects.get( document = self, text_type = 0)
+        except ObjectDoesNotExist:
+            doc_text = None
+
+        if doc_text:
+            # Get the text from the integral text
+            text = doc_text.text
+            text = re.sub(r'<.*?>',r'', text)
+            text = text.replace('TEXTO :','')
+
+        elif os.path.exists(filename):
+            # Get the text from the plain text pdf
             command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
-            return os.popen(command).read()
+            text = os.popen(command).read()
+
         else:
-            return ''
+            # No text
+            text = ''
+
+        return text
 
     def title(self):
         # Note: strftime requires years greater than 1899, even though we do not
