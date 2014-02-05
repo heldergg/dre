@@ -445,20 +445,31 @@ class DocumentCache(models.Model):
         self.version = DOCUMENT_VERSION
         self.timestamp = datetime.now()
         filename = self.document.plain_pdf_filename()
-        self.doc_cache = {}
-        self.document.connects_to.clear()
+        try:
+            doc_text = DocumentText.objects.get( document = self, text_type = 0)
+        except ObjectDoesNotExist:
+            doc_text = None
 
-
-        # Build the html from the plain text html
-        if not os.path.exists(filename):
+        if doc_text:
+            # Build the html from the integral text
+            html = doc_text.text
+            html = re.sub( r'(Artigo \d+\..)\n',r'<strong>\1</strong>', html)
+            html = re.sub( u'(CAPÍTULO [IVXLD]+)\n',r'<strong>\1</strong>', html)
+            html = re.sub( u'(SECÇÃO [IVXLD]+)\n',r'<strong>\1</strong>', html)
+        elif os.path.exists(filename):
+            # Build the html from the plain text html
+            html = self.build_cache_from_pdf(filename)
+            html = unicode(html,'utf-8','ignore')
+        else:
             # No text to represent
             self._html = ''
             self.save()
-            return ''
-        html = self.build_cache_from_pdf(filename)
+            html = ''
 
         # Recognize other document names and link to them:
-        html = doc_ref_re.sub( self.make_links, unicode(html,'utf-8','ignore') )
+        self.doc_cache = {}
+        self.document.connects_to.clear()
+        html = doc_ref_re.sub( self.make_links, html )
         html = doc_ref_plural_re.sub( self.make_links_plural , html )
 
         self._html = html
