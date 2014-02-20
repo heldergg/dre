@@ -124,11 +124,10 @@ doc_type_plural = (
         )
 
 doc_type_relation = {
-        u'Leis': u'Lei',
-        u'Decretos-Lei': u'Decreto-Lei',
-        u'Decretos-Leis': u'Decreto-Lei',
-        u'Portarias': u'Portaria',
-        u'Despachos': u'Despacho',
+        u'leis': u'Lei',
+        u'decretos-lei': u'Decreto-Lei',
+        u'decretos-leis': u'Decreto-Lei',
+        u'portarias': u'Portaria',
         u'despachos': u'Despacho',
         }
 
@@ -406,7 +405,7 @@ class DocumentCache(models.Model):
     def make_links_plural(self, match ):
         g = match.groups()
 
-        doc_type = doc_type_relation[g[0]]
+        doc_type = doc_type_relation[g[0].lower()]
         n = [ xi.strip() for xi in g[1].replace(' e ',' ').split(',') ]
         numbers = zip(n[::2],n[1::2])
 
