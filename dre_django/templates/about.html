@@ -59,14 +59,14 @@
   reports</em>, etc, na <a href="https://github.com/heldergg/dre">página
   do projecto</a> no github.
 
-  <h2>Base de dados</h2>
+  <a name="base_de_dados"></a><h2>Base de dados</h2>
 
   <p>Pode fazer o download de toda a legislação que recolhemos do 'dre.pt' nas
   ligações seguintes:
 
   <ul>
     <li><a href="{% include "json.url" %}">Base de dados em formato JSON</a> (cerca de 20MB)</li>
-    <li><a href="{% include "sql.url" %}">Dump da base de dados com a ferramenta 'pg_dump'</a> (cerca de 20MB)</li>
+    <li><a href="{% include "sql.url" %}">Dump da base de dados com a ferramenta 'pg_dump'</a> (cerca de 220MB)</li>
   </ul>
 
   <p>Note, por favor, o seguinte:
@@ -77,7 +77,9 @@
     <li>Os ficheiros foram comprimidos usando a ferramenta 
     <a href="http://www.bzip.org/">bzip2</a>. Depois de descomprimidos expandem
     para ficheiros relativamente pesados, com cerca de 250MB no caso da versão 
-    <a href="http://pt.wikipedia.org/wiki/JSON">JSON</a> e cerca de 150MB na versão SQL;
+    <a href="http://pt.wikipedia.org/wiki/JSON">JSON</a> e cerca de <strong>1.3GB</strong> na versão SQL;
+    <li>Temos uma explicação sobre o formato destes ficheiros <a href="http://blog.tretas.org/2014/02/23/obter-a-legislacao-do-dre-tretas-org/">neste post</a>;
+    <li>Por vezes o upload para o mega.co.nz falha, especialmente no caso do ficheiro maior. Se detectar um ficheiro estragado, contacte <a href="mailto:webmaster@tretas.org">webmaster@tretas.org</a>;
     <li>Estes ficheiros são gerados todos os Domingos às 10:00.
   </ol>
   <div style="display:none;">
