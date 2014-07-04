@@ -15,7 +15,7 @@
   </script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
   {% endif %}
-  <meta name="keywords" content="diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.date|date:"Y" }}, {{ document.c_emitting }}">
+  <meta name="keywords" content="{{ document.title }}, diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.date|date:"Y" }}, {{ document.c_emitting }}">
   <meta name="description" content="{{ document.note_escaped }}">
   <meta name="author" content="{{ document.c_emitting }}">
 {% endblock %}
