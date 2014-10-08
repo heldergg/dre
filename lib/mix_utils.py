@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Scraping application for the dre.pt site, a portuguese database of 
+'''Scraping application for the dre.pt site, a portuguese database of
 legislation.
 '''
 
@@ -37,18 +37,18 @@ du = debug_unicode
 socket.setdefaulttimeout(60)
 MAXREPEAT = 2
 
-class SmartRedirectHandler(urllib2.HTTPRedirectHandler):     
-    def http_error_301(self, req, fp, code, msg, headers):  
-        result = urllib2.HTTPRedirectHandler.http_error_301( 
-                        self, req, fp, code, msg, headers)              
+class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
+    def http_error_301(self, req, fp, code, msg, headers):
+        result = urllib2.HTTPRedirectHandler.http_error_301(
+                        self, req, fp, code, msg, headers)
 
         result.status = code
         logger.debug('Redirect URL (301): %s' %  result.url)
         return result
 
-    def http_error_302(self, req, fp, code, msg, headers):  
-        result = urllib2.HTTPRedirectHandler.http_error_302( 
-                        self, req, fp, code, msg, headers)              
+    def http_error_302(self, req, fp, code, msg, headers):
+        result = urllib2.HTTPRedirectHandler.http_error_302(
+                        self, req, fp, code, msg, headers)
 
         result.status = code
         logger.debug('Redirect URL (302): %s' %  result.url)
