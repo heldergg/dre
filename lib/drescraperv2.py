@@ -15,7 +15,6 @@ import sys
 import os.path
 import re
 import urllib2
-import StringIO
 import time
 
 # Append the current project path
@@ -23,13 +22,6 @@ sys.path.append(os.path.abspath('../lib/'))
 sys.path.append(os.path.abspath('../dre_django/'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
-
-# PDFMiner
-
-from pdfminer.layout import LAParams
-from pdfminer.converter import TextConverter
-from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-from pdfminer.pdfpage import PDFPage
 
 # Django general
 from django.conf import settings
@@ -62,16 +54,6 @@ MODIFY = 2
 
 doc_header_re = re.compile( r'^(?P<type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+) - Diário da República n.º (?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
-page_header_re = re.compile( r'^Diário da República.*?\d+\s+de\s+(?:janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+\d{4}$', re.MULTILINE )
-
-page_number_re = re.compile( r'^\d{4,5}(?:-\(\d+\))?$', re.MULTILINE )
-
-enumeration_start_re = re.compile( r'^(?:\d+\s(?:—|-)|[a-zA-Z]\)\s|[ivxdl]+\)\s).*$' )
-
-hyphens_re = re.compile( r'-.*? ' )
-
-titles_re = re.compile( r'^(?:Artigo \d+.º(?:-[A-Z])?|ANEXO|)$' )
-
 ##
 ## Utils
 ##
@@ -101,7 +83,6 @@ def save_file(filename, url):
     with open(filename, 'wb') as f:
         f.write(data_blob)
         f.close()
-
 
 ##
 ## Scraper
@@ -256,14 +237,6 @@ def main():
     dr.read_index()
     dr.save_docs()
 
-##     k = 0
-##     for doc in dr.doc_list:
-##         if k==2:
-##             doc.save_pdf()
-##             doc.extract_txt()
-##             doc.process_txt()
-##             doc.process_lines()
-##         k+=1
 
 if __name__ == '__main__':
     main()
