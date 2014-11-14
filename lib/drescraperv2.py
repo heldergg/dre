@@ -22,6 +22,8 @@ import time
 sys.path.append(os.path.abspath('../lib/'))
 sys.path.append(os.path.abspath('../dre_django/'))
 
+os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
+
 # PDFMiner
 
 from pdfminer.layout import LAParams
@@ -31,8 +33,10 @@ from pdfminer.pdfpage import PDFPage
 
 # Django general
 from django.conf import settings
+from django.db.utils import IntegrityError
 
 # Local Imports
+from dreapp.models import Document, DocumentNext
 from mix_utils import fetch_url
 from dreerror import DREError
 from drelog import logger
@@ -44,6 +48,13 @@ import bs4
 
 MAX_ATTEMPTS = 5
 ARCHIVEDIR = settings.ARCHIVEDIR
+
+##
+## Constants
+##
+
+NEW = 1
+MODIFY = 2
 
 ##
 ## Re
@@ -91,196 +102,10 @@ def save_file(filename, url):
         f.write(data_blob)
         f.close()
 
-def pdf_to_txt( fp ):
-    rsrcmgr = PDFResourceManager(caching=True)
-    outfp = StringIO.StringIO()
-    codec = 'utf-8'
-    laparams = LAParams()
-    device = TextConverter(rsrcmgr, outfp, codec=codec, laparams=laparams,
-                                           imagewriter=None)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    for page in PDFPage.get_pages(fp, pagenos=set(),
-                                  maxpages=0, password='',
-                                  caching=True, check_extractable=True):
-        page.rotate = page.rotate % 360
-        interpreter.process_page(page)
-    device.close()
-    txt = outfp.getvalue()
-    outfp.close()
-
-    return txt
-
 
 ##
 ## Scraper
 ##
-
-class DREPDFReader( object ):
-    def __init__(self, meta ):
-        self.meta = meta
-
-    def check_dirs(self):
-        date = self.meta['date']
-        archive_dir = os.path.join( ARCHIVEDIR,
-                                    '%d' % date.year,
-                                    '%02d' % date.month,
-                                    '%02d' % date.day )
-        # Create the directory if needed
-        if not os.path.exists( archive_dir ):
-            os.makedirs( archive_dir )
-
-        return archive_dir
-
-    def save_pdf(self):
-        archive_dir = self.check_dirs()
-        pdf_file_name = os.path.join( archive_dir, 'dre-%d.pdf' % self.meta['id'] )
-        save_file( pdf_file_name, self.meta['url'] )
-        self.pdf_file_name = pdf_file_name
-
-    def extract_txt(self):
-        # Convert the pdf to txt
-        fp = file(self.pdf_file_name, 'rb')
-        self.txt = pdf_to_txt( fp )
-        fp.close()
-
-
-    def process_txt(self):
-        '''Document wide processing methods
-        '''
-        def raw_document( txt ):
-            # Extract the intended document
-            doc_start = txt.find( '%s n.º %s' % (self.meta['type'],
-                self.meta['number']) )
-            if self.meta['next']:
-                doc_end = txt.find( '%s n.º %s' % (self.meta['next']['type'],
-                    self.meta['next']['number']) )
-            else:
-                doc_end = -1
-            return txt[doc_start:doc_end]
-
-        def strip_trailing( txt ):
-            # Clean up leading and trailing spaces
-            txt = '\n'.join([ ln.strip() for ln in txt.split('\n') ])
-            return txt
-
-        def remove_headers( txt ):
-            # Remove page headers
-            txt = page_header_re.sub('', txt)
-            txt = page_number_re.sub('', txt)
-            return txt
-
-        def remove_dr_footer( txt ):
-            # Remove the final DR footer
-            return txt[:txt.find('\nI  SÉRIE')]
-
-        tool_list = [
-                raw_document,
-                strip_trailing,
-                remove_headers,
-                remove_dr_footer,
-                ]
-        txt = self.txt
-        for tool in tool_list:
-            txt = tool( txt )
-
-        self.txt = txt
-
-    def process_lines(self):
-        def is_start_para( ln ):
-            if titles_re.match(ln):
-                return True
-            if len(ln) >= 1 and ln[0] in "ABCDEFGHIJKLMNOPQRSTUVWXYZÉ":
-                return True
-            if enumeration_start_re.match(ln):
-                return True
-            return False
-
-        def all_caps( ln ):
-            for c in unicode(ln,'utf-8'):
-                # Must loop through the unicode object, else we get
-                # a byte for byte loop
-                if c in u'abcdefghijklmnopqrstuvwxyzçàáãâèéêóòõôíú':
-                    return False
-            return True
-
-        def join_para( para ):
-            txt_para = ' '.join(para)
-            txt_para = txt_para.replace('- ', '-')
-            txt_para = txt_para.replace(' -', '-')
-
-            # Remove the hyphenation
-            for term in hyphens_re.findall(txt_para):
-                term = term.strip()
-                if term[1].isupper():
-                    continue
-                if term not in [ '-se', ]:
-                    txt_para = txt_para.replace( term, term[1:])
-            return txt_para
-
-        pl = []     # Paragraph list
-        para = []   # Current paragraph
-        last_char = ''
-        sub_title = True
-
-        txt = self.txt
-        ln_number = 0
-        for ln in txt.split('\n'):
-            ln_number += 1
-            ln = ln.strip()
-            is_title = bool(titles_re.match(ln))
-
-            if not ln:
-                # Ignore empty lines
-                continue
-
-            if all_caps(ln):
-                # Ignore lines in upper case
-                continue
-
-#            if len(ln) < 30 and ln[-1] not in ['.',';',':'] and para:
-#                # Titles
-#                pl.append(join_para( para ))
-#                pl.append(ln)
-#                para = []
-#                title = True
-#                continue
-
-            if is_start_para(ln):
-                # Start a new paragraph
-                if ( last_char in ['.',';',':'] or
-                     enumeration_start_re.match(ln) ):
-                    # Paragraph
-                    if para:
-                        # End of a pragraph and start of another
-                        pl.append(join_para(para))
-                        para = []
-                elif ln_number == 1:
-                    # First line
-                    pl.append(join_para([ln]))
-                    last_char = ''
-                    para = []
-                    continue
-                elif is_title or sub_title:
-                    if para:
-                        pl.append(join_para(para))
-                        para = []
-                    pl.append(join_para([ln]))
-                    last_char = ''
-                    sub_title = is_title
-                    continue
-
-            para.append(ln)
-            last_char = ln[-1]
-
-        if para:
-            pl.append(join_para(para))
-
-        self.txt = '\n'.join(pl)
-
-        for p in pl:
-            print p
-            print
-
 
 class DREReader( object ):
     def __init__( self, date ):
@@ -291,6 +116,24 @@ class DREReader( object ):
 
     def soupify(self, html):
         self.soup = bs4.BeautifulSoup(html)
+
+    def check_dirs(self):
+        date = self.date
+        archive_dir = os.path.join( ARCHIVEDIR,
+                                    '%d' % date.year,
+                                    '%02d' % date.month,
+                                    '%02d' % date.day )
+        # Create the directory if needed
+        if not os.path.exists( archive_dir ):
+            os.makedirs( archive_dir )
+
+        return archive_dir
+
+    def save_pdf(self, meta):
+        archive_dir = self.check_dirs()
+        pdf_file_name = os.path.join( archive_dir, 'dre-%d.pdf' % meta['id'] )
+        save_file( pdf_file_name, meta['url'] )
+        self.pdf_file_name = pdf_file_name
 
     def get_document_list(self):
         day_dr = self.soup.findAll('div', { 'class': 'diplomas' })
@@ -319,7 +162,7 @@ class DREReader( object ):
             if prev_doc:
                 prev_doc['next'] = doc
             prev_doc = doc
-            dl.append(DREPDFReader(doc))
+            dl.append(doc)
 
         self.doc_list = dl
 
@@ -335,6 +178,64 @@ class DREReader( object ):
 
         return self
 
+    def save_docs(self, mode = NEW):
+        if not self.doc_list:
+            logger.critical('Couldn\'t get documents for %s' % self.date.isoformat())
+        for doc in self.doc_list:
+            if mode == MODIFY:
+                try:
+                    document = Document.objects.get(claint = doc['id'] )
+                    document_next = DocumentNext.objects.get( document = document )
+                except ObjectDoesNotExist:
+                    mode = NEW
+            if mode == NEW:
+                document = Document()
+                document_next = DocumentNext()
+
+            document.claint       = doc['id']
+            document.doc_type     = doc['type']
+            document.number       = doc['number']
+            document.emiting_body = doc['source']
+            document.source       = '%d.ª Série, Nº %s, de %s' % (
+                                self.serie, doc['dr_number'], self.date.isoformat())
+            document.dre_key      = 'NA'
+            document.in_force     = True
+            document.conditional  = False
+            document.processing   = False
+            document.date         = doc['date']
+            document.notes        = doc['summary']
+            document.plain_text   = ''
+            document.dre_pdf      = doc['url']
+            document.pdf_error    = False
+            document.timestamp    = datetime.datetime.now()
+            try:
+                document.save()
+            except IntegrityError:
+                # Duplicated document
+                logger.debug('We have this document. Aborting - %(type)s %(number)s claint=%(id)d' % doc )
+                continue
+
+            # Log document
+            txt = 'Document saved:\n'
+            for key,item in doc.items():
+                if key != 'next':
+                    txt += '   %-10s: %s\n' % (key, item)
+            logger.warn(txt[:-1])
+
+            # Create the document html cache
+            if document.plain_text:
+                DocumentCache.objects.get_cache(document)
+
+            # Save PDF:
+            self.save_pdf( doc )
+            time.sleep(0.5)
+            logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
+
+            # Save the 'next' information to DocumentNext
+            document_next.document = document
+            document_next.doc_type = doc['next']['type'] if doc['next'] else ''
+            document_next.number   = doc['next']['number'] if doc['next'] else ''
+            document_next.save()
 
 class DREReader1S( DREReader ):
     def __init__( self, date ):
@@ -351,17 +252,18 @@ def main():
     # Get the DR from a given day
     # This will read the documents for the first series from a given
     # day, save the meta-data to the database, and the pdf to a file
-    dr =  DREReader1S( datetime.datetime.strptime( '2014-10-08', '%Y-%m-%d' )
-            ).read_index()
+    dr =  DREReader1S( datetime.datetime.strptime( '2014-10-08', '%Y-%m-%d' ) )
+    dr.read_index()
+    dr.save_docs()
 
-    k = 0
-    for doc in dr.doc_list:
-        if k==2:
-            doc.save_pdf()
-            doc.extract_txt()
-            doc.process_txt()
-            doc.process_lines()
-        k+=1
+##     k = 0
+##     for doc in dr.doc_list:
+##         if k==2:
+##             doc.save_pdf()
+##             doc.extract_txt()
+##             doc.process_txt()
+##             doc.process_lines()
+##         k+=1
 
 if __name__ == '__main__':
     main()

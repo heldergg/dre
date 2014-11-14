@@ -203,6 +203,8 @@ class Document(models.Model):
     emiting_body = models.CharField(max_length=512)
     source = models.CharField(max_length=128)
     dre_key = models.CharField(max_length=32)
+    dr_number = models.CharField(max_length=16, default='')
+    series  = models.IntegerField(default=1)
     in_force = models.BooleanField(default=True)
     conditional = models.BooleanField(default=False)
     processing = models.BooleanField(default=False)
