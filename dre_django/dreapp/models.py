@@ -202,7 +202,7 @@ class Document(models.Model):
     '''
 
     claint = models.IntegerField(unique=True) # dre.pt site id
-    doc_type = models.CharField(max_length=64)
+    doc_type = models.CharField(max_length=128)
 
     number = models.CharField(max_length=32)
     emiting_body = models.CharField(max_length=512)
