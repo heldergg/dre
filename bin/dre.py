@@ -21,27 +21,12 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 def usage():
     print '''Usage: %(script_name)s [options]\n
     Commands:
-        -r
-        --read_docs         Reads documents from the site until no more
-                            documents are available
+        -r YYYY-MM-DD
+        --read_date YYYY-MM-DD
+                            Read the DRs from a given date
 
-        -t
-        --read_processing   Re-reads the documents marked as "processing"
-
-        -g
-        --read_gaps         Checks the missing claints on sequence
-
-        -u <document_id>
-        --read_single <document_id>
-                            Reads a single document from the site, this is the
-                            table's 'claint' field
-
-        --read_text <document_id>
-                            Reads the "integral text" from a document, this is
-                            the table's 'id' field
-
-        --check_text        Reads the "integral text" for all suitable docs
-                            on the database
+        --read_range YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂
+                            Read the DRs from in a given date range
 
         -d
         --dump              Dump the documents to stdout as a JSON list
@@ -58,11 +43,10 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   'hru:vtdcg',
-                                   ['help', 'read_processing', 'read_docs',
-                                    'read_gaps', 'read_text=', 'check_text',
-                                    'read_single=', 'verbose', 'dump',
-                                    'update_cache'])
+                                    'hr:dvc',
+                                   ['help', 'verbose',
+                                    'read_date=', 'read_range=',
+                                    'dump', 'update_cache'])
     except getopt.GetoptError, err:
         print str(err)
         print
@@ -78,80 +62,47 @@ if __name__ == '__main__':
 
     # Commands
     for o, a in opts:
-        if o in ('-r', '--read_docs'):
-            from drescraper import DREScrap, last_claint
-            scraper = DREScrap(last_claint)
-            scraper.run()
-            sys.exit()
-
-        elif o in ('-t', '--read_processing'):
-            from drescraper import DREScrap, processing_docs
-            scraper = DREScrap(processing_docs)
-            scraper.run()
-            sys.exit()
-
-        elif o in ('-g', '--read_gaps'):
-            from drescraper import DREScrap, check_gaps
-            scraper = DREScrap(check_gaps)
-            scraper.run()
-            sys.exit()
-
-        elif o in ('-u', '--read_single'):
-            from drescraper import DREReadDocs, DRESession
-            try:
-                reader = DREReadDocs( DRESession() )
-                document_id = int(a.strip())
-                reader.read_document(document_id)
-            except ValueError:
-                print 'Please specify the document number (integer).'
-                sys.exit(1)
-            sys.exit()
-
-        elif o == '--read_text':
-            from django.core.exceptions import ObjectDoesNotExist
-            from drescraper import TIReadDoc
-            from dreapp.models import Document
+        if o in ('-r', '--read_date'):
+            from drescraperv2 import DREReader1S
+            import datetime
 
             try:
-                document_id = int(a.strip())
-                document    = Document.objects.get(pk=document_id)
-                reader = TIReadDoc(document)
-                reader.read()
+                date = datetime.datetime.strptime( a, '%Y-%m-%d' )
             except ValueError:
-                print 'Please specify the document number (integer).'
+                print 'A date in ISO format must be passed to this command'
                 sys.exit(1)
-            except ObjectDoesNotExist:
-                print 'The document does not exist.'
-                sys.exit(2)
+
+            dr =  DREReader1S( date )
+            dr.read_index()
+            dr.save_docs()
+
             sys.exit()
 
-        elif o == '--check_text':
+        elif o == '--read_range':
+            from drescraperv2 import DREReader1S
+            import datetime
             import time
-            import random
-            from drescraper import TIReadDoc
-            from dreapp.models import Document
-            from drelog import logger
-            from dreerror import DREError
 
-            query = '''
-                select
-                    id
-                from
-                    dreapp_document
-                where
-                    id not in (select document_id from dreapp_documenttext) AND
-                    (dre_key like '%%@s1' OR dre_key like '%%@s2');
-            '''
+            try:
+                date1, date2 = a.split(':')
+            except ValueError:
+                print 'A date range in the format YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂ is needed.'
+                sys.exit()
 
-            for document in Document.objects.raw(query):
-                try:
-                    reader = TIReadDoc(document)
-                    reader.read()
-                except DREError, msg:
-                    logger.critical('ID: %d - error getting the document: %s' % (document.id, msg) )
-                t = 10.0 * random.random() + 5
-                print "Sleeping %ds" % t
-                time.sleep(t)
+            try:
+                date1 = datetime.datetime.strptime( date1, '%Y-%m-%d' )
+                date2 = datetime.datetime.strptime( date2, '%Y-%m-%d' )
+            except ValueError:
+               print 'The dates provided must be in ISO format.'
+               sys.exit(1)
+
+            date = date1
+            while date <= date2:
+                dr =  DREReader1S( date )
+                dr.read_index()
+                dr.save_docs()
+                date += datetime.timedelta(1)
+                time.sleep( 5 )
 
             sys.exit()
 
