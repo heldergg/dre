@@ -596,5 +596,5 @@ class DocumentNext(models.Model):
     document  = models.ForeignKey(Document, unique=True )
     timestamp = models.DateTimeField(default = datetime.datetime.now())
 
-    doc_type = models.CharField(max_length=64)
+    doc_type = models.CharField(max_length=128)
     number = models.CharField(max_length=32)
