@@ -29,6 +29,7 @@ from django.db.utils import IntegrityError
 
 # Local Imports
 from dreapp.models import Document, DocumentNext
+import dreapp.index
 from mix_utils import fetch_url
 from dreerror import DREError
 from drelog import logger
