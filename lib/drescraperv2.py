@@ -94,7 +94,7 @@ class DREReader( object ):
         self.date = date
         self.base_url = 'https://dre.pt'
         self.url = None
-        self.serie = None
+        self.series = None
 
     def soupify(self, html):
         self.soup = bs4.BeautifulSoup(html)
@@ -179,7 +179,7 @@ class DREReader( object ):
             document.number       = doc['number']
             document.emiting_body = doc['source']
             document.source       = '%d.ª Série, Nº %s, de %s' % (
-                                self.serie, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
+                                self.series, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
             document.dre_key      = 'NA'
             document.in_force     = True
             document.conditional  = False
@@ -189,6 +189,8 @@ class DREReader( object ):
             document.plain_text   = ''
             document.dre_pdf      = doc['url']
             document.pdf_error    = False
+            document.dr_number    = doc['dr_number']
+            document.series       = self.series
             document.timestamp    = datetime.datetime.now()
             try:
                 document.save()
@@ -223,7 +225,7 @@ class DREReader1S( DREReader ):
     def __init__( self, date ):
         super(DREReader1S, self).__init__(date)
         self.url = 'https://dre.pt/web/guest/home/-/dre/calendar/maximized?day=%s' % date
-        self.serie = 1
+        self.series = 1
 
 
 ##
