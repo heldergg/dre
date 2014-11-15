@@ -178,7 +178,7 @@ class DREReader( object ):
             document.number       = doc['number']
             document.emiting_body = doc['source']
             document.source       = '%d.ª Série, Nº %s, de %s' % (
-                                self.serie, doc['dr_number'], self.date.isoformat())
+                                self.serie, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
             document.dre_key      = 'NA'
             document.in_force     = True
             document.conditional  = False
@@ -233,7 +233,7 @@ def main():
     # Get the DR from a given day
     # This will read the documents for the first series from a given
     # day, save the meta-data to the database, and the pdf to a file
-    dr =  DREReader1S( datetime.datetime.strptime( '2014-10-08', '%Y-%m-%d' ) )
+    dr =  DREReader1S( datetime.datetime.strptime( '2014-11-14', '%Y-%m-%d' ) )
     dr.read_index()
     dr.save_docs()
 

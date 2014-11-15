@@ -4,7 +4,7 @@ import os
 import re
 import cgi
 
-from datetime import datetime
+import datetime
 from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -16,11 +16,16 @@ from django.db.models import Q
 from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
 from notesapp.models import Note
+from dre_convertpdf import DREPDFReader
 
 # Needed for dates < 1899 (read note bellow)
 MONTHS = [ u'Janeiro', u'Fevereiro', u'Março', u'Abril', u'Maio',
     u'Junho', u'Julho', u'Agosto', u'Setembro', u'Outubro',
     u'Novembro', u'Dezembro' ]
+
+# New site date
+
+NEWSITE = datetime.date(2014,9,17)
 
 ##
 # Regular expressions - used to detect references to other documents
@@ -216,7 +221,7 @@ class Document(models.Model):
     dre_pdf = models.URLField()
     pdf_error = models.BooleanField(default=False)
 
-    timestamp = models.DateTimeField(default=datetime.now())
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
 
     # Reverse generic relations
     bookmarks = generic.GenericRelation(Bookmark)
@@ -281,6 +286,9 @@ class Document(models.Model):
     def plain_pdf_filename(self):
         return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint)
 
+    def dre_pdf_filename(self):
+        return os.path.join(self.archive_dir(), 'dre-%s.pdf' % self.claint)
+
     # Representation
     def plain_html(self):
         '''Converts the plain_pdf pdf to html'''
@@ -305,6 +313,12 @@ class Document(models.Model):
             command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
             text = os.popen(command).read()
 
+        elif self.date > NEWSITE:
+            # Create cache from the dre_pdf file, this is needed for the new
+            # site
+            importer = DREPDFReader(self)
+            text = importer.plain_txt()
+
         else:
             # No text
             text = ''
@@ -319,6 +333,10 @@ class Document(models.Model):
 
         if self.plain_text or doc_text:
             return True
+
+        if self.date > NEWSITE:
+            return True
+
         return False
 
     def title(self):
@@ -386,7 +404,7 @@ class DocumentCache(models.Model):
     document = models.ForeignKey(Document, unique=True)
     version  = models.IntegerField()
     _html    = models.TextField()
-    timestamp = models.DateTimeField(default=datetime.now())
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
 
     objects = CacheManager()
 
@@ -490,7 +508,7 @@ class DocumentCache(models.Model):
     def build_cache(self):
         # Rebuild the cache
         self.version = DOCUMENT_VERSION
-        self.timestamp = datetime.now()
+        self.timestamp = datetime.datetime.now()
         filename = self.document.plain_pdf_filename()
         try:
             doc_text = DocumentText.objects.get( document = self.document, text_type = 0)
@@ -509,6 +527,11 @@ class DocumentCache(models.Model):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
             html = unicode(html,'utf-8','ignore')
+        elif self.document.date > NEWSITE:
+            # Create cache from the dre_pdf file, this is needed for the new
+            # site
+            importer = DREPDFReader(self.document)
+            html = importer.run()
         else:
             # No text to represent
             self._html = ''
@@ -540,7 +563,7 @@ class DocumentCache(models.Model):
 class FailedDoc(models.Model):
     claint = models.IntegerField(unique=True) # dre.pt site id
     tries = models.IntegerField(default=1)
-    timestamp = models.DateTimeField(default=datetime.now())
+    timestamp = models.DateTimeField(default=datetime.datetime.now())
 
 TEXT_DOC        = 0
 TEXT_SUMMARY_PT = 1
@@ -551,7 +574,7 @@ class DocumentText(models.Model):
     This table is used to store raw html retrieved from dre.pt
     '''
     document  = models.ForeignKey(Document)
-    timestamp = models.DateTimeField(default = datetime.now())
+    timestamp = models.DateTimeField(default = datetime.datetime.now())
     text_url  = models.URLField()
     text_type = models.IntegerField(default=0)
 
@@ -571,7 +594,7 @@ class DocumentNext(models.Model):
     '''
 
     document  = models.ForeignKey(Document, unique=True )
-    timestamp = models.DateTimeField(default = datetime.now())
+    timestamp = models.DateTimeField(default = datetime.datetime.now())
 
     doc_type = models.CharField(max_length=64)
     number = models.CharField(max_length=32)
