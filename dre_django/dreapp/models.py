@@ -313,34 +313,8 @@ class Document(models.Model):
 
     def plain_txt(self):
         '''Converts the plain_pdf pdf to txt'''
-        filename = self.plain_pdf_filename()
-        try:
-            doc_text = DocumentText.objects.get( document = self, text_type = 0)
-        except ObjectDoesNotExist:
-            doc_text = None
-
-        if doc_text:
-            # Get the text from the integral text
-            text = doc_text.text
-            text = re.sub(r'<.*?>',r'', text)
-            text = text.replace('TEXTO :','')
-
-        elif os.path.exists(filename):
-            # Get the text from the plain text pdf
-            command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
-            text = os.popen(command).read()
-
-        elif self.date > NEWSITE and self.timestamp.date() > NEWSITE:
-            # Create cache from the dre_pdf file, this is needed for the new
-            # site
-            importer = DREPDFReader(self)
-            text = importer.plain_txt()
-
-        else:
-            # No text
-            text = ''
-
-        return text
+        html = self.plain_html()
+        return re.sub(r'<.*?>', '', html)
 
     def has_text(self):
         try:
