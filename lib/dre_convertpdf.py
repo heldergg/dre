@@ -87,18 +87,24 @@ def pdf_to_txt( fp ):
 class DREPDFReader( object ):
     def __init__(self, document ):
         self.meta = document
-        dnext = document.documentnext_set.all()[0]
-        if dnext.doc_type:
-            self.doc_next = u'%s n.º %s' % ( dnext.doc_type, dnext.number )
-        else:
+        try:
+            dnext = document.documentnext_set.all()[0]
+            if dnext.doc_type:
+                self.doc_next = u'%s n.º %s' % ( dnext.doc_type, dnext.number )
+            else:
+                self.doc_next = ''
+        except IndexError:
             self.doc_next = ''
 
     def extract_txt(self):
         # Convert the pdf to txt
         filename = self.meta.dre_pdf_filename()
-        fp = file(filename, 'rb')
-        self.txt = unicode( pdf_to_txt( fp ), 'utf-8' )
-        fp.close()
+        try:
+            fp = file(filename, 'rb')
+            self.txt = unicode( pdf_to_txt( fp ), 'utf-8' )
+            fp.close()
+        except IOError:
+            self.txt = ''
 
 
     def process_txt(self):
