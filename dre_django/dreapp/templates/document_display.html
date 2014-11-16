@@ -87,11 +87,11 @@
 
 {% if document.dre_pdf %}
 <div class="noprint">
-<p>Pode consultar o DR original <a href="{{ document.dre_pdf }}">aqui</a>.
+<p>Pode consultar o DR original <a rel="nofollow" href="{{ document.dre_pdf_url }}">aqui</a>.
 </div>
 <div class="only_print">
 <p>Pode consultar o DR original em:
-<p>{{ document.dre_pdf }}
+<p>{{ document.dre_pdf_url }}
 </div>
 {% endif %}
 
