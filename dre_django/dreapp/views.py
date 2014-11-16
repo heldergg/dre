@@ -287,7 +287,7 @@ def bookmark_display( request, userid ):
     # Finish the context:
     context['page'] = paginator.page(page)
     context['results'] = results
-    context['query'] = '?'
+    context['query'] = re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] )
     context['bookmarks_user'] = user
 
     return render_to_response('bookmark_display.html', context,
