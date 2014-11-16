@@ -330,7 +330,7 @@ class Document(models.Model):
             command = '/usr/bin/pdftotext -htmlmeta -layout %s -' % filename
             text = os.popen(command).read()
 
-        elif self.date > NEWSITE and self.timestamp > NEWSITE:
+        elif self.date > NEWSITE and self.timestamp.date() > NEWSITE:
             # Create cache from the dre_pdf file, this is needed for the new
             # site
             importer = DREPDFReader(self)
@@ -351,7 +351,7 @@ class Document(models.Model):
         if self.plain_text or doc_text:
             return True
 
-        if self.date > NEWSITE:
+        if self.date > NEWSITE and self.timestamp.date() > NEWSITE:
             return True
 
         return False
@@ -544,7 +544,7 @@ class DocumentCache(models.Model):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
             html = unicode(html,'utf-8','ignore')
-        elif self.document.date > NEWSITE and self.document.timestamp > NEWSITE:
+        elif self.document.date > NEWSITE and self.document.timestamp.date() > NEWSITE:
             # Create cache from the dre_pdf file, this is needed for the new
             # site
             importer = DREPDFReader(self.document)
