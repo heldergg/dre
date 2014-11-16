@@ -289,6 +289,23 @@ class Document(models.Model):
     def dre_pdf_filename(self):
         return os.path.join(self.archive_dir(), 'dre-%s.pdf' % self.claint)
 
+    # URLs
+    def plain_pdf_url(self):
+        return  os.path.join(
+                            '/pdfs',
+                            '%d' % self.year(),
+                            '%02d' % self.month(),
+                            '%02d' % self.day(),
+                            'plain-%s.pdf' % self.claint)
+
+    def dre_pdf_url(self):
+        return  os.path.join(
+                            '/pdfs',
+                            '%d' % self.year(),
+                            '%02d' % self.month(),
+                            '%02d' % self.day(),
+                            'dre-%s.pdf' % self.claint)
+
     # Representation
     def plain_html(self):
         '''Converts the plain_pdf pdf to html'''
