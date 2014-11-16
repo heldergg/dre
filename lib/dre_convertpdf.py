@@ -168,6 +168,8 @@ class DREPDFReader( object ):
             # Remove the hyphenation
             for term in hyphens_re.findall(txt_para):
                 term = term.strip()
+                if len(term) < 2:
+                    continue
                 if term[1].isupper():
                     continue
                 if term not in [ '-se', ]:
