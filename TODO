@@ -2,12 +2,14 @@
 ## TODO
 ##
 
-Possible names:
-- publex
-- onlexis
-- publexis
-- resdies
-- diurnumlex
+* Redindex the database with the new field: series. The dr_number is a bit more
+dificult to handle, maybe in the future. 
+
+* Import Jorge Leitão's data to the DocumentText table and create the meta-data entries
+  where necessary
+  
+* Use Xapian's PostingSource (http://xapian.org/docs/postingsource.html) to change the 
+  document weight based on a link analisys between docs.
 
 * Bookmarks
     * Use the is_ajax where possible
@@ -36,6 +38,20 @@ Possible names:
 ##
 ## DONE
 ##
+
+2014-11-16
+
+* Download the PDFs - DONE
+* Add info about the next file - DONE
+* Add new columns to the Document table (and populate them!) - DONE
+* Remove the text extractig stuff from the scraper - DONE
+* Generate the html from the text - DONE initial stage
+* Fix the 'plain_txt' method of the Document table class - DONE
+* Clean up imports from the scrapper - DONE
+* Clean up auxiliary functions - DONE
+* Strip the dre.py from the connections to the old scaper - DONE
+* Add to dre.py the new scrapper (maybe two commands, date and date range) - DONE
+* Update the series on the documents retrived before 2014-09-18 - DONE
 
 2012-11-10
 
