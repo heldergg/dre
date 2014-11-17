@@ -53,7 +53,7 @@ MODIFY = 2
 ## Re
 ##
 
-doc_header_re = re.compile( r'^(?P<type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+) - Diário da República n.º (?P<dr_number>[0-9A-Za-z/-]+).*$' )
+doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+) - Diário da República n.º (?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
 ##
 ## Utils
@@ -131,10 +131,10 @@ class DREReader( object ):
             doc = {
                 'url': self.base_url + raw_doc.a['href'],
                 'id': int(raw_doc.a['href'].split('/')[-1]),
-                'source': raw_doc.find('div', {'class': 'author'}).renderContents().strip(),
+                'emiting_body': raw_doc.find('div', {'class': 'author'}).renderContents().strip(),
                 'summary': strip_html(
                     raw_doc.find('div', {'class': 'summary'}).renderContents().strip()),
-                'type': header.group('type'),
+                'doc_type': header.group('doc_type'),
                 'number': header.group('number'),
                 'dr_number': header.group('dr_number'),
                 'date': self.date,
@@ -175,9 +175,9 @@ class DREReader( object ):
                 document_next = DocumentNext()
 
             document.claint       = doc['id']
-            document.doc_type     = doc['type']
+            document.doc_type     = doc['doc_type']
             document.number       = doc['number']
-            document.emiting_body = doc['source']
+            document.emiting_body = doc['emiting_body']
             document.source       = '%d.ª Série, Nº %s, de %s' % (
                                 self.series, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
             document.dre_key      = 'NA'
@@ -196,14 +196,14 @@ class DREReader( object ):
                 document.save()
             except IntegrityError:
                 # Duplicated document
-                logger.debug('We have this document. Aborting - %(type)s %(number)s claint=%(id)d' % doc )
+                logger.debug('We have this document. Aborting - %(doc_type)s %(number)s claint=%(id)d' % doc )
                 continue
 
             # Log document
             txt = 'Document saved:\n'
             for key,item in doc.items():
                 if key != 'next':
-                    txt += '   %-10s: %s\n' % (key, item)
+                    txt += '   %-12s: %s\n' % (key, item)
             logger.warn(txt[:-1])
 
             # Create the document html cache
@@ -217,7 +217,7 @@ class DREReader( object ):
 
             # Save the 'next' information to DocumentNext
             document_next.document = document
-            document_next.doc_type = doc['next']['type'] if doc['next'] else ''
+            document_next.doc_type = doc['next']['doc_type'] if doc['next'] else ''
             document_next.number   = doc['next']['number'] if doc['next'] else ''
             document_next.save()
 
