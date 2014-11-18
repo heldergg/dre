@@ -19,6 +19,9 @@ urlpatterns = patterns('dreapp.views',
     # Document display
     url(r'^(?P<docid>\d+)/.json/$', 'document_json', name='document_json'),
 
+    # Related documents search result
+    url(r'^(?P<docid>\d+)/related/$', 'related', name='related_document'),
+
     # Display the bookmarked documents
     url(r'^marcador/(?P<userid>\d+)/$','bookmark_display', name='bookmark_display'),
     )

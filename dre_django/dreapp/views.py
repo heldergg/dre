@@ -123,6 +123,43 @@ def search(request):
     return render_to_response('search.html', context,
                 context_instance=RequestContext(request))
 
+def related( request, docid ):
+    '''
+    Returns a related set of search results to a given document.
+    '''
+    # Select the related documents:
+    document = get_object_or_404( Document, id = docid )
+    results = Document.indexer.related( document.plain_txt() )
+    results = Document.indexer.related( document.notes )
+
+    # Setting the pagination
+    context = {}
+    context['document'] = document
+    context['query'] = '?'
+    page = request.GET.get('page', 1)
+    try:
+        page = int(page)
+    except:
+        page = 1
+    paginator = Paginator(results, settings.RESULTS_PER_PAGE, orphans=settings.ORPHANS)
+    if page < 1:
+        page = 1
+    if page > paginator.num_pages:
+        page = paginator.num_pages
+
+    context['page'] = paginator.page(page)
+
+    object_list = []
+
+    for obj in context['page'].object_list:
+        obj.instance.docid = obj.docid
+        object_list.append(obj.instance)
+
+    context['page'].object_list = object_list
+
+    return render_to_response('related.html', context,
+                context_instance=RequestContext(request))
+
 def browse( request ):
     context = {}
 

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load tips %}
+
+{% block title %}Diários da República - Documentos relacionados{% endblock %}
+
+{% block header %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tips.css">
+  <meta name="keywords" content="procura,diplomas,documentos,diário da república,relacionados">
+  <meta name="description" content="Procura de diplomas no Diário da República Electrónico">
+{% endblock %}
+
+{% block body_content %}
+<div class="center_text">
+
+</div>
+
+<h1>Documentos relacionados com:<br> {{ document.title }}</h1>
+
+
+{% if page.object_list %}
+<div class="content-text">
+  {% include "results.html" %}
+</div>
+{% else %}
+<div class="center_text error">
+  <p>Não encontrei documentos relacionados.</p>
+</div> 
+{% endif %}
+
+{% endblock %}
+
