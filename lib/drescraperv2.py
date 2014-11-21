@@ -180,7 +180,7 @@ class DREReader( object ):
             document.emiting_body = doc['emiting_body']
             document.source       = '%d.ª Série, Nº %s, de %s' % (
                                 self.series, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
-            document.dre_key      = 'NA'
+            document.dre_key      = ''
             document.in_force     = True
             document.conditional  = False
             document.processing   = False
