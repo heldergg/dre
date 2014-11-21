@@ -36,6 +36,7 @@
   <li><strong>Data</strong>: {{ document.date|date:"Y-m-d" }}
   <li title="Cada documento tem um ID no dre.pt, identificamos aqui esse id."><strong>ID no dre.pt</strong>: {{ document.claint }}
   {% if document.dre_key %}<li><strong>Chave DRE</strong>: {{ document.dre_key }}{% endif %}
+  <li><strong><a href="{% url 'related_document' document.id %}">Documentos relacionados</a></strong>
   {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
   {% if document.processing %}<li><strong style="color:red;">Em tratamento</strong>{% endif %}

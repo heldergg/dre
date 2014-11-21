@@ -130,7 +130,6 @@ def related( request, docid ):
     # Select the related documents:
     document = get_object_or_404( Document, id = docid )
     results = Document.indexer.related( document.plain_txt() )
-    results = Document.indexer.related( document.notes )
 
     # Setting the pagination
     context = {}
