@@ -8,7 +8,7 @@
 {% block header %}
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
   {% if user.is_authenticated %}
-  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
   <script>
     var STATIC_URL="{{ STATIC_URL }}";
     var is_owner = true;
