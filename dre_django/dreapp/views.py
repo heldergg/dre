@@ -241,8 +241,8 @@ def document_org_pdf( request, docid ):
 
     if not document.dre_pdf:
         raise Http404
-    elif 'getpdf.asp' in document.dre_pdf:
-        url = document.dre_pdf.replace('dig', 'rss')
+#    elif 'getpdf.asp' in document.dre_pdf:
+#        url = document.dre_pdf.replace('dig', 'rss')
     elif 'https://dre.pt/application/file/' in document.dre_pdf:
         url = document.dre_pdf
     else:
