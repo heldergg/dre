@@ -236,6 +236,21 @@ def document_display( request, docid ):
     return render_to_response('document_display.html', context,
                 context_instance=RequestContext(request))
 
+def document_org_pdf( request, docid ):
+    document = get_object_or_404(Document, pk=docid )
+
+    if not document.dre_pdf:
+        raise Http404
+    elif 'getpdf.asp' in document.dre_pdf:
+        url = document.dre_pdf.replace('dig', 'rss')
+    elif 'https://dre.pt/application/file/' in document.dre_pdf:
+        url = document.dre_pdf
+    else:
+        url = document.dre_pdf_url()
+
+    return redirect( url )
+
+
 def document_json( request, docid ):
     document = get_object_or_404(Document, pk=docid )
 

@@ -19,6 +19,9 @@ urlpatterns = patterns('dreapp.views',
     # Document display (JSON)
     url(r'^(?P<docid>\d+).json$', 'document_json', name='document_json'),
 
+    # Document display (Original PDF)
+    url(r'^(?P<docid>\d+).dre.pdf$', 'document_org_pdf', name='document_org_pdf'),
+
     # Related documents search result
     url(r'^(?P<docid>\d+)/related/$', 'related', name='related_document'),
 
