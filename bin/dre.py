@@ -20,6 +20,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 
 def usage():
     print '''Usage: %(script_name)s [options]\n
+    Options:
+        --series_i          Selects series I (default)
+        --series_ii         Selects series II
     Commands:
         -r YYYY-MM-DD
         --read_date YYYY-MM-DD
@@ -46,7 +49,8 @@ if __name__ == '__main__':
                                     'hr:dvc',
                                    ['help', 'verbose',
                                     'read_date=', 'read_range=',
-                                    'dump', 'update_cache'])
+                                    'dump', 'update_cache',
+                                    'series_i', 'series_ii'])
     except getopt.GetoptError, err:
         print str(err)
         print
@@ -55,15 +59,26 @@ if __name__ == '__main__':
 
     # Defaults
     verbose = False
+    series  = 1
 
     for o, a in opts:
         if o in ('-v', '--verbose'):
             verbose = True
 
+        elif o == '--series_ii':
+            series = 2
+
+
     # Commands
     for o, a in opts:
+        if o in ('-r', '--read_date', '--read_range'):
+            from drescraperv2 import DREReader1S, DREReader2S
+            if series == 1:
+                DREReader = DREReader1S
+            elif series == 2:
+                DREReader = DREReader2S
+
         if o in ('-r', '--read_date'):
-            from drescraperv2 import DREReader1S
             import datetime
 
             try:
@@ -72,14 +87,13 @@ if __name__ == '__main__':
                 print 'A date in ISO format must be passed to this command'
                 sys.exit(1)
 
-            dr =  DREReader1S( date )
+            dr = DREReader( date )
             dr.read_index()
             dr.save_docs()
 
             sys.exit()
 
         elif o == '--read_range':
-            from drescraperv2 import DREReader1S
             import datetime
             import time
 
@@ -98,7 +112,7 @@ if __name__ == '__main__':
 
             date = date1
             while date <= date2:
-                dr =  DREReader1S( date )
+                dr = DREReader( date )
                 dr.read_index()
                 dr.save_docs()
                 date += datetime.timedelta(1)

@@ -3,7 +3,7 @@
 '''This module will scan and scrap the dre.pt site
 
 This was codded after the ne DRE site came online around September 2014,
-it superceds the drescraper module.
+it supersedes the drescraper module.
 '''
 
 ##
@@ -53,7 +53,7 @@ MODIFY = 2
 ## Re
 ##
 
-doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+) - Diário da República n.º (?P<dr_number>[0-9A-Za-z/-]+).*$' )
+doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+)\s+- Diário da República n.º (?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
 ##
 ## Utils
@@ -118,7 +118,7 @@ class DREReader( object ):
         self.pdf_file_name = pdf_file_name
 
     def get_document_list(self):
-        day_dr = self.soup.findAll('div', { 'class': 'diplomas' })
+        day_dr = self.soup.findAll('div', { 'class': self.result_div })
 
         raw_dl = []
         for dr in day_dr:
@@ -226,6 +226,15 @@ class DREReader1S( DREReader ):
         super(DREReader1S, self).__init__(date)
         self.url = 'https://dre.pt/web/guest/home/-/dre/calendar/maximized?day=%s' % date
         self.series = 1
+        self.result_div = 'diplomas'
+
+class DREReader2S( DREReader ):
+    def __init__( self, date ):
+        super(DREReader2S, self).__init__(date)
+        year = date.year
+        self.url = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/advanced/maximized?types=SERIEII&anoDoc=%(year)s&perPage=10000&dataPublicacaoInicio=%(date)s&dataPublicacaoFim=%(date)s' % { 'date': date.date(), 'year': year }
+        self.series = 2
+        self.result_div = 'search-result'
 
 
 ##
@@ -236,10 +245,11 @@ def main():
     # Get the DR from a given day
     # This will read the documents for the first series from a given
     # day, save the meta-data to the database, and the pdf to a file
-    dr =  DREReader1S( datetime.datetime.strptime( '2014-11-14', '%Y-%m-%d' ) )
+    dr = DREReader1S( datetime.datetime.strptime( '2014-11-14', '%Y-%m-%d' ) )
+    dr = DREReader2S( datetime.datetime.strptime( '2014-11-14', '%Y-%m-%d' ) )
+
     dr.read_index()
     dr.save_docs()
-
 
 if __name__ == '__main__':
     main()
