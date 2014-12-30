@@ -237,6 +237,29 @@ class Document(models.Model):
     def in_links(self):
         return self.document_set.all().order_by('date')
 
+    def links(self):
+        '''Adjacent vertexes'''
+        for vertex in self.out_links():
+            yield vertex
+        for vertex in self.in_links():
+            yield vertex
+
+    def out_edges(self):
+        for vertex in self.out_links():
+            yield ( self, vertex )
+
+    def in_edges(self):
+        for vertex in self.in_links():
+            yield ( vertex, self )
+
+    def edges(self):
+        '''Incident edges'''
+        for vertex in self.out_links():
+            yield ( self, vertex )
+        for vertex in self.in_links():
+            yield ( vertex, self )
+
+
     def bookmark(self, user):
         '''Return the bookmark associated to this document if it exists'''
         try:
