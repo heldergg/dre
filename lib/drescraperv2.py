@@ -128,6 +128,7 @@ class DREReader( object ):
         prev_doc = {}
         for raw_doc in raw_dl:
             header = doc_header_re.match( raw_doc.a.renderContents().strip() )
+            doc_id_text = raw_doc.find( 'span', { 'class': 'rgba' } )
             doc = {
                 'url': self.base_url + raw_doc.a['href'],
                 'id': int(raw_doc.a['href'].split('/')[-1]),
@@ -137,6 +138,7 @@ class DREReader( object ):
                 'doc_type': header.group('doc_type'),
                 'number': header.group('number'),
                 'dr_number': header.group('dr_number'),
+                'doc_id_text': doc_id_text.renderContents() if doc_id_text else None,
                 'date': self.date,
                 'next': None
                 }
@@ -192,6 +194,7 @@ class DREReader( object ):
             document.dr_number    = doc['dr_number']
             document.series       = self.series
             document.timestamp    = datetime.datetime.now()
+
             try:
                 document.save()
             except IntegrityError:
@@ -212,8 +215,8 @@ class DREReader( object ):
 
             # Save PDF:
             self.save_pdf( doc )
-            time.sleep(0.5)
             logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
+            time.sleep(1)
 
             # Save the 'next' information to DocumentNext
             document_next.document = document
