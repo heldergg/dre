@@ -341,14 +341,22 @@ class Document(models.Model):
 
     def has_text(self):
         try:
+            # doc_text - text extracted from "Texto Integral" html
             doc_text = DocumentText.objects.get( document = self, text_type = 0)
         except ObjectDoesNotExist:
             doc_text = None
 
-        if self.plain_text or doc_text:
+        if self.plain_text:
+            # PDF with integral text
             return True
 
-        if self.date > NEWSITE and self.timestamp.date() > NEWSITE:
+        if doc_text:
+            # Integral text extracted from html
+            return True
+
+        if ( self.date > NEWSITE and self.timestamp.date() > NEWSITE and
+             self.plain_html() ):
+            # Text extracted from the original DRs
             return True
 
         return False
@@ -548,8 +556,6 @@ class DocumentCache(models.Model):
             html = importer.run()
         else:
             # No text to represent
-            self._html = ''
-            self.save()
             html = ''
 
         # Recognize other document names and link to them:
