@@ -26,7 +26,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 # Django general
 from django.conf import settings
 from django.db.utils import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
 # Local Imports
 from dreapp.models import Document, DocumentNext
@@ -174,16 +174,6 @@ class DREReader( object ):
                 except ObjectDoesNotExist:
                     mode = NEW
             if mode == NEW:
-                try:
-                    # This is needed for postgresql since it will rollback all
-                    # saves after an error (ie, we must have a transaction for
-                    # each document saved)
-                    Document.objects.get( claint = doc['id'] )
-                    logger.debug('We have this document. Aborting - %(doc_type)s %(number)s claint=%(id)d' % doc)
-                    continue
-                except ObjectDoesNotExist:
-                    pass
-
                 document = Document()
                 document_next = DocumentNext()
 
@@ -207,10 +197,13 @@ class DREReader( object ):
             document.timestamp    = datetime.datetime.now()
 
             try:
+                sid = transaction.savepoint()
                 document.save()
+                transaction.savepoint_commit(sid)
             except IntegrityError:
                 # Duplicated document
-                logger.debug('We have this document. Aborting - %(doc_type)s %(number)s claint=%(id)d' % doc )
+                logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
+                transaction.savepoint_rollback(sid)
                 continue
 
             # Log document
