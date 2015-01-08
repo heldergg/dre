@@ -50,11 +50,19 @@ ARCHIVEDIR = settings.ARCHIVEDIR
 NEW = 1
 MODIFY = 2
 
+digesto_url = 'https://dre.pt/home/-/dre/%d/details/maximized?serie=II&parte_filter=32'
+
 ##
 ## Re
 ##
 
-doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+)\s+- Diário da República n.º (?P<dr_number>[0-9A-Za-z/-]+).*$' )
+doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+)'
+                            r'.*?(?:Diário da República n.º )'
+                            r'(?P<dr_number>[0-9A-Za-z/-]+).*$' )
+
+nonumber_header_re = re.compile( r'^\(Sem diploma\)'
+                            r'.*?(?:Diário da República n.º )'
+                            r'(?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
 ##
 ## Utils
@@ -97,8 +105,18 @@ class DREReader( object ):
         self.url = None
         self.series = None
 
+    ##
+    ## Getting the data
+    ##
+
     def soupify(self, html):
-        self.soup = bs4.BeautifulSoup(html)
+        return bs4.BeautifulSoup(html)
+
+    def read_page(self, page):
+        # Read the page
+        url, html, cookie_jar = fetch_url( page )
+        # Parse the page
+        return self.soupify( html )
 
     def check_dirs(self):
         date = self.date
@@ -109,7 +127,6 @@ class DREReader( object ):
         # Create the directory if needed
         if not os.path.exists( archive_dir ):
             os.makedirs( archive_dir )
-
         return archive_dir
 
     def save_pdf(self, meta):
@@ -117,6 +134,7 @@ class DREReader( object ):
         pdf_file_name = os.path.join( archive_dir, 'dre-%d.pdf' % meta['id'] )
         save_file( pdf_file_name, meta['url'] )
         self.pdf_file_name = pdf_file_name
+
 
     def get_document_list(self):
         day_dr = self.soup.findAll('div', { 'class': self.result_div })
@@ -128,19 +146,33 @@ class DREReader( object ):
         dl = []
         prev_doc = {}
         for raw_doc in raw_dl:
-            header = doc_header_re.match( raw_doc.a.renderContents().strip() )
-            doc_id_text = raw_doc.find( 'span', { 'class': 'rgba' } )
+            raw_header = raw_doc.a.renderContents().strip()
+            if 'Sem diploma' in raw_header:
+                header = nonumber_header_re.match( raw_header )
+                doc_type = 'Sem diploma'
+                number = ''
+            else:
+                header = doc_header_re.match( raw_header )
+                doc_type = header.group('doc_type')
+                number = header.group('number')
+            dr_number = header.group('dr_number')
+            try:
+                digesto = raw_doc.find('a', { 'class':'clara' }).find( 'span', { 'class': 'rgba' } )
+                digesto = int(digesto.renderContents())
+            except AttributeError:
+                digesto = None
+
             doc = {
                 'url': self.base_url + raw_doc.a['href'],
                 'id': int(raw_doc.a['href'].split('/')[-1]),
                 'emiting_body': raw_doc.find('div', {'class': 'author'}).renderContents().strip(),
                 'summary': strip_html(
                     raw_doc.find('div', {'class': 'summary'}).renderContents().strip()),
-                'doc_type': header.group('doc_type'),
-                'number': header.group('number'),
-                'dr_number': header.group('dr_number'),
-                'doc_id_text': doc_id_text.renderContents() if doc_id_text else None,
+                'doc_type': doc_type,
+                'number': number,
+                'dr_number': dr_number,
                 'date': self.date,
+                'digesto': digesto,
                 'next': None
                 }
 
@@ -152,81 +184,86 @@ class DREReader( object ):
         self.doc_list = dl
 
     def read_index(self):
-        # Read the page
-        if not(self.url):
-            raise DREError( 'DRE url to retrieve not defined.' )
-        url, html_index, cookie_jar = fetch_url( self.url )
-
-        # Parse the page
-        self.soupify( html_index )
+        '''Gets the document list'''
+        self.soup = self.read_page( self.url )
         self.get_document_list()
-
         return self
 
-    def save_docs(self, mode = NEW):
+    def get_digesto( self, doc_id ):
+        # Gets the DIGESTO system integral text
+        soup = self.read_page( digesto_url % doc_id )
+
+    ##
+    ## Saving the docs
+    ##
+
+    def save_doc(self, doc, mode = NEW ):
+        if mode == MODIFY:
+            try:
+                document = Document.objects.get(claint = doc['id'] )
+                document_next = DocumentNext.objects.get( document = document )
+            except ObjectDoesNotExist:
+                mode = NEW
+        if mode == NEW:
+            document = Document()
+            document_next = DocumentNext()
+
+        document.claint       = doc['id']
+        document.doc_type     = doc['doc_type']
+        document.number       = doc['number']
+        document.emiting_body = doc['emiting_body']
+        document.source       = '%d.ª Série, Nº %s, de %s' % (
+                            self.series, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
+        document.dre_key      = ''
+        document.in_force     = True
+        document.conditional  = False
+        document.processing   = False
+        document.date         = doc['date']
+        document.notes        = doc['summary']
+        document.plain_text   = ''
+        document.dre_pdf      = doc['url']
+        document.pdf_error    = False
+        document.dr_number    = doc['dr_number']
+        document.series       = self.series
+        document.timestamp    = datetime.datetime.now()
+
+        try:
+            sid = transaction.savepoint()
+            document.save()
+            transaction.savepoint_commit(sid)
+        except IntegrityError:
+            # Duplicated document
+            logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
+            transaction.savepoint_rollback(sid)
+            return
+
+        # Log document
+        txt = 'Document saved:\n'
+        for key,item in doc.items():
+            if key != 'next':
+                txt += '   %-12s: %s\n' % (key, item)
+        logger.warn(txt[:-1])
+
+        # Create the document html cache
+        if document.plain_text:
+            DocumentCache.objects.get_cache(document)
+
+        # Save PDF:
+        self.save_pdf( doc )
+        logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
+        time.sleep(1)
+
+        # Save the 'next' information to DocumentNext
+        document_next.document = document
+        document_next.doc_type = doc['next']['doc_type'] if doc['next'] else ''
+        document_next.number   = doc['next']['number'] if doc['next'] else ''
+        document_next.save()
+
+    def save_doc_list(self, mode = NEW):
         if not self.doc_list:
             logger.critical('Couldn\'t get documents for %s' % self.date.isoformat())
         for doc in self.doc_list:
-            if mode == MODIFY:
-                try:
-                    document = Document.objects.get(claint = doc['id'] )
-                    document_next = DocumentNext.objects.get( document = document )
-                except ObjectDoesNotExist:
-                    mode = NEW
-            if mode == NEW:
-                document = Document()
-                document_next = DocumentNext()
-
-            document.claint       = doc['id']
-            document.doc_type     = doc['doc_type']
-            document.number       = doc['number']
-            document.emiting_body = doc['emiting_body']
-            document.source       = '%d.ª Série, Nº %s, de %s' % (
-                                self.series, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
-            document.dre_key      = ''
-            document.in_force     = True
-            document.conditional  = False
-            document.processing   = False
-            document.date         = doc['date']
-            document.notes        = doc['summary']
-            document.plain_text   = ''
-            document.dre_pdf      = doc['url']
-            document.pdf_error    = False
-            document.dr_number    = doc['dr_number']
-            document.series       = self.series
-            document.timestamp    = datetime.datetime.now()
-
-            try:
-                sid = transaction.savepoint()
-                document.save()
-                transaction.savepoint_commit(sid)
-            except IntegrityError:
-                # Duplicated document
-                logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
-                transaction.savepoint_rollback(sid)
-                continue
-
-            # Log document
-            txt = 'Document saved:\n'
-            for key,item in doc.items():
-                if key != 'next':
-                    txt += '   %-12s: %s\n' % (key, item)
-            logger.warn(txt[:-1])
-
-            # Create the document html cache
-            if document.plain_text:
-                DocumentCache.objects.get_cache(document)
-
-            # Save PDF:
-            self.save_pdf( doc )
-            logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
-            time.sleep(1)
-
-            # Save the 'next' information to DocumentNext
-            document_next.document = document
-            document_next.doc_type = doc['next']['doc_type'] if doc['next'] else ''
-            document_next.number   = doc['next']['number'] if doc['next'] else ''
-            document_next.save()
+            self.save_doc( doc, mode )
 
 class DREReader1S( DREReader ):
     def __init__( self, date ):
@@ -242,21 +279,3 @@ class DREReader2S( DREReader ):
         self.url = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/advanced/maximized?types=SERIEII&anoDoc=%(year)s&perPage=10000&dataPublicacaoInicio=%(date)s&dataPublicacaoFim=%(date)s' % { 'date': date.date(), 'year': year }
         self.series = 2
         self.result_div = 'search-result'
-
-
-##
-## Main
-##
-
-def main():
-    # Get the DR from a given day
-    # This will read the documents for the first series from a given
-    # day, save the meta-data to the database, and the pdf to a file
-    dr = DREReader1S( datetime.datetime.strptime( '2014-11-14', '%Y-%m-%d' ) )
-    dr = DREReader2S( datetime.datetime.strptime( '2014-11-14', '%Y-%m-%d' ) )
-
-    dr.read_index()
-    dr.save_docs()
-
-if __name__ == '__main__':
-    main()

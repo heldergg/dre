@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
             dr = DREReader( date )
             dr.read_index()
-            dr.save_docs()
+            dr.save_doc_list()
 
             sys.exit()
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             while date <= date2:
                 dr = DREReader( date )
                 dr.read_index()
-                dr.save_docs()
+                dr.save_doc_list()
                 date += datetime.timedelta(1)
                 time.sleep( 5 )
 
