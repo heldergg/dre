@@ -11,11 +11,11 @@ it supersedes the drescraper module.
 ##
 
 import datetime
-import sys
 import os.path
 import re
-import urllib2
+import sys
 import time
+import urllib2
 
 # Append the current project path
 sys.path.append(os.path.abspath('../lib/'))
@@ -29,7 +29,7 @@ from django.db.utils import IntegrityError
 from django.db import transaction
 
 # Local Imports
-from dreapp.models import Document, DocumentNext
+from dreapp.models import Document, DocumentNext, DocumentText
 import dreapp.index
 from mix_utils import fetch_url
 from dreerror import DREError
@@ -104,6 +104,7 @@ class DREReader( object ):
         self.base_url = 'https://dre.pt'
         self.url = None
         self.series = None
+        self.digesto = False
 
     ##
     ## Getting the data
@@ -173,6 +174,7 @@ class DREReader( object ):
                 'dr_number': dr_number,
                 'date': self.date,
                 'digesto': digesto,
+                'document': None,
                 'next': None
                 }
 
@@ -189,9 +191,25 @@ class DREReader( object ):
         self.get_document_list()
         return self
 
-    def get_digesto( self, doc_id ):
+    def get_digesto( self, doc ):
+        document = doc['document']
+        doc_id = doc['digesto']
+
         # Gets the DIGESTO system integral text
         soup = self.read_page( digesto_url % doc_id )
+
+        # Parse the text
+        # <li class="formatedTextoWithLinks">
+        text = soup.find( 'li', { 'class': 'formatedTextoWithLinks' }
+                ).renderContents()
+        text = text.replace('<span>Texto</span>','')
+
+        # Save the text to the database
+        document_text = DocumentText()
+        document_text.document = document
+        document_text.text_url = 'digesto_url % doc_id'
+        document_text.text = text
+        document_text.save()
 
     ##
     ## Saving the docs
@@ -201,12 +219,10 @@ class DREReader( object ):
         if mode == MODIFY:
             try:
                 document = Document.objects.get(claint = doc['id'] )
-                document_next = DocumentNext.objects.get( document = document )
             except ObjectDoesNotExist:
                 mode = NEW
         if mode == NEW:
             document = Document()
-            document_next = DocumentNext()
 
         document.claint       = doc['id']
         document.doc_type     = doc['doc_type']
@@ -237,23 +253,32 @@ class DREReader( object ):
             transaction.savepoint_rollback(sid)
             return
 
-        # Log document
+        logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
+
+        doc['document'] = document
+
+
+    def log_doc(self, doc):
         txt = 'Document saved:\n'
         for key,item in doc.items():
-            if key != 'next':
+            if key not in ('next', 'summary', 'document'):
                 txt += '   %-12s: %s\n' % (key, item)
         logger.warn(txt[:-1])
+
+    def create_cache( self, doc ):
+        document = doc['document']
 
         # Create the document html cache
         if document.plain_text:
             DocumentCache.objects.get_cache(document)
 
-        # Save PDF:
-        self.save_pdf( doc )
-        logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
-        time.sleep(1)
+    def next_doc(self, doc, mode = NEW ):
+        document = doc['document']
 
         # Save the 'next' information to DocumentNext
+        if mode == MODIFY:
+            return
+        document_next = DocumentNext()
         document_next.document = document
         document_next.doc_type = doc['next']['doc_type'] if doc['next'] else ''
         document_next.number   = doc['next']['number'] if doc['next'] else ''
@@ -264,6 +289,17 @@ class DREReader( object ):
             logger.critical('Couldn\'t get documents for %s' % self.date.isoformat())
         for doc in self.doc_list:
             self.save_doc( doc, mode )
+            if not doc['document']: # Duplicated document
+                continue
+            if self.digesto and doc['digesto']:
+                # Get the "digesto" integral text
+                self.get_digesto( doc )
+            self.save_pdf( doc )
+            self.create_cache( doc )
+            self.next_doc( doc )
+            self.log_doc( doc )
+
+            time.sleep(1)
 
 class DREReader1S( DREReader ):
     def __init__( self, date ):
@@ -279,3 +315,4 @@ class DREReader2S( DREReader ):
         self.url = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/advanced/maximized?types=SERIEII&anoDoc=%(year)s&perPage=10000&dataPublicacaoInicio=%(date)s&dataPublicacaoFim=%(date)s' % { 'date': date.date(), 'year': year }
         self.series = 2
         self.result_div = 'search-result'
+        self.digesto = True
