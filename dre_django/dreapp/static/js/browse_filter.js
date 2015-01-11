@@ -24,6 +24,7 @@ function dre_filter_setup() {
     });
 
     $("#id_doc_type").multiselect();
+    $(".ui-multiselect").css('width', '15em');
 };
 
 
