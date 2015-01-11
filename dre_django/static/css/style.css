@@ -245,6 +245,22 @@ a.user {
   opacity:0.9;
 }
 
+/***********/
+/* Filters */
+/***********/
+
+#filter_control {
+  padding: 0.5em;
+  background-color: #acb5c8;
+  border-radius: 0.4em;
+  }
+
+#filter_control table {
+  }
+
+#filter_control table td {
+  vertical-align: top;
+  }
 
 /*****************/
 /* Notifications */
