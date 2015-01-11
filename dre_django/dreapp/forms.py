@@ -6,6 +6,7 @@
 from django import forms
 
 # Local imports:
+from models import Document
 from tagsapp.models import Tag
 
 class DateInput(forms.widgets.TextInput):
@@ -26,7 +27,46 @@ class ChooseDateForm(forms.Form):
         label = 'Indique a data:',
         required=True,
         widget = DateInput(),
-        help_text = "Pode usar o formato AAAA-MM-DD" )
+        help_text = "Use o formato AAAA-MM-DD" )
+
+class BrowseDayFilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        date =  kwargs['date']
+        del kwargs['date']
+        super(BrowseDayFilterForm, self).__init__(*args, **kwargs)
+
+        doc_type_choices = [ x['doc_type'] for x in Document.objects.filter(
+            date__exact = date ).values('doc_type'
+            ).order_by('doc_type').distinct() ]
+
+        self.fields['doc_type'].choices = list(enumerate(doc_type_choices))
+        self.document_types = dict(self.fields['doc_type'].choices)
+
+        self.fields['series'].choices = [
+            (1, 'Série I'),
+            (2, 'Série II'),
+            (3, 'Ambas as séries'),
+            ]
+
+    series = forms.TypedChoiceField(
+        coerce = int,
+        label = 'Série:',
+        required=True )
+
+    query = forms.CharField(
+        label = 'Procurar texto',
+        required=False,
+        max_length=1000,)
+
+    doc_type = forms.MultipleChoiceField(
+        label = 'Tipo documento:',
+        required=False,
+        widget = forms.SelectMultiple(attrs = {'title':'Filtrar por tipo'}))
+
+    date = forms.DateTimeField(
+        label = 'Mudar data:',
+        required=False,
+        widget = DateInput() )
 
 class BookmarksFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):

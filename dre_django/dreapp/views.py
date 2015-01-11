@@ -20,6 +20,7 @@ from django.http import Http404, HttpResponse
 import dreapp.index
 from bookmarksapp.models import Bookmark
 from tagsapp.models import Tag
+from dreapp.forms import BrowseDayFilterForm
 from dreapp.forms import QueryForm, BookmarksFilterForm, ChooseDateForm
 from dreapp.models import Document, doc_ref_optimize_re
 from settingsapp.models import get_setting
@@ -194,9 +195,59 @@ def browse_day( request, year, month, day ):
     except ValueError:
         raise Http404
 
+    ##
+    # Filter form
+    f = BrowseDayFilterForm( request.GET,  date=date )
+    context['filter_form'] = f
+
+    order = 1
+    invert = False
+    query = ''
+    doc_type_choices = []
+    series = 1
+
+    if f.is_valid():
+        # Filter the results
+        query = f.cleaned_data['query']
+        doc_type_choices   = [ int(i) for i in f.cleaned_data['doc_type']]
+        series = f.cleaned_data['series']
+        fdate = f.cleaned_data['date'].date()
+
+        if fdate != date:
+            return redirect( '%s%s' % ( reverse('browse_day',
+                kwargs= { 'year': fdate.year,
+                          'month': fdate.month,
+                          'day': fdate.day } ),
+                re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] ) ))
+
+    print [ order, invert, query, doc_type_choices, series ]
+
+    ##
     # Query the document table
     results = Document.objects.filter( date__exact = date )
 
+    if series == 1:
+        results = results.filter( series__exact = 1 )
+    elif series == 2:
+        results = results.filter( series__exact = 2 )
+
+    if doc_type_choices:
+        t = [ f.document_types[ i ] for i in doc_type_choices ]
+        results = results.filter( doc_type__in = t )
+
+    if query:
+        results = results.filter(
+                Q(number__icontains = query ) |
+                Q(doc_type__icontains = query ) |
+                Q(emiting_body__icontains = query ) |
+                Q(source__icontains = query ) |
+                Q(dre_key__icontains = query ) |
+                Q(notes__icontains = query )
+                )
+
+    results = results.order_by( 'doc_type', 'number' )
+
+    ##
     # Dates
     context['prev_date'] = Document.objects.filter( date__lt = date
             ).aggregate(Max('date'))['date__max']
@@ -218,7 +269,7 @@ def browse_day( request, year, month, day ):
         page = paginator.num_pages
 
     context['page'] = paginator.page(page)
-    context['query'] = '?'
+    context['query'] = re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] )
 
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))
