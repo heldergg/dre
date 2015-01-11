@@ -59,7 +59,7 @@
   <div class="result_bar noprint">
     <div style="width:33%;float:left;text-align:left;">
       {% if prev_date %}
-      <a href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
+      <a href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}{{ query_date }}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
       {% endif %}
     </div>
     <div style="width:33%;float:left;text-align:center;">
@@ -67,7 +67,7 @@
     </div>
     <div style="width:33%;float:left;text-align:right;">
       {% if next_date %}
-      <a href="{% url 'browse_day' year=next_date.year month=next_date.month day=next_date.day %}">Data seguinte {{ next_date|date:'Y-m-d' }}</a>
+      <a href="{% url 'browse_day' year=next_date.year month=next_date.month day=next_date.day %}{{ query_date }}">Data seguinte {{ next_date|date:'Y-m-d' }}</a>
       {% endif %}
     </div>
     <div style="clear:both;"></div>

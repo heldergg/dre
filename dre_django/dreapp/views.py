@@ -205,13 +205,17 @@ def browse_day( request, year, month, day ):
     query = ''
     doc_type_choices = []
     series = 1
+    fdate = date
 
     if f.is_valid():
         # Filter the results
         query = f.cleaned_data['query']
         doc_type_choices   = [ int(i) for i in f.cleaned_data['doc_type']]
         series = f.cleaned_data['series']
-        fdate = f.cleaned_data['date'].date()
+        try:
+            fdate = f.cleaned_data['date'].date()
+        except AttributeError:
+            pass
 
         if fdate != date:
             return redirect( '%s%s' % ( reverse('browse_day',
@@ -219,8 +223,6 @@ def browse_day( request, year, month, day ):
                           'month': fdate.month,
                           'day': fdate.day } ),
                 re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] ) ))
-
-    print [ order, invert, query, doc_type_choices, series ]
 
     ##
     # Query the document table
@@ -270,6 +272,7 @@ def browse_day( request, year, month, day ):
 
     context['page'] = paginator.page(page)
     context['query'] = re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] )
+    context['query_date'] = re.sub(r'&date=\d+-\d+-\d+', '', '?%s' % request.META['QUERY_STRING'] )
 
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))
