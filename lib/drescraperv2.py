@@ -25,8 +25,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 
 # Django general
 from django.conf import settings
-from django.db.utils import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.db.utils import IntegrityError
 
 # Local Imports
 from dreapp.models import Document, DocumentNext, DocumentText
@@ -97,6 +98,9 @@ def save_file(filename, url):
 ##
 ## Scraper
 ##
+
+class DREReaderError(Exception):
+    pass
 
 class DREReader( object ):
     def __init__( self, date ):
@@ -195,6 +199,15 @@ class DREReader( object ):
         document = doc['document']
         doc_id = doc['digesto']
 
+        # Checks if the document already has the digesto text
+        try:
+            document_text = DocumentText.objects.get( document = document,
+                    text_type = 0)
+        except ObjectDoesNotExist:
+            logger.debug('Getting digesto text.')
+        else:
+            return
+
         # Gets the DIGESTO system integral text
         soup = self.read_page( digesto_url % doc_id )
 
@@ -249,9 +262,10 @@ class DREReader( object ):
             transaction.savepoint_commit(sid)
         except IntegrityError:
             # Duplicated document
-            logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
             transaction.savepoint_rollback(sid)
-            return
+            logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
+            doc['document'] = Document.objects.get(claint = doc['id'] )
+            raise DREReaderError('Duplicate document')
 
         logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
 
@@ -288,8 +302,13 @@ class DREReader( object ):
         if not self.doc_list:
             logger.critical('Couldn\'t get documents for %s' % self.date.isoformat())
         for doc in self.doc_list:
-            self.save_doc( doc, mode )
-            if not doc['document']: # Duplicated document
+            try:
+                self.save_doc( doc, mode )
+            except DREReaderError:
+                # Duplicated document
+                if self.digesto and doc['digesto']:
+                    # Check the "digesto" integral text
+                    self.get_digesto( doc )
                 continue
             if self.digesto and doc['digesto']:
                 # Get the "digesto" integral text
