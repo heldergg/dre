@@ -57,11 +57,17 @@ digesto_url = 'https://dre.pt/home/-/dre/%d/details/maximized?serie=II&parte_fil
 ## Re
 ##
 
-doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+)'
-                            r'.*?(?:Diário da República n.º )'
+doc_nonumber = r'(?P<doc_type>.*?)\s+-\s+'
+
+nonumber_header_re = re.compile( r'^(?P<doc_type>.*?)(?:\s+-\s+)'
+                            r'(?:Diário da República n.º |Diário do Governo n.º )'
                             r'(?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
-nonumber_header_re = re.compile( r'^\(Sem diploma\)'
+doc_header_re = re.compile( r'^(?P<doc_type>.*?)(?: n.º )(?P<number>[0-9A-Za-z/-]+)'
+                            r'.*?(?:Diário da República n.º |Diário do Governo n.º )'
+                            r'(?P<dr_number>[0-9A-Za-z/-]+).*$' )
+
+nodoctype_header_re = re.compile( r'^\(Sem diploma\)'
                             r'.*?(?:Diário da República n.º )'
                             r'(?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
@@ -151,16 +157,31 @@ class DREReader( object ):
         dl = []
         prev_doc = {}
         for raw_doc in raw_dl:
+            # Header with a link (to a PDF)
             raw_header = raw_doc.a.renderContents().strip()
+            has_pdf = True
+
+            if 'DIGESTO' in raw_header:
+                # Header is not a link
+                raw_header = raw_doc.span.renderContents().strip()
+                has_pdf = False
+
             if 'Sem diploma' in raw_header:
-                header = nonumber_header_re.match( raw_header )
-                doc_type = 'Sem diploma'
+                header = nodoctype_header_re.match( raw_header )
+                doc_type = 'Não especificado'
                 number = ''
             else:
-                header = doc_header_re.match( raw_header )
-                doc_type = header.group('doc_type')
-                number = header.group('number')
+                try:
+                    header = doc_header_re.match( raw_header )
+                    doc_type = header.group('doc_type')
+                    number = header.group('number')
+                except AttributeError:
+                    header = nonumber_header_re.match( raw_header )
+                    doc_type = header.group('doc_type')
+                    number = None
+
             dr_number = header.group('dr_number')
+
             try:
                 digesto = raw_doc.find('a', { 'class':'clara' }).find( 'span', { 'class': 'rgba' } )
                 digesto = int(digesto.renderContents())

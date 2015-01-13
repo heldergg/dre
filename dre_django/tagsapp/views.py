@@ -13,7 +13,7 @@ from django.db.transaction import commit_on_success
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.utils import simplejson
+import json
 
 import logging
 logger = logging.getLogger(__name__)
@@ -156,7 +156,7 @@ def suggest( request ):
     except ObjectDoesNotExist:
         pass
 
-    return HttpResponse(simplejson.dumps(suggestions), mimetype='application/json')
+    return HttpResponse(json.dumps(suggestions), mimetype='application/json')
 
 
 ##

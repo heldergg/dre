@@ -7,7 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
-from django.utils import simplejson
+import json
 
 def is_ajax( template = 'is_ajax_template.html', referer = False ):
     '''Decorator that checks if the request is an AJAX one, if it is returns
@@ -25,7 +25,7 @@ def is_ajax( template = 'is_ajax_template.html', referer = False ):
             context = f( request, **karg )
             redirect_to = request.REQUEST.get('next', '')
             if is_ajax:
-                return HttpResponse(simplejson.dumps(context),
+                return HttpResponse(json.dumps(context),
                             mimetype='application/json')
             elif redirect_to:
                 # Redirect to a 'next' page

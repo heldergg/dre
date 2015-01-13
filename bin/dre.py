@@ -18,6 +18,9 @@ sys.path.append(os.path.abspath('../dre_django/'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 
+import django
+django.setup()
+
 def usage():
     print '''Usage: %(script_name)s [options]\n
     Options:

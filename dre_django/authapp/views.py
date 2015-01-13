@@ -14,6 +14,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth import login
 import datetime, time
 
 # Local imports
@@ -43,7 +44,6 @@ def do_login(request, template_name='login.html',
             if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
                 redirect_to = settings.LOGIN_REDIRECT_URL
 
-            from django.contrib.auth import login
             login(request, form.get_user())
 
             if request.session.test_cookie_worked():

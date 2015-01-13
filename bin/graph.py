@@ -17,8 +17,10 @@ sys.path.append(os.path.abspath('../dre_django/'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 
-# Local imports
+import django
+django.setup()
 
+# Local imports
 from dreapp.models import Document
 from dre_graph import DREGraph
 
