@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.db import IntegrityError
 from django.db.models.signals import pre_delete
 from django.db.models.signals import Signal
-from django.db.transaction import commit_on_success
+from django.db import transaction
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
@@ -80,7 +80,7 @@ def get_tag_from_request(request):
     return tag
 
 @login_required
-@commit_on_success
+@transaction.atomic
 @is_ajax(template = 'tags_ops.html', referer = True )
 def tag_object(request, ctype_id, object_id ):
     context = {}
@@ -118,7 +118,7 @@ def tag_object(request, ctype_id, object_id ):
 
 
 @login_required
-@commit_on_success
+@transaction.atomic
 @is_ajax(template = 'tags_ops.html', referer = True )
 def untag_object(request, item_id ):
     context = {}
@@ -156,7 +156,7 @@ def suggest( request ):
     except ObjectDoesNotExist:
         pass
 
-    return HttpResponse(json.dumps(suggestions), mimetype='application/json')
+    return HttpResponse(json.dumps(suggestions), content_type='application/json')
 
 
 ##

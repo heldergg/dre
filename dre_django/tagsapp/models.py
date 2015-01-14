@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.transaction import commit_on_success
+from django.db import transaction
 
 import datetime
 
@@ -56,7 +56,7 @@ class Tag(models.Model):
 
 # Functions
 
-@commit_on_success
+@transaction.atomic
 def delete_tag(tag):
     # Get the objects where the tag is used
     tagged_list = TaggedItem.objects.filter( tag__exact = tag )
@@ -89,7 +89,7 @@ class TaggedItem(models.Model):
         unique_together = ('tag', 'content_type', 'object_id')
 
 
-@commit_on_success
+@transaction.atomic
 def del_tagged_item( tagged_item ):
     # Detele the tag from the item
     tag = tagged_item.tag

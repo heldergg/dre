@@ -26,7 +26,7 @@ def is_ajax( template = 'is_ajax_template.html', referer = False ):
             redirect_to = request.REQUEST.get('next', '')
             if is_ajax:
                 return HttpResponse(json.dumps(context),
-                            mimetype='application/json')
+                            content_type='application/json')
             elif redirect_to:
                 # Redirect to a 'next' page
                 return redirect( redirect_to )

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db.models.signals import pre_delete
-from django.db.transaction import commit_on_success
+from django.db import transaction
 
 # Local imports:
 from decorators import is_ajax
@@ -18,7 +18,7 @@ from notesapp.forms import NoteForm
 # Signals
 ##
 
-@commit_on_success
+@transaction.atomic
 def check_object_deleted_notes(sender, **kwargs):
     '''Each object that gets deleted is checked for association with notes. If
     this association exist they are deleted'''

@@ -310,7 +310,7 @@ def document_json( request, docid ):
 
 
     return HttpResponse(json.dumps(document.dict_repr()),
-            mimetype='application/json')
+            content_type='application/json')
 
 def bookmark_display( request, userid ):
     context = {}
