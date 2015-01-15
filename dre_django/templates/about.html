@@ -84,6 +84,53 @@
     <li>Temos uma explicação sobre o formato destes ficheiros <a href="http://blog.tretas.org/2014/02/23/obter-a-legislacao-do-dre-tretas-org/">neste post</a>;
     <li>Estes ficheiros são gerados todos os Domingos às 10:00.
   </ol>
+
+  <a name="lista_funcionalidades"></a><h2>Lista de funcionalidades</h2>
+
+  <ul>
+    <li>Procura em texto livre usando a biblioteca <a href="http://xapian.org">Xapian</a>:
+    <ul>
+      <li>Procura probabilística;
+      <li>Procura booleana estruturada;
+      <li>Procura usando prefixos;
+    </ul>
+    <li>Navegação por datas:
+    <ul>
+      <li>Filtragem por uma série de critérios: 
+      <ul>
+        <li>Série;
+        <li>Tipo de documento;
+        <li>Palavra chave;
+      </ul>
+    </ul>
+    <li>Reconhecimento de citações entre documentos (com tooltip e hiperligação);
+    <ul>
+      <li>Lista de referencias feitas num dado documento;
+      <li>Lista de documentos que referem um dado documento;
+    </ul>
+    <li>Procura de documentos relacionados;
+    <li>Suporte de utilizadores com áreas próprias:
+    <ul>
+      <li>Anotação de documentos (suporta markdown);
+      <li>Manutenção de uma lista de marcadores:
+      <ul>
+        <li>Filtragem de marcadores (por datas, palavra chave e etiquetas);
+        <li>Sistema de etiquetagem;
+        <li>Sistema de anotação;
+      </ul>
+      <li>Possibilidade de ter os marcadores e anotações públicos ou privados;
+      <li>Ferramentas para gestão do perfil de utilizador:
+      <ul>
+        <li>Dados pessoais;
+        <li>Palavra chave;
+        <li>Gestão de etiquetas;
+        <li>Definições várias (controlo geral de privacidade, ajustes da 
+        interface.
+      </ul>
+    </ul>
+  </ul>
+
+
   <div style="display:none;">
     <p><a href="{% url 'browse_day' year=1974 month=4 day=25 %}">Este link</a> 
     serve apenas para proporcionar aos motores de busca um caminho
