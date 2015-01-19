@@ -6,11 +6,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.db import IntegrityError
 from django.db.models.signals import pre_delete
-from django.db.models.signals import Signal
 from django.db import transaction
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 import json
