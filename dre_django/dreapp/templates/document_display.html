@@ -40,7 +40,7 @@
   {% if document.processing %}<li><strong style="color:red;">Em tratamento</strong>{% endif %}
   <li><strong>Secções desta página:</strong>:
     <ul>
-      <li><a href="#summary">Sumário</a>
+      {% if document.notes %}<li><a href="#summary">Sumário</a>{% endif %}
       {% if user.is_authenticated and show_user_notes %}<li><a href="#user_notes">As suas notas associadas a este documento</a>{% endif %}
       {% if document.has_text %}<li><a href="#text">Texto do documento</a>{% endif %}
       {% if document.plain_text or document.dre_pdf %}<li><a href="#anexos">Anexos (pdf)</a>{% endif %}
@@ -52,10 +52,12 @@
   </li>
 </ul>
 
+{% if document.notes %}
 <h2><a name="summary">Sumário</a></h2>
 <div class="result_notes">
 {{ document.notes }}
 </div>
+{% endif %}
 
 {% if user.is_authenticated and show_user_notes %}
 <h2><a name="user_notes">Notas do utilizador</a></h2>

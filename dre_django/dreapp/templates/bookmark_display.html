@@ -98,9 +98,10 @@
       <span class="document_emiting">{{ document.emiting_body.title }}</span>
     </div> <!-- result_header -->
 
+    {% if document.notes %}
     <p class="document_notes">
       {{ document.note_abrv }}
-    </p> <!-- document_notes -->
+      </p> <!-- document_notes -->{% endif %}
 
     <div class="decoration">
       <div class="deco_toolbar">

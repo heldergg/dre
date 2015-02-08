@@ -28,7 +28,7 @@
       <span class="result_tipo">{{ result.doc_type.title }}</span>
       <span class="result_number">{{ result.number }}</span></a> -
       <span class="result_emiting">{{ result.emiting_body.title }}</span>
-      <p class="result_notes">{{ result.note_abrv }}</p>
+      {% if result.notes %}<p class="result_notes">{{ result.note_abrv }}</p>{% endif %}
     </li>
     {% endfor %}
   </ul>
