@@ -33,7 +33,7 @@
 <ul>
   <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
   <li><strong>Fonte</strong>: {{ document.source }}
-  <li><strong>Data</strong>: {{ document.date|date:"Y-m-d" }}
+  <li><strong>Data</strong>: <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}{% if document.series == 2 %}?series=2{% endif %}">{{ document.date|date:"Y-m-d" }}</a>
   <li><strong><a href="{% url 'related_document' document.id %}">Documentos relacionados</a></strong>
   {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
