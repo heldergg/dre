@@ -16,6 +16,7 @@ import re
 import sys
 import time
 import urllib2
+import random
 
 # Append the current project path
 sys.path.append(os.path.abspath('../lib/'))
@@ -195,9 +196,16 @@ class DREReader( object ):
             except AttributeError:
                 summary = ''
 
+            if has_pdf:
+                claint = int(raw_doc.a['href'].split('/')[-1])
+                url = self.base_url + raw_doc.a['href']
+            else:
+                claint = random.randint(9000000, 10000000)
+                url = ''
+
             doc = {
-                'url': self.base_url + raw_doc.a['href'],
-                'id': int(raw_doc.a['href'].split('/')[-1]),
+                'url': url,
+                'id': claint,
                 'emiting_body': raw_doc.find('div', {'class': 'author'}).renderContents().strip(),
                 'summary': summary,
                 'doc_type': doc_type,
@@ -332,7 +340,9 @@ class DREReader( object ):
             try:
                 self.save_doc( doc, mode )
             except DREReaderError:
-                # Duplicated document
+                # Duplicated document: even if the document is duplicated we
+                # check for the "digesto" text since sometimes this is created
+                # long after the original date of the document.
                 if self.digesto and doc['digesto']:
                     # Check the "digesto" integral text
                     self.get_digesto( doc )
@@ -340,7 +350,9 @@ class DREReader( object ):
             if self.digesto and doc['digesto']:
                 # Get the "digesto" integral text
                 self.get_digesto( doc )
-            self.save_pdf( doc )
+            if doc['url']:
+                # if we have a pdf then we get it
+                self.save_pdf( doc )
             self.create_cache( doc )
             self.next_doc( doc )
             self.log_doc( doc )
