@@ -188,12 +188,18 @@ class DREReader( object ):
             except AttributeError:
                 digesto = None
 
+            try:
+                summary = strip_html(
+                        raw_doc.find('div', {'class': 'summary'}
+                            ).renderContents().strip())
+            except AttributeError:
+                summary = ''
+
             doc = {
                 'url': self.base_url + raw_doc.a['href'],
                 'id': int(raw_doc.a['href'].split('/')[-1]),
                 'emiting_body': raw_doc.find('div', {'class': 'author'}).renderContents().strip(),
-                'summary': strip_html(
-                    raw_doc.find('div', {'class': 'summary'}).renderContents().strip()),
+                'summary': summary,
                 'doc_type': doc_type,
                 'number': number,
                 'dr_number': dr_number,
