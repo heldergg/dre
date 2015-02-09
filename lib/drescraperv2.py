@@ -16,7 +16,7 @@ import re
 import sys
 import time
 import urllib2
-import random
+import zlib
 
 # Append the current project path
 sys.path.append(os.path.abspath('../lib/'))
@@ -159,8 +159,12 @@ class DREReader( object ):
         prev_doc = {}
         for raw_doc in raw_dl:
             # Header with a link (to a PDF)
-            raw_header = raw_doc.a.renderContents().strip()
             has_pdf = True
+            try:
+                raw_header = raw_doc.a.renderContents().strip()
+            except AttributeError:
+                raw_header = raw_doc.span.renderContents().strip()
+                has_pdf = False
 
             if 'DIGESTO' in raw_header:
                 # Header is not a link
@@ -196,17 +200,19 @@ class DREReader( object ):
             except AttributeError:
                 summary = ''
 
+            emiting_body = raw_doc.find('div', {'class': 'author'}).renderContents().strip()
+
             if has_pdf:
                 claint = int(raw_doc.a['href'].split('/')[-1])
                 url = self.base_url + raw_doc.a['href']
             else:
-                claint = random.randint(9000000, 10000000)
+                claint = zlib.adler32(doc_type + number + emiting_body)
                 url = ''
 
             doc = {
                 'url': url,
                 'id': claint,
-                'emiting_body': raw_doc.find('div', {'class': 'author'}).renderContents().strip(),
+                'emiting_body': emiting_body,
                 'summary': summary,
                 'doc_type': doc_type,
                 'number': number,
