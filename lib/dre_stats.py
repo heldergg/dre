@@ -60,11 +60,15 @@ class LogReader(object):
     def save_line(self, m, ts):
         ln = LogLine()
 
+        request_path = m.group('request_path')
+        if len(request_path) > 8190:
+            request_path = request_path[:8190]
+
         ln.timestamp = ts
         ln.remote_host = m.group('remote_host')
         ln.remote_user = m.group('remote_user')
         ln.request_type = m.group('request_type')
-        ln.request_path = m.group('request_path')
+        ln.request_path = request_path
         ln.request_proto = m.group('request_proto')
         ln.response_status = int(m.group('response_status'))
         ln.response_bytes = int(m.group('response_bytes')) if m.group('response_bytes') != '-' else 0

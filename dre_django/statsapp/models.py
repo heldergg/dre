@@ -44,7 +44,7 @@ class LogLine(models.Model):
 
     request_type = models.CharField(max_length=8)
     request_proto= models.CharField(max_length=8)
-    request_path = models.CharField(max_length= 5120)
+    request_path = models.CharField(max_length= 8190)
     request_referer = models.CharField(max_length= 5120)
     request_useragent = models.CharField(max_length= 2048)
 
