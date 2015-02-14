@@ -183,7 +183,7 @@ class DREReader( object ):
                 except AttributeError:
                     header = nonumber_header_re.match( raw_header )
                     doc_type = header.group('doc_type')
-                    number = None
+                    number = ''
 
             dr_number = header.group('dr_number')
 
@@ -206,7 +206,11 @@ class DREReader( object ):
                 claint = int(raw_doc.a['href'].split('/')[-1])
                 url = self.base_url + raw_doc.a['href']
             else:
-                claint = zlib.adler32(doc_type + number + emiting_body)
+                sign_str = ( doc_type +
+                             number if number else '' +
+                             emiting_body
+                             )
+                claint = zlib.adler32(sign_str)
                 url = ''
 
             doc = {
