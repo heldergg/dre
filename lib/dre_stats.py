@@ -88,9 +88,8 @@ class LogReader(object):
                 ts = datetime.strptime( m.group('timestamp').split(' ')[0],
                         '%d/%b/%Y:%H:%M:%S')
 
-                if ts <= self.last:
-                    continue
-                self.save_line(m, ts)
+                if ts > self.last:
+                    self.save_line(m, ts)
 
 
     def reader(self):
