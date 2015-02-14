@@ -36,12 +36,9 @@ ALLOWED_HOSTS = [
 ## Database definition
 ##
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '',
-    }
-}
+DATABASES = {}
+
+DATABASE_ROUTERS = [ 'statsapp.models.StatsRouter' ]
 
 DJAPIAN_DATABASE_PATH = os.path.join(project_dir, 'archive', 'xapian.db')
 DJAPIAN_STEMMING_LANG = 'pt'
@@ -165,6 +162,7 @@ INSTALLED_APPS = (
     'tipsapp',
     'settingsapp',
     'authapp',
+    'statsapp',
     'dreapp',
 
     ##
