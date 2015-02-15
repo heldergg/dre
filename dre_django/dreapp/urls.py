@@ -27,6 +27,9 @@ urlpatterns = patterns('dreapp.views',
 
     # Display the bookmarked documents
     url(r'^marcador/(?P<userid>\d+)/$','bookmark_display', name='bookmark_display'),
+
+    # Top documents
+    url(r'^top/$','top', name='top'),
     )
 
 ##

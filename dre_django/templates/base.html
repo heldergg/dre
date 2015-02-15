@@ -27,6 +27,7 @@
     <div id="header_left">
       <a href="/">Procurar</a>
       <a href="{% url 'today_results' %}">Hoje</a>
+      <a href="{% url 'top' %}">Top</a>
       {% if user.is_authenticated %}
       <a href="{% url 'bookmark_display' user.id %}">Marcadores</a>
       {% endif %}

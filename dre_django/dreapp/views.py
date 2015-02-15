@@ -9,12 +9,14 @@ import json
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
 from django.db.models import Q, Max, Min
+from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse
+from django.db import connections
 
 # Local Imports:
 import dreapp.index
@@ -397,3 +399,64 @@ def bookmark_display( request, userid ):
 
     return render_to_response('bookmark_display.html', context,
                 context_instance=RequestContext(request))
+
+def top( request ):
+    context = {}
+
+    ##
+    # Period to show
+
+    # 0 - statistics since the begining
+    # 1 - last month
+    # 2 - last week
+    # 3 - last year
+    period = request.GET.get('period', 2)
+    try:
+        period = int(period)
+    except:
+        period = 2
+    if period not in (0,1,2,3):
+        period = 2
+    context['period'] = period
+
+    if period == 0:
+        min_date = datetime.datetime(2012,1,1)
+    elif period == 1:
+        min_date = datetime.datetime.now() - datetime.timedelta(30)
+    elif period == 2:
+        min_date = datetime.datetime.now() - datetime.timedelta(7)
+    else:
+        min_date = datetime.datetime.now() - datetime.timedelta(365)
+
+    ##
+    # Get the results
+    cursor = connections['stats'].cursor()
+    query = '''
+        select
+            count(1) as hits,
+            request_path
+        from
+            statsapp_logline
+        where
+            response_status = 200 and
+            timestamp >= %s and
+            request_path ~ '^/dre/\d+/$'
+        group by
+            request_path
+        order by hits desc
+        limit 10
+    '''
+    cursor.execute( query, [ min_date ] )
+
+    results = []
+    for hit in cursor.fetchall():
+        doc_id = int(hit[1].split('/')[2])
+        try:
+            results.append(Document.objects.get( pk = doc_id ))
+        except ObjectDoesNotExist:
+            pass
+
+    context['results'] = results
+
+    return render_to_response('top.html', context,
+            context_instance=RequestContext(request))
