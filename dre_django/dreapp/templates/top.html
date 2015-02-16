@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load bookmarks %}
+
+{% block title %}Diários da República - Documentos mais consultados{% endblock %}
+
+{% block header %}
+  <meta name="keywords" content="procura,diplomas,documentos,diário da república,top,documentos mais consultados">
+  <meta name="description" content="Documentos mais consultados">
+{% endblock %}
+
+{% block body_content %}
+<div class="content_text" style="max-width:50em;margin:auto;">
+  <h1>Documentos mais consultados</h1>
+ 
+  <p>Lista dos 10 documentos mais consultados
+  {% if period == 0 %}desde a abertura do site {% endif %}
+  {% if period == 1 %}nos últimos 30 dias {% endif %}
+  {% if period == 2 %}nos últimos 7 dias {% endif %}
+  {% if period == 3 %}no último ano {% endif %}
+  ordenados por ordem decrescente de acessos.</p>
+  <div class="results" id="search_results">
+    <ul>
+      {% for result in results %}
+      <li>
+        {% if user.is_authenticated %}
+        <a href="{% toggle_bookmark result %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon result %}</a>
+        {% endif %}
+        {% if result.plain_text or result.dre_pdf %}
+        <img src="{{ STATIC_URL }}img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+        {% else %}
+        <img src="{{ STATIC_URL }}img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+        {% endif %}
+        {% if result.in_force %}
+        <img src="{{ STATIC_URL }}img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+        {% else %}
+        <img src="{{ STATIC_URL }}img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+        {% endif %}
+        <span class="result_date">
+          <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
+        {{ result.date|date:"Y-m-d" }}</span></a> - 
+        <a href="{% url 'document_display' docid=result.id %}">
+        <span class="result_tipo">{{ result.doc_type.title }}</span>
+        <span class="result_number">{{ result.number }}</span></a> -
+        <span class="result_emiting">{{ result.emiting_body.title }}</span>
+        {% if result.notes %}<p class="result_notes">{{ result.note_abrv }}</p>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+
+    <p class="noprint center_text"> [
+      <a href="{% url 'top' %}?period=0">Top desde sempre</a> | 
+      <a href="{% url 'top' %}?period=3">Top do último ano</a> | 
+      <a href="{% url 'top' %}?period=1">Top do último mês</a> | 
+      <a href="{% url 'top' %}?period=2">Top da última semana</a> ] 
+    </p>
+  </div>
+
+</div>
+{% endblock %}
+
