@@ -37,6 +37,20 @@ class StatsRouter(object):
 
 
 class LogLine(models.Model):
+    '''
+    The following indexes where applied to this table:
+
+    Generic indexes:
+
+    create index timestamp_idx on statsapp_logline (timestamp);
+    create index response_status_idx on statsapp_logline (response_status);
+
+    Indexes tailored to a given query:
+
+    create index parcial_idx on statsapp_logline (timestamp)
+        where response_status = 200 and request_path ~ '^/dre/[0-9]+/$';
+
+    '''
     timestamp = models.DateTimeField()
 
     remote_host = models.GenericIPAddressField()
