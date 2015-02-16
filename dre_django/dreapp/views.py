@@ -440,7 +440,7 @@ def top( request ):
         where
             response_status = 200 and
             timestamp >= %s and
-            request_path ~ '^/dre/\d+/$'
+            request_path ~ '^/dre/[0-9]+/$'
         group by
             request_path
         order by hits desc
@@ -454,6 +454,7 @@ def top( request ):
         try:
             results.append(Document.objects.get( pk = doc_id ))
         except ObjectDoesNotExist:
+            # This might happen if a document is deleted
             pass
 
     context['results'] = results
