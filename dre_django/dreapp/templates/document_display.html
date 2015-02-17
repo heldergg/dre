@@ -18,6 +18,15 @@
   <meta name="keywords" content="{{ document.title }}, diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.date|date:"Y" }}, {{ document.c_emitting }}">
   <meta name="description" content="{{ document.note_escaped }}">
   <meta name="author" content="{{ document.c_emitting }}">
+  <!-- Open Graph protocol metadata -->
+  <meta property="og:title" content="{{ document.title }}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="http://dre.tretas.org{% url 'document_display' document.id %}">
+  <meta property="og:description" content="{{ document.note_escaped }}">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:site_name" content="Diários da República">
+  <meta property="og:article:published_time" content="{{ document.date|date:"Y-m-d" }}">
+  <meta property="og:article:author" content="{{ document.emiting_body }}">
 {% endblock %}
 
 {% block body_content %}
