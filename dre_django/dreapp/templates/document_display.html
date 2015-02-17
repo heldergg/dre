@@ -32,18 +32,18 @@
 
 {% block body_content %}
 {% show_public_notes document %}
-<div class="content-text">
+<div itemscope itemtype="http://schema.org/Article" class="content-text">
 
 {% if user.is_authenticated %}
 <p style="text-align:right;"><a href="{% toggle_bookmark document %}?next={{ request.get_full_path|urlencode }}">{% bookmark_icon document %}</a>
 {% endif %}
 
-<h1>{{ document.title }}</h1>
+<h1 itemprop="name">{{ document.title }}</h1>
 
 <ul>
-  <li><strong>Corpo emitente</strong>: {{ document.emiting_body }}
+  <li><strong>Corpo emitente</strong>: <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">{{ document.emiting_body }}</span></span>
   <li><strong>Fonte</strong>: {{ document.source }}
-  <li><strong>Data</strong>: <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}{% if document.series == 2 %}?series=2{% endif %}">{{ document.date|date:"Y-m-d" }}</a>
+  <li><strong>Data</strong>: <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}{% if document.series == 2 %}?series=2{% endif %}"><span itemprop="datePublished" content="{{ document.date|date:"Y-m-d" }}">{{ document.date|date:"Y-m-d" }}</span></a>
   <li><strong><a href="{% url 'related_document' document.id %}">Documentos relacionados</a></strong>
   {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
@@ -84,7 +84,7 @@
 
 {% if document.has_text %}
 <h2><a name="text">Texto do documento</a></h2>
-<div class="result_notes">
+<div itemprop="articleBody" class="result_notes">
   {% autoescape off %}
   {{ document.plain_html }}
   {% endautoescape %}
@@ -215,6 +215,10 @@
 <p><strong>NOTA IMPORTANTE</strong> - a consulta deste documento não substitui a
 leitura do Diário da República correspondente. Não nos responsabilizamos por
 quaisquer incorrecções produzidas na transcrição do original para este formato.
+
+<div class="only_print">
+  <p>O URL desta página é: <span itemprop="url">http://dre.tretas.org{% url 'document_display' document.id %}</span>
+</div>
 
 </div>
 {% endblock %}
