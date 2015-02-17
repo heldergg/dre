@@ -13,10 +13,9 @@
   <h1>Documentos mais consultados</h1>
  
   <p>Lista dos 10 documentos mais consultados
-  {% if period == 0 %}desde a abertura do site {% endif %}
-  {% if period == 1 %}nos últimos 30 dias {% endif %}
+  {% if period == 1 %}nas últimas 24 horas {% endif %}
   {% if period == 2 %}nos últimos 7 dias {% endif %}
-  {% if period == 3 %}no último ano {% endif %}
+  {% if period == 3 %}nos últimos 30 dias {% endif %}
   ordenados por ordem decrescente de acessos.</p>
   <div class="results" id="search_results">
     <ul>
@@ -44,14 +43,15 @@
         <span class="result_emiting">{{ result.emiting_body.title }}</span>
         {% if result.notes %}<p class="result_notes">{{ result.note_abrv }}</p>{% endif %}
       </li>
+      {% empty %}
+      <li>Não temos resultados de montento, por favor volte mais tarde.
       {% endfor %}
     </ul>
 
     <p class="noprint center_text"> [
-      <a href="{% url 'top' %}?period=0">Top desde sempre</a> | 
-      <a href="{% url 'top' %}?period=3">Top do último ano</a> | 
-      <a href="{% url 'top' %}?period=1">Top do último mês</a> | 
+      <a href="{% url 'top' %}?period=1">Top do último dia</a> | 
       <a href="{% url 'top' %}?period=2">Top da última semana</a> ] 
+      <a href="{% url 'top' %}?period=3">Top do último mês</a> | 
     </p>
   </div>
 

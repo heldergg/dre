@@ -415,18 +415,16 @@ def top( request ):
         period = int(period)
     except:
         period = 2
-    if period not in (0,1,2,3):
+    if period not in (1,2,3):
         period = 2
     context['period'] = period
 
-    if period == 0:
-        min_date = datetime.datetime(2012,1,1)
-    elif period == 1:
-        min_date = datetime.datetime.now() - datetime.timedelta(30)
+    if period == 1:
+        min_date = datetime.datetime.now() - datetime.timedelta(1)
     elif period == 2:
         min_date = datetime.datetime.now() - datetime.timedelta(7)
     else:
-        min_date = datetime.datetime.now() - datetime.timedelta(365)
+        min_date = datetime.datetime.now() - datetime.timedelta(30)
 
     ##
     # Get the results
