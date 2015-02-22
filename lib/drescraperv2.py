@@ -102,6 +102,15 @@ def save_file(filename, url):
         f.write(data_blob)
         f.close()
 
+def read_soup(page):
+    '''
+    Reads a web page and soupifies it
+    '''
+    # Read the page
+    url, html, cookie_jar = fetch_url( page )
+    # Parse the page
+    return bs4.BeautifulSoup( html )
+
 ##
 ## Scraper
 ##
@@ -120,15 +129,6 @@ class DREReader( object ):
     ##
     ## Getting the data
     ##
-
-    def soupify(self, html):
-        return bs4.BeautifulSoup(html)
-
-    def read_page(self, page):
-        # Read the page
-        url, html, cookie_jar = fetch_url( page )
-        # Parse the page
-        return self.soupify( html )
 
     def check_dirs(self):
         date = self.date
@@ -236,7 +236,7 @@ class DREReader( object ):
 
     def read_index(self):
         '''Gets the document list'''
-        self.soup = self.read_page( self.url )
+        self.soup = read_soup( self.url )
         self.get_document_list()
         return self
 
@@ -254,7 +254,7 @@ class DREReader( object ):
             return
 
         # Gets the DIGESTO system integral text
-        soup = self.read_page( digesto_url % doc_id )
+        soup = read_soup( digesto_url % doc_id )
 
         # Parse the text
         # <li class="formatedTextoWithLinks">
