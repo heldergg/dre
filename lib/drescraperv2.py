@@ -84,6 +84,7 @@ def strip_html( html ):
     txt = re.sub(r'<.*?>','', txt)
     return txt
 
+
 def save_file(filename, url):
     k = 1
     while True:
@@ -102,6 +103,7 @@ def save_file(filename, url):
         f.write(data_blob)
         f.close()
 
+
 def read_soup(page):
     '''
     Reads a web page and soupifies it
@@ -119,6 +121,33 @@ class DREReaderError(Exception):
     pass
 
 class DREReader( object ):
+    '''
+    Read DRs from dre.pt
+
+    # PDFs
+
+    check_dirs         # Check if a dir to store docs exists, if not, creates it
+    save_pdf           # downloads a pdf and saves it to the apropriate dir
+
+    # Metadata
+
+    get_document_list  # Gets the doc list from a search page
+    extract_metadata   # Creates metadata from the document_list
+    read_index         # downloads the page and creates the meta data
+
+    # Getting the documents
+
+    get_digesto        # Gets the digesto text
+
+    log_doc            # makes a doc entry
+    create_cache       # Creates a cache entry
+
+    save_doc           # Saves a document metadata to the database
+    next_doc           # Saves the next doc info to the database
+
+    save_doc_list      # downloads the doc list obtained on `get_document_list`
+    '''
+
     def __init__( self, date ):
         self.date = date
         self.base_url = 'https://dre.pt'
@@ -129,6 +158,8 @@ class DREReader( object ):
     ##
     ## Getting the data
     ##
+
+    # Get the PDFs
 
     def check_dirs(self):
         date = self.date
@@ -141,12 +172,14 @@ class DREReader( object ):
             os.makedirs( archive_dir )
         return archive_dir
 
+
     def save_pdf(self, meta):
         archive_dir = self.check_dirs()
         pdf_file_name = os.path.join( archive_dir, 'dre-%d.pdf' % meta['id'] )
         save_file( pdf_file_name, meta['url'] )
         self.pdf_file_name = pdf_file_name
 
+    # Get the document metadata
 
     def get_document_list(self):
         day_dr = self.soup.findAll('div', { 'class': self.result_div })
@@ -155,6 +188,10 @@ class DREReader( object ):
         for dr in day_dr:
             raw_dl += dr.findAll('li')
 
+        return raw_dl
+
+
+    def extract_metadata(self, raw_dl):
         dl = []
         prev_doc = {}
         for raw_doc in raw_dl:
@@ -234,11 +271,17 @@ class DREReader( object ):
 
         self.doc_list = dl
 
+
     def read_index(self):
         '''Gets the document list'''
         self.soup = read_soup( self.url )
-        self.get_document_list()
+        raw_doc_list = self.get_document_list()
+        self.extract_metadata( raw_doc_list )
         return self
+
+    ##
+    ## Saving the docs
+    ##
 
     def get_digesto( self, doc ):
         document = doc['document']
@@ -249,7 +292,7 @@ class DREReader( object ):
             document_text = DocumentText.objects.get( document = document,
                     text_type = 0)
         except ObjectDoesNotExist:
-            logger.debug('Getting digesto text.')
+            logger.warn('Getting digesto text.')
         else:
             return
 
@@ -269,9 +312,6 @@ class DREReader( object ):
         document_text.text = text
         document_text.save()
 
-    ##
-    ## Saving the docs
-    ##
 
     def save_doc(self, doc, mode = NEW ):
         if mode == MODIFY:
@@ -324,12 +364,14 @@ class DREReader( object ):
                 txt += '   %-12s: %s\n' % (key, item)
         logger.warn(txt[:-1])
 
+
     def create_cache( self, doc ):
         document = doc['document']
 
         # Create the document html cache
         if document.plain_text:
             DocumentCache.objects.get_cache(document)
+
 
     def next_doc(self, doc, mode = NEW ):
         document = doc['document']
@@ -342,6 +384,7 @@ class DREReader( object ):
         document_next.doc_type = doc['next']['doc_type'] if doc['next'] else ''
         document_next.number   = doc['next']['number'] if doc['next'] else ''
         document_next.save()
+
 
     def save_doc_list(self, mode = NEW):
         if not self.doc_list:
@@ -368,6 +411,7 @@ class DREReader( object ):
             self.log_doc( doc )
 
             time.sleep(1)
+
 
 class DREReader1S( DREReader ):
     def __init__( self, date ):
