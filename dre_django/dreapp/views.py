@@ -27,6 +27,9 @@ from dreapp.forms import QueryForm, BookmarksFilterForm, ChooseDateForm
 from dreapp.models import Document, doc_ref_optimize_re
 from settingsapp.models import get_setting
 
+# Settings
+SITE_URL = getattr(settings, 'SITE_URL', 'http://dre.tretas.org')
+
 abreviation_list = (
     # Use lower case abreviations and expansions
     # ( <abreviation>, <expansion> )
@@ -285,6 +288,9 @@ def document_display( request, docid ):
     document = get_object_or_404(Document, pk=docid )
 
     context['document'] = document
+    context['url'] = urllib.quote_plus( SITE_URL + reverse( 'document_display',
+            kwargs = { 'docid': docid }) )
+    context['text'] =  urllib.quote_plus( document.title().encode('utf-8')  )
 
     if request.user.is_authenticated():
         context['show_user_notes'] = get_setting(request.user, 'show_user_notes')

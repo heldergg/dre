@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     '.tretas.org',
     ]
 
+SITE_URL = 'http://dre.tretas.org'
+
 ##
 ## Database definition
 ##
