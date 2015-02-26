@@ -34,7 +34,10 @@ def usage():
         -d
         --dump              Dump the documents to stdout as a JSON list
 
-        -c
+        --create_cache YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂
+                            Creates (or updates) the cache for the documents
+                            in the date range
+
         --update_cache      Refresh the document's html cache
 
         -h
@@ -46,10 +49,11 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                    'hr:dvc',
+                                    'hr:dv',
                                    ['help',
                                     'read_date=', 'read_range=',
                                     'dump', 'update_cache',
+                                    'create_cache='
                                    ])
     except getopt.GetoptError, err:
         print str(err)
@@ -124,7 +128,7 @@ if __name__ == '__main__':
             sys.exit()
 
 
-        elif o in ('-c', '--update_cache'):
+        elif o == '--update_cache':
             from dreapp.models import Document, DocumentCache
             page_size = 5000
 
@@ -137,6 +141,41 @@ if __name__ == '__main__':
                     DocumentCache.objects.get_cache(doc)
 
             sys.exit()
+
+
+        elif o == '--create_cache':
+            import datetime
+            from dreapp.models import Document, DocumentCache
+            page_size = 1000
+
+            try:
+                date1, date2 = a.split(':')
+            except ValueError:
+                print 'A date range in the format YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂ is needed.'
+                sys.exit()
+
+            try:
+                date1 = datetime.datetime.strptime( date1, '%Y-%m-%d' )
+                date2 = datetime.datetime.strptime( date2, '%Y-%m-%d' )
+            except ValueError:
+               print 'The dates provided must be in ISO format.'
+               sys.exit(1)
+
+
+            results = Document.objects.filter(date__gte = date1
+                    ).filter(date__lte = date2)
+
+            for i in range(0,results.count(), page_size):
+                j = i + page_size
+                print '* Processing documents %d through %d' % (i,j)
+                for doc in results[i:j]:
+                    print doc.date, doc.doc_type, doc.number
+                    cache = DocumentCache.objects.get_cache_object(doc)
+                    cache.build_cache()
+
+
+            sys.exit()
+
 
         elif o in ('-h', '--help'):
             usage()

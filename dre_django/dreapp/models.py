@@ -402,7 +402,7 @@ class Document(models.Model):
 DOCUMENT_VERSION = getattr(settings, 'DOCUMENT_VERSION', 1)
 
 class CacheManager(models.Manager):
-    def get_cache(self, document):
+    def get_cache_object(self, document):
         try:
             cache = super(CacheManager, self).get_query_set(
                     ).get(document=document)
@@ -413,6 +413,10 @@ class CacheManager(models.Manager):
             cache._html = ''
             cache.save()
 
+        return cache
+
+    def get_cache(self, document):
+        cache = self.get_cache_object( document )
         return cache.html
 
 
@@ -544,7 +548,7 @@ class DocumentCache(models.Model):
             html = re.sub( u'(CAPÍTULO [IVXLD]+)\n',r'<strong>\1</strong>', html)
             html = re.sub( u'(SECÇÃO [IVXLD]+)\n',r'<strong>\1</strong>', html)
             html = html.replace('TEXTO :','')
-            html = html.replace('eurlex.asp', 'http://www.dre.pt/cgi/eurlex.asp')
+            html = html.replace('/application/external/eurolex?', 'https://dre.pt/application/external/eurolex?')
         elif os.path.exists(filename):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
