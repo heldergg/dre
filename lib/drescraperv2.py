@@ -72,6 +72,8 @@ nodoctype_header_re = re.compile( r'^\(Sem diploma\)'
                             r'.*?(?:Diário da República n.º )'
                             r'(?P<dr_number>[0-9A-Za-z/-]+).*$' )
 
+dr_number_re = re.compile( r'^https://dre.pt/web/guest/pesquisa-avancada/-/asearch/(?P<int_rd_num>\d+)/details/maximized.*$')
+
 ##
 ## Utils
 ##
@@ -152,8 +154,7 @@ class DREReader( object ):
         self.date = date
         self.base_url = 'https://dre.pt'
         self.url = None
-        self.series = None
-        self.digesto = False
+        self.url = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/advanced/maximized?types=DR&dataPublicacao=%(date)s' % { 'date': date.date() }
 
     ##
     ## Getting the data
@@ -181,8 +182,14 @@ class DREReader( object ):
 
     # Get the document metadata
 
-    def get_document_list(self):
-        day_dr = self.soup.findAll('div', { 'class': self.result_div })
+    def get_document_list(self, soup):
+        pagination = soup.find('div', { 'class': 'pagination' })
+        if pagination:
+            pagination.extract()
+            pagination = soup.find('div', { 'class': 'pagination' })
+            pagination.extract()
+
+        day_dr = soup.findAll('div', { 'class': 'list' })
 
         raw_dl = []
         for dr in day_dr:
@@ -202,6 +209,8 @@ class DREReader( object ):
             except AttributeError:
                 raw_header = raw_doc.span.renderContents().strip()
                 has_pdf = False
+
+            series = 1 if 'Série I ' in raw_header else 2
 
             if 'DIGESTO' in raw_header:
                 # Header is not a link
@@ -224,11 +233,6 @@ class DREReader( object ):
 
             dr_number = header.group('dr_number')
 
-            try:
-                digesto = raw_doc.find('a', { 'class':'clara' }).find( 'span', { 'class': 'rgba' } )
-                digesto = int(digesto.renderContents())
-            except AttributeError:
-                digesto = None
 
             try:
                 summary = strip_html(
@@ -249,6 +253,16 @@ class DREReader( object ):
                              )
                 claint = zlib.adler32(sign_str)
                 url = ''
+                digesto = None
+
+            try:
+                digesto = raw_doc.find('span', { 'class':'rgba' })
+                digesto = int(digesto.renderContents())
+
+                if digesto == claint:
+                    digesto = None
+            except AttributeError:
+                digesto = None
 
             doc = {
                 'url': url,
@@ -260,6 +274,7 @@ class DREReader( object ):
                 'dr_number': dr_number,
                 'date': self.date,
                 'digesto': digesto,
+                'series': series,
                 'document': None,
                 'next': None
                 }
@@ -269,15 +284,47 @@ class DREReader( object ):
             prev_doc = doc
             dl.append(doc)
 
-        self.doc_list = dl
+        return dl
 
 
     def read_index(self):
         '''Gets the document list'''
-        self.soup = read_soup( self.url )
-        raw_doc_list = self.get_document_list()
-        self.extract_metadata( raw_doc_list )
+        doc_list = []
+
+        soup = read_soup( self.url )
+        dr_list = soup.find('div', { 'class': 'search-result' }).findAll('li')
+        for dr in dr_list:
+            a = dr.a
+            dr_internal_id = int(dr_number_re.match(a['href']).groups('dr_number_re')[0])
+            series = 1 if 'Série I ' in a.renderContents() else 2
+
+            # Falta descobrir como extraír os contratos, se estivermos
+            # na série 2 basta acrescentar &at=c ao url
+
+            page = 1
+            get_contracts = series == 2
+            url_template = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/%d/details/%d/maximized'
+            url_template_org = url_template
+            while True:
+                url = url_template % (dr_internal_id, page)
+                soup = read_soup( url )
+                raw_doc_list = self.get_document_list( soup )
+                if not raw_doc_list:
+                    if get_contracts:
+                        url_template = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/%d/details/%d/maximized?at=c'
+                        get_contracts = False
+                        page = 1
+                        continue
+                    else:
+                        url_template = url_template_org
+                        break
+                dl = self.extract_metadata( raw_doc_list )
+                doc_list += dl
+                page += 1
+
+        self.doc_list = doc_list
         return self
+
 
     ##
     ## Saving the docs
@@ -327,7 +374,7 @@ class DREReader( object ):
         document.number       = doc['number']
         document.emiting_body = doc['emiting_body']
         document.source       = '%d.ª Série, Nº %s, de %s' % (
-                            self.series, doc['dr_number'], self.date.strftime('%Y-%m-%d'))
+                            doc['series'], doc['dr_number'], self.date.strftime('%Y-%m-%d'))
         document.dre_key      = ''
         document.in_force     = True
         document.conditional  = False
@@ -338,7 +385,7 @@ class DREReader( object ):
         document.dre_pdf      = doc['url']
         document.pdf_error    = False
         document.dr_number    = doc['dr_number']
-        document.series       = self.series
+        document.series       = doc['series']
         document.timestamp    = datetime.datetime.now()
 
         try:
@@ -396,11 +443,11 @@ class DREReader( object ):
                 # Duplicated document: even if the document is duplicated we
                 # check for the "digesto" text since sometimes this is created
                 # long after the original date of the document.
-                if self.digesto and doc['digesto']:
+                if doc['digesto']:
                     # Check the "digesto" integral text
                     self.get_digesto( doc )
                 continue
-            if self.digesto and doc['digesto']:
+            if doc['digesto']:
                 # Get the "digesto" integral text
                 self.get_digesto( doc )
             if doc['url']:
@@ -411,20 +458,3 @@ class DREReader( object ):
             self.log_doc( doc )
 
             time.sleep(1)
-
-
-class DREReader1S( DREReader ):
-    def __init__( self, date ):
-        super(DREReader1S, self).__init__(date)
-        self.url = 'https://dre.pt/web/guest/home/-/dre/calendar/maximized?day=%s' % date
-        self.series = 1
-        self.result_div = 'diplomas'
-
-class DREReader2S( DREReader ):
-    def __init__( self, date ):
-        super(DREReader2S, self).__init__(date)
-        year = date.year
-        self.url = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/advanced/maximized?types=SERIEII&anoDoc=%(year)s&perPage=10000&dataPublicacaoInicio=%(date)s&dataPublicacaoFim=%(date)s' % { 'date': date.date(), 'year': year }
-        self.series = 2
-        self.result_div = 'search-result'
-        self.digesto = True

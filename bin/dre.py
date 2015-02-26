@@ -23,9 +23,6 @@ django.setup()
 
 def usage():
     print '''Usage: %(script_name)s [options]\n
-    Options:
-        --series_i          Selects series I (default)
-        --series_ii         Selects series II
     Commands:
         -r YYYY-MM-DD
         --read_date YYYY-MM-DD
@@ -50,39 +47,21 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
                                     'hr:dvc',
-                                   ['help', 'verbose',
+                                   ['help',
                                     'read_date=', 'read_range=',
                                     'dump', 'update_cache',
-                                    'series_i', 'series_ii'])
+                                   ])
     except getopt.GetoptError, err:
         print str(err)
         print
         usage()
         sys.exit(1)
 
-    # Defaults
-    verbose = False
-    series  = 1
-
-    for o, a in opts:
-        if o in ('-v', '--verbose'):
-            verbose = True
-
-        elif o == '--series_ii':
-            series = 2
-
-
     # Commands
     for o, a in opts:
-        if o in ('-r', '--read_date', '--read_range'):
-            from drescraperv2 import DREReader1S, DREReader2S
-            if series == 1:
-                DREReader = DREReader1S
-            elif series == 2:
-                DREReader = DREReader2S
-
         if o in ('-r', '--read_date'):
             import datetime
+            from drescraperv2 import DREReader
 
             try:
                 date = datetime.datetime.strptime( a, '%Y-%m-%d' )
@@ -99,6 +78,7 @@ if __name__ == '__main__':
         elif o == '--read_range':
             import datetime
             import time
+            from drescraperv2 import DREReader
 
             try:
                 date1, date2 = a.split(':')
@@ -122,6 +102,7 @@ if __name__ == '__main__':
                 time.sleep( 5 )
 
             sys.exit()
+
 
         elif o in ('-d', '--dump'):
             import json
