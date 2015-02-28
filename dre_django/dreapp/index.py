@@ -18,7 +18,16 @@ import xapian
 
 class DocumentIndexer(Indexer):
     stemming_lang_accessor = 'portuguese'
-    fields = [ 'doc_type', 'number', 'emiting_body', 'source', 'notes', 'plain_txt']
+    fields = [
+            'doc_type',
+            'number',
+            'emiting_body',
+            'source',
+            'notes',
+            'plain_txt'
+            'series',
+            'dr_number',
+            ]
     tags = [
         ('notes', 'notes'),
         ('date', 'date_to_index'),
@@ -28,7 +37,9 @@ class DocumentIndexer(Indexer):
         ('type', 'doc_type'),
         ('number','number'),
         ('who','emiting_body'),
-        ('source','source')
+        ('source','source'),
+        ('series','series'),
+        ('dr', 'dr_number'),
         ]
     aliases = {
         'notes': 'notas',
@@ -40,6 +51,8 @@ class DocumentIndexer(Indexer):
         'number':'número',
         'who': 'quem',
         'source':'fonte',
+        'series':'série',
+        'dr':'dr',
         }
 
 
