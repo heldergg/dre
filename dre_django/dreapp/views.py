@@ -61,9 +61,13 @@ def search(request):
     order = request.GET.get('order', None)
     if order not in ('date', '-date'):
         order = None
+    context['order'] = order
 
     # Try to optimize the user's query?
     mquery = request.GET.get('m','T')
+    if mquery not in ('T','F'):
+        mquery = 'T'
+    context['mquery'] = mquery
 
     if form.is_valid():
         query = form.cleaned_data['q']

@@ -44,6 +44,11 @@
   {% endif %}
 
   {% include "results.html" %}
+  <p class="noprint center_text">
+   [ <a href="{{ query }}&m={{ mquery }}&order=-date">Ordenar por data descendente</a> |
+     <a href="{{ query }}&m={{ mquery }}&order=date">Ordenar por data ascendente</a> |
+     <a href="{{ query }}&m={{ mquery }}">Ordenar por relevância</a> ]
+  </p>
 </div>
 {% else %}
 {% if not success %}
