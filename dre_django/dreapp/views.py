@@ -21,11 +21,12 @@ from django.db import connections
 # Local Imports:
 import dreapp.index
 from bookmarksapp.models import Bookmark
-from tagsapp.models import Tag
+from djapian.resultset import ResultSet
 from dreapp.forms import BrowseDayFilterForm
 from dreapp.forms import QueryForm, BookmarksFilterForm, ChooseDateForm
 from dreapp.models import Document, doc_ref_optimize_re
 from settingsapp.models import get_setting
+from tagsapp.models import Tag
 
 # Settings
 SITE_URL = getattr(settings, 'SITE_URL', 'http://dre.tretas.org')
@@ -57,6 +58,10 @@ def search(request):
     except:
         page = 1
 
+    order = request.GET.get('order', None)
+    if order not in ('date', '-date'):
+        order = None
+
     # Try to optimize the user's query?
     mquery = request.GET.get('m','T')
 
@@ -79,19 +84,22 @@ def search(request):
 
             if mod_query.lower() == query.lower():
                 # No optimization
-                results = indexer.search(query)
+                results = ResultSet(indexer, query, parse_query=True) # .order_by('-date')
             else:
                 # The query string was modified
-                results = indexer.search(mod_query)
+                results = ResultSet(indexer, mod_query, parse_query=True)
 
                 if results.count(): # Did we get results?
                     # Yap
                     context['query_modified'] = query
                 else:
                     # Nope, will try to get results with the user's query string
-                    results = indexer.search(query)
+                    results = ResultSet(indexer, query, parse_query=True)
         else:
-            results = indexer.search(query)
+            results = ResultSet(indexer, query, parse_query=True)
+
+        if order:
+            results = results.order_by(order)
 
         spell_correction = results.spell_correction()
         spell_correction = spell_correction.get_corrected_query_string()

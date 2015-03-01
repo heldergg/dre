@@ -19,14 +19,15 @@ import xapian
 class DocumentIndexer(Indexer):
     stemming_lang_accessor = 'portuguese'
     fields = [
-            'doc_type',
-            'number',
-            'emiting_body',
-            'source',
-            'notes',
-            'plain_txt'
-            'series',
-            'dr_number',
+            ('date', 1),
+            ('doc_type', 1),
+            ('number', 1),
+            ('emiting_body', 1),
+            ('source', 1),
+            ('notes', 1),
+            ('plain_txt', 1),
+            ('series', 1),
+            ('dr_number', 1),
             ]
     tags = [
         ('notes', 'notes'),
