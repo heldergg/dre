@@ -260,7 +260,7 @@ def browse_day( request, year, month, day ):
                 Q(notes__icontains = query )
                 )
 
-    results = results.order_by( 'doc_type', 'number' )
+    results = results.order_by('timestamp')
 
     ##
     # Dates
