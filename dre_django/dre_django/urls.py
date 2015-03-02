@@ -14,17 +14,17 @@ urlpatterns = patterns('',
     url(r'^$', 'dreapp.views.search'),
 
     # About:
-    url(r'^about',
+    url(r'^about/',
         TemplateView.as_view(template_name='about.html'),
         name='about'),
 
     # Help:
-    url(r'^help',
+    url(r'^help/',
         TemplateView.as_view(template_name='help.html'),
         name='help'),
 
     # Not implemented:
-    url(r'^not_implemented',
+    url(r'^not_implemented/',
         TemplateView.as_view(template_name='not_implemented.html'),
         name='not_implemented'),
 
