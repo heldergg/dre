@@ -37,9 +37,14 @@ urlpatterns = patterns('dreapp.views',
 ##
 
 from dreapp.syndication import LatestEntriesFeed
+from django.views.generic import TemplateView
 
 urlpatterns += patterns('',
     # Latest feeds
-    url(r'^rss/$', LatestEntriesFeed(), name='latest_entries_feed'),
+    url(r'^rss/$', LatestEntriesFeed(), name='rss'),
 
+    # Feed help page:
+    url(r'^rss/help/$',
+        TemplateView.as_view(template_name='rss_help.html'),
+        name='rss_help'),
     )

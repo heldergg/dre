@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Diários da República - Ajuda{% endblock %}
+
+{% block header %}
+  <meta name="keywords" content="ajuda,dre,diário da república">
+  <meta name="description" content="Ajuda do sistema de procura e armazenamento de Diários da República.">
+  <meta property="og:title" content="Diários da República - Ajuda">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://dre.tretas.org">
+  <meta property="og:image" content="http://dre.tretas.org{{ STATIC_URL }}img/esfera_armilar_200.png">
+  <meta property="og:site_name" content="Diários da República - Versão do cidadão">
+  <meta property="fb:admins" content="webmaster@tretas.org">
+  <meta property="og:description" content="Ajuda do sistema de procura e armazenamento de Diários da República.">
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text">
+  <h1>Ajuda RSS</h1>
+
+  <p>Leia na Wikipédia o que é um <a href="" target="_blank">feed RSS</a> saiba que tipo de utilização lhes pode dar.</p>
+
+  <p>No dre.tretas.org temos um endereço geral de RSS onde todo o conteúdo adicionado ao site é listado. Esse endereço é:
+
+  <p class="center_text"><tt>http://dre.tretas.org/dre/rss/</tt>
+
+  <p>A utilidade deste endereço é um pouco reduzida dado que um utilizador normal raramente terá necessidade de ter conhecimento dos 150 a 200 novos documentos que são, tipicamente, acrescentados ao site todos os dias úteis.
+
+  <p>Para tornar os feeds RSS úteis temos a possibilidade de interrogar a base de dados quando se lê um feed. Isto permite-nos, por exemplo, construír um feed personalizado onde apenas apareçam os documentos da Série I do DR:
+
+  <p class="center_text"><tt>http://dre.tretas.org/dre/rss/<strong>?q=série:1</strong></tt>
+
+  <p>Ou todos os diplomas da Série I que façam menção da palavra 'professor':
+
+  <p class="center_text"><tt>http://dre.tretas.org/dre/rss/<strong>?q=série:1+professor</strong></tt>
+
+  <p>A parte do endereço realçada a negrito é a busca que fazemos para obter os resultados. Pode ser tão complexa como qualquer busca que façamos na <a href="/">secção de procura deste site</a>. Na realidade o mecanismo para gerar esta lista é exactamente o mesmo que usamos para produzir os resultados nessa secção.
+
+  <p>Como a construção de URLs como os que usámos como exemplo requerem o algum conhecimento técnico incluímos nos resultados de busca a possibilidade de obter directamente o feed RSS. O utilizador só terá de ajustar a busca de acordo com o seu desejo e, quando estiver satisfeito, apenas tem de clicar em "<strong>Obter esta busca como RSS</strong>", no rodapé da página de busca.
+
+  <p>Notar que o feed RSS destina-se a mostrar novos documentos que sejam acrescentados ao site, assim os resultados de busca apresentados no feed RSS são sempre ordenados por data decrescente. Isto por oposição à busca normal onde os resultados são apresentados por ordem de relevância.
+
+
+</div>
+{% endblock %}

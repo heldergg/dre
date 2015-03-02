@@ -14,6 +14,7 @@
   <meta property="og:site_name" content="Diários da República - Versão do cidadão">
   <meta property="fb:admins" content="webmaster@tretas.org">
   <meta property="og:description" content="Procura de diplomas no Diário da República">
+  {% if query %}<link rel="alternate" type="application/rss+xml" title="RSS Desta Busca" href="{% url 'rss' %}{{ query }}">{% endif %}
 {% endblock %}
 
 {% block body_content %}
@@ -45,9 +46,10 @@
 
   {% include "results.html" %}
   <p class="noprint center_text">
-   [ <a href="{{ query }}&m={{ mquery }}&order=-date">Ordenar por data descendente</a> |
-     <a href="{{ query }}&m={{ mquery }}&order=date">Ordenar por data ascendente</a> |
-     <a href="{{ query }}&m={{ mquery }}">Ordenar por relevância</a> ]
+  [ <span class="nobreak"><a href="{{ query }}&m={{ mquery }}&order=-date">Ordenar por data descendente</a> |</span>
+  <span class="nobreak"><a href="{{ query }}&m={{ mquery }}&order=date">Ordenar por data ascendente</a> |</span>
+  <span class="nobreak"><a href="{{ query }}&m={{ mquery }}">Ordenar por relevância</a> |</span>
+  <span class="nobreak"><a href="{% url 'rss' %}{{ query }}">Obter esta busca como RSS</a> ]</span>
   </p>
 </div>
 {% else %}

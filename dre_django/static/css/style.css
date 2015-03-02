@@ -282,3 +282,5 @@ a.user {
 /* Mix */
 
 .hidden {display: none;}
+
+.nobreak {white-space: pre;}
