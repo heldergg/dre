@@ -15,6 +15,10 @@
   <meta property="fb:admins" content="webmaster@tretas.org">
   <meta property="og:description" content="Procura de diplomas no Diário da República">
   {% if query %}<link rel="alternate" type="application/rss+xml" title="RSS Desta Busca" href="{% url 'rss' %}{{ query }}">{% endif %}
+  {% if page.object_list %}
+  <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+  <script src="{{ STATIC_URL }}js/keyboard_nav.js"></script>
+  {% endif %}
 {% endblock %}
 
 {% block body_content %}
