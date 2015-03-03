@@ -378,6 +378,8 @@ class Document(models.Model):
             'claint'       : self.claint,
             'doc_type'     : self.doc_type,
             'number'       : self.number,
+            'dr_number'    : self.dr_number,
+            'series'       : self.series,
             'emiting_body' : self.emiting_body.split(';'),
             'source'       : self.source,
             'dre_key'      : self.dre_key,
