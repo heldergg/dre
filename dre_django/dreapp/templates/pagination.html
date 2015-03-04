@@ -1,6 +1,6 @@
 <div class="pagination">
   {% if page.has_previous %}
-  <a id="first_page" id="Ctrl-Seta Esquerda" href="{{ query }}{% if mquery %}&m={{ mquery }}{% endif %}{% if order %}&order={{ order }}{% endif %}"><img src="{{ STATIC_URL }}img/arrow-first.png" alt="Primeira página"></a> 
+  <a id="first_page" title="Ctrl-Seta Esquerda" href="{{ query }}{% if mquery %}&m={{ mquery }}{% endif %}{% if order %}&order={{ order }}{% endif %}"><img src="{{ STATIC_URL }}img/arrow-first.png" alt="Primeira página"></a> 
   &nbsp;
   <a id="prev_page" title="Seta Esquerda" href="{{ query }}{% if mquery %}&m={{ mquery }}{% endif %}&page={{ page.previous_page_number }}{% if order %}&order={{ order }}{% endif %}"><img src="{{ STATIC_URL }}img/arrow-left.png" alt="Página anterior"></a> 
   {% else %}
