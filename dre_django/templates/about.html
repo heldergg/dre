@@ -3,7 +3,7 @@
 {% block title %}Diários da República - Acerca{% endblock %}
 
 {% block header %}
-  <meta name="keywords" content="ajuda,dre,diário da república">
+  <meta name="keywords" content="ajuda,dre,diário da república,leis">
   <meta name="description" content="Acerca do sistema de procura e armazenamento de Diários da República.">
   <meta property="og:title" content="Diários da República - Acerca">
   <meta property="og:type" content="website">
@@ -19,22 +19,15 @@
   <h1>Acerca do DRE Tretas</h1>
     <p>Este site disponibiliza uma cópia tão fiel quanto possível do <a href="http://dre.pt/">Diário da República Electrónico</a>, em caso de dúvida deverá sempre recorrer à fonte oficial.
 
-    <p>O motivo que nos levou a fazer este trabalho foi a extremamente baixa qualidade do site oficial. A qualidade é tão baixa que chega ao extremo de não nos permitir partilhar ligações para os documentos nele contidos. Notar que não estou a falar em ligações automáticas para redes sociais ou coisa do género. Estou a falar das próprias ligações para a legislação. Por exemplo, a <a href="http://digestoconvidados.dre.pt/Digesto/(S(1bpz5ljwwqq15s450ea0s145))/Paginas/DiplomaDetalhado.aspx?claint=305745">seguinte ligação</a>:
-
-    <pre>http://digestoconvidados.dre.pt/Digesto/(S(1bpz5ljwwqq15s450ea0s145))
-/Paginas/DiplomaDetalhado.aspx?claint=305745</pre> 
-
-    <p>Não vai, pura e simplesmente, funcionar. Não há motivo técnico válido para que assim seja. Desta forma quebra-se uma das características principais da web, disponível desde o início: a possibilidade de se utilizarem hiperligações em hipertexto (o 'H' de <a href="http://pt.wikipedia.org/wiki/HTML">HTML</a>...). 
-
-    <p>O site oficial é mau de outras formas:
+    <p>O motivo que nos levou a fazer este trabalho foi a baixa qualidade do site oficial. Não nos referimos ao design do site, que melhorou muito na nova versão de Setembro de 2014, mas sim à falta de funcionalidades que consideramos básicas, tais como:
 
     <ul>
-      <li>O sistema de busca, para além de lento, é muito sensível às perguntas que lhe pomos. Muitas vezes simplesmente cracha sem nos devolver qualquer resultado;
-      <li>Não conseguimos fazer buscas em texto livre, ficamos limitados a procurar nos metadados disponibilizados;
-      <li>Não existem feeds que nos permitam acompanhar a nova legislação que vai saindo, da mesma forma não é possível criar avisos por mail;
+      <li>Sistema de busca em texto livre: a legislação é cada vez mais complexa, termos um sistema de procura moderno e flexível é fundamental. O site actual disponível para a generalidade dos cidadãos não tem esta funcionalidade, as capacidades de busca limitam-se a procuras num conjunto reduzido de meta-dados. Assim, se não soubermos qual o documento que queremos obter, dificilmente o conseguiremos encontrar no site oficial;
+      <li>O site oficial tem feeds RSS, mas estes limitam-se a listar os documentos do dia. Se quisermos acompanhar a actividade sobre um determinado tema, isso não é possível;
+      <li>Os documentos estão apenas disponíveis em formato PDF, isto apresenta problemas para os motores de busca, dificulta o acesso ao site a pessoas com deficiências, não há ligações entre documentos. Notar que o INCM já tem os documentos noutros formatos, no entanto não os disponibiliza na versão grátis do site. Neste site conseguimos obter a versão em html recorrendo a uma falha do site oficial (ver <a href="http://www.reddit.com/r/opendata_pt/comments/2ounh2/dre_pesquisa_para_obten%C3%A7%C3%A3o_da_segunda_s%C3%A9rie/cowtc9d" target="_blank">aqui</a>);
     </ul>
 
-    <p>Por todos estes motivos, decidimos criar este site onde tentaremos remediar as questões acima citadas bem como desenvolver soluções que permitam aos cidadãos explorar a legislação de formas inovadoras e práticas.. 
+    <p>Por estes motivos, decidimos criar este site onde tentaremos remediar as questões acima citadas bem como desenvolver soluções que permitam aos cidadãos explorar a legislação de formas inovadoras e práticas...
 
     <p>Todos os cidadãos são convidados a utilizar este site. Qualquer 
        comentário, crítica ou sugestão pode ser enviado para: 
@@ -42,6 +35,8 @@
 
     <p>Helder Guerreiro</p> 
     <p>José Lopes</p>
+
+    <p>Nota: esta introdução foi alterada em Maio de 2015, pode consultar as versões anteriores na <a href="https://github.com/heldergg/dre">página do projecto</a> no github.
 
   <h2>Nota técnica</h2>
 
@@ -135,7 +130,7 @@
         <li>Palavra chave;
         <li>Gestão de etiquetas;
         <li>Definições várias (controlo geral de privacidade, ajustes da 
-        interface.
+        interface).
       </ul>
     </ul>
   </ul>
