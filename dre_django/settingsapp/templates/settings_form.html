@@ -4,18 +4,12 @@
 
 {% block content_column %}
     <h1>Configurações pessoais</h1>
-    <form method="post" action="{% url 'settings_form' %}">{% csrf_token %}
-      <table>
-        {{ form }}
-        <tr>
-          <td colspan=2>
-            <div class="center_text">
-              <button style="width:12em" type="submit" value="Submit">Salvar configurações pessoais</button>
-              {% if saved %}<p>Dados guardados.</p>{% endif %}
-            </div>
-          </td>
-        </tr>
-      </table>
+    <form id="settings" method="post" action="{% url 'settings_form' %}">{% csrf_token %}
+        {{ form.as_p  }}
 
+        <div class="center_text">
+          <button style="width:12em" type="submit" value="Submit">Salvar configurações pessoais</button>
+          {% if saved %}<p>Dados guardados.</p>{% endif %}
+        </div>
     </form>
 {% endblock %}

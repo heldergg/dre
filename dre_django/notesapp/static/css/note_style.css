@@ -1,7 +1,7 @@
 .add_note { }
 
 .add_note textarea {
-  width: 100%;
+  width: 95%;
   height: 7em;
   }
 
@@ -36,7 +36,7 @@
   background-color: whitesmoke;
   border: solid !important;
   border-width: 1px !important;
-  margin-left:auto; 
+  margin-left:auto;
   margin-right:auto;
 }
 

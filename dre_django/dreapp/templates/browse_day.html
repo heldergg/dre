@@ -7,8 +7,7 @@
   <meta name="description" content="Consultar os diplomas publicados numa dada data.">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.css" />
   <link rel="stylesheet" href="/static/css/jquery.multiselect.css" />
-  <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
-  <script src="{{ STATIC_URL }}js/jquery-ui-1.10.2.min.js"></script>
+  <script src="{{ STATIC_URL }}jquery/jquery-ui-1.10.2.min.js"></script>
   <script src="/static/js/jquery.multiselect.min.js"></script>
   <script>
     var date="{{ date|date:"Y-m-d" }}";
@@ -30,50 +29,38 @@
 
   <div id="filter_control" class="noprint">
     <form action="" method="GET" id="form_filter" name="FilterForm">
-      <table width=100%>
-        <tr>
-          <td>
-            <table>
-              <tr>
-                <td>Escolha a&nbsp;série:</td>
-                <td>{{ filter_form.series }}</td>
-              </tr>
-              <tr>
-                <td>Tipo documento:</td>
-                <td>{{ filter_form.doc_type }}</td>
-              </tr>
-              <tr>
-                <td>Procurar por:</td>
-                <td>{{ filter_form.query }}</td>
-              </tr>
-            </table>
-          </td>
-          <td style="border: solid; border-width: 0 0 0 2px;">
-            <table>
-              <tr>
-                <td>Outra data:</td>
-              </tr>
-              <tr>
-                <td>{{ filter_form.date }}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <p style="text-align:right;"><a href='.'>Limpar filtro</a> <button type="submit">Filtrar</button>
+      <div class="filter_left">
+        <p><label for="series">Escolha a&nbsp;série:</label>
+        <span>{{ filter_form.series }}</span>
+
+        <p><label for="doc_type">Tipo documento:</label>
+        <span>{{ filter_form.doc_type }}</span>
+
+        <p><label for="query">Procurar por:</label>
+        <span>{{ filter_form.query }}</span>
+      </div>
+      <div class="filter_right">
+        <p><label for="date">Outra data:</label>
+        <span>{{ filter_form.date }}</span>
+      </div>
+      <div class="clear_both"></div>
+      <div class="filter_bottom">
+        <a href='.'>Limpar filtro</a>
+        <button type="submit">Filtrar</button>
+      </div>
     </form>
   </div>
 
   <div class="result_bar noprint">
-    <div style="width:33%;float:left;text-align:left;">
+    <div class="one_third" style="text-align:left;">
       {% if prev_date %}
       <a id="prev_date" title="Shift-Seta Esquerda" href="{% url 'browse_day' year=prev_date.year month=prev_date.month day=prev_date.day %}{{ query_date }}">Data anterior {{ prev_date|date:'Y-m-d' }}</a>
       {% endif %}
     </div>
-    <div style="width:33%;float:left;text-align:center;">
+    <div class="one_third" style="text-align:center;">
       <a href="{% url 'browse' %}">Outras datas</a>
     </div>
-    <div style="width:33%;float:left;text-align:right;">
+    <div class="one_third" style="text-align:right;">
       {% if next_date %}
       <a id="next_date" title="Shift-Seta Direita" href="{% url 'browse_day' year=next_date.year month=next_date.month day=next_date.day %}{{ query_date }}">Data seguinte {{ next_date|date:'Y-m-d' }}</a>
       {% endif %}

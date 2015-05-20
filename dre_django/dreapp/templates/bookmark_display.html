@@ -6,12 +6,10 @@
 {% block title %}Diários da República - Marcadores{% endblock %}
 
 {% block header %}
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tag_style.css">
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.css" />
   <link rel="stylesheet" href="/static/css/jquery.multiselect.css" />
-  <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
-  <script src="{{ STATIC_URL }}js/jquery-ui-1.10.2.min.js"></script>
+  <script src="{{ STATIC_URL }}jquery/jquery-ui-1.10.2.min.js"></script>
   <script src="/static/js/jquery.multiselect.min.js"></script>
   <script>
     var STATIC_URL="{{ STATIC_URL }}";
@@ -33,51 +31,34 @@
 {% endblock %}
 
 {% block body_content %}
+<h1>Marcadores - {{ bookmarks_user.username }}</h1>
+
 <div class="content-text"><div id="search_results">
   <div id="filter_control">
     <form>
-    <table width=100%>
-      <tr>
-        <td>
-          <table>
-            <tr>
-              <td>Ordenar por:</td>
-            </tr>
-            <tr>
-              <td>{{ filter_form.order }}</td>
-            </tr>
-            <tr>
-              <td>Inverter: {{ filter_form.invert }}</td>
-            </tr>
-          </table>
-        </td>
-        <td style="border: solid; border-width: 0 0 0 2px;">
-          <table>
-            <tr>
-              <td>Data inicial:</td>
-              <td>{{ filter_form.start_date }}</td>
-            </tr>
-            <tr>
-              <td>Data final:</td>
-              <td>{{ filter_form.end_date }}</td>
-            </tr>
-            <tr>
-              <td>Procurar por:</td>
-              <td>{{ filter_form.query }}</td>
-            </tr>
-            <tr>
-              <td>Etiquetas:</td>
-              <td>{{ filter_form.tags }}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <p style="text-align:right;"><a href='.'>Limpar busca</a> <button type="submit" name="submit" value="true">Filtrar</button>
+      <div class="filter_left">
+        <p><label for="order">Ordenar por:</p>
+        <p><span>{{ filter_form.order }}</span></p>
+        <p><label for"invert">Inverter:</label>
+        <span>{{ filter_form.invert }}</span></p>
+      </div>
+      <div class="filter_right">
+        <p><label for="">Data inicial:</label>
+        <span>{{ filter_form.start_date }}</span></p>
+        <p><label for="">Data final:</label>
+        <span>{{ filter_form.end_date }}</span></p>
+        <p><label for="">Procurar por:</label>
+        <span>{{ filter_form.query }}</span></p>
+        <p><label for="">Etiquetas:</label>
+        <span>{{ filter_form.tags }}</span></p>
+      </div>
+      <div class="clear_both"></div>
+      <div class="filter_bottom">
+        <a href='.'>Limpar busca</a>
+        <button type="submit" name="submit" value="true">Filtrar</button>
+      </div>
     </form>
   </div>
-
-  <h1>Marcadores - {{ bookmarks_user.username }}</h1>
 
   <ul>
     {% for document in results %}
@@ -115,7 +96,7 @@
       <div class="deco_toolbar">
         {% if user == bookmarks_user %}<span class="tag_control"><img src="{{ STATIC_URL }}img/add-tag.png"></span> <span class="note_control"><img src="{{ STATIC_URL }}img/edit-note.png"></span>{% endif %}
         <span class="tags">
-          Etiquetas: 
+          Etiquetas:
           {% show_tags document bookmarks_user %}
         </span> <!-- tags -->
       </div> <!-- deco_toolbar -->

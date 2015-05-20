@@ -80,7 +80,7 @@ $(function() {
     var DOWN = 40;
 
     $( "body" ).keydown( function( event ) {
-        if ( event.target.nodeName != "INPUT" ) {
+        if ( event.target.nodeName != "INPUT" && event.target.nodeName != "TEXTAREA" ) {
             var prev_date = $("#prev_date").attr("href");
             if ( event.keyCode == LEFT && $("#prev_date").length && event.shiftKey == true && event.ctrlKey == false ) {
                 window.location.href = prev_date;

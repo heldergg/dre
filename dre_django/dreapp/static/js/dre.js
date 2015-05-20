@@ -20,7 +20,8 @@ function dre_filter_setup() {
             changeYear: true
         });
     };
-    $("#id_tags").multiselect()
+    $("#id_tags").multiselect();
+    $(".ui-multiselect").css('width', '10em');
 };
 
 

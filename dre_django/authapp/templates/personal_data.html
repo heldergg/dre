@@ -14,26 +14,19 @@
   <meta property="og:site_name" content="Diários da República - Versão do cidadão">
   <meta property="fb:admins" content="webmaster@tretas.org">
   <meta property="og:description" content="Procura de diplomas no Diário da República - Dados pessoais">
-  <link rel="stylesheet" type="text/css" href="/static/css/settings.css">
 {% endblock %}
 
 {% block content_column %}
+
     <h1>Dados Pessoais</h1>
-    
+
     <div class="center_text"><img src='{% avatar user.email '128' %}' height="128" width="128" style="margin:auto"></div>
 
-    <form method="post" action="{% url 'personal_data' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
-      <table>
-        {{ form }}
-        <tr>
-          <td colspan=2>
-            <div class="center_text">
-              <button style="width:12em" type="submit" value="Submit">Salvar dados pessoais</button>
-              {% if saved %}<p>Dados guardados.</p>{% endif %}
-            </div>
-          </td>
-        </tr>
-      </table>
-
+    <form id="settings" method="post" action="{% url 'personal_data' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
+        {{ form.as_p }}
+        <div class="center_text">
+          <button style="width:12em" type="submit" value="Submit">Salvar dados pessoais</button>
+          {% if saved %}<p>Dados guardados.</p>{% endif %}
+        </div>
     </form>
 {% endblock %}

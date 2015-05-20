@@ -1,0 +1,237 @@
+/***********************/
+/* Small screens style */
+/***********************/
+
+body {
+  background-color: #fdfeff;
+  color: #022263;
+  padding: 0;
+  margin: 0;
+  font-family: verdana, arial, sans-serif;
+  font-size: 13px;
+  line-height: 150%;
+}
+
+h1 {
+  line-height: 130%;
+  text-align: center;
+}
+
+/*
+ * Menu
+ */
+
+div#menu_back {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
+}
+
+nav#mobile_menu {
+  background: #4060a2;
+  margin: 0;
+  position: relative;
+  color: white;
+  font-size: 120%;
+  padding: 0.3em 0.3em 0 0.3em;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-color: #6f94de;
+  height: 36px;
+}
+
+#toggle_menu {
+  float: right;
+  position: absolute;
+  top:0.3em;
+  right:0.3em;
+}
+
+nav#mobile_menu h1 {
+  position: absolute;
+  display: block;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  bottom: 0;
+  font-size: 16px;
+}
+
+
+nav#main_menu {
+  background: #4060a2;
+  margin: 0;
+  position: relative;
+  color: white;
+  font-size: 120%;
+  padding: 0.8em 0.5em 0.8em 0.5em;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-color: #6f94de;
+  line-height: 230%;
+  display: none;
+  z-index: 150;
+}
+
+nav#main_menu a {
+  color: white;
+  background-color: #4765a2;
+  text-decoration: none;
+  padding: 0.3em 0.6em 0.4em 0.6em;
+  border-radius: 0.3em;
+  }
+
+nav#main_menu a:hover {
+  background-color: #e89900;
+  text-decoration: none;
+  }
+
+ul.horizontal_list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+ul.horizontal_list li {
+  display: inline;
+}
+
+li#gravatar { display: none; }
+
+/* End Menu */
+
+/*
+ * Filters
+ */
+
+
+#filter_control {
+  margin: 0 0.4em 0 0.4em;
+  padding: 0.5em;
+  background-color: #acb5c8;
+  border-radius: 0.2em;
+  text-align: left;
+}
+
+#filter_control label {
+  display: table-cell;
+  vertical-align: middle;
+  float: left;
+  width: 9em;
+  text-align: left;
+  margin-right: 0.2em;
+  margin-top: 0.3em;
+}
+
+.filter_bottom {
+  text-align: right;
+}
+
+input {
+  border: 1px solid #6f94de;
+  background-color: white;
+  font-size: 1.3em;
+  border: 1px solid #6f94de;
+  padding: 0.1em;
+  }
+
+input[type=date] {
+  width: 9em;
+}
+
+button {
+  border: none;
+  background: #4060a2;
+  border-radius: 5px;
+  color: white;
+  font-size: 12pt;
+  padding: 0.3em;
+}
+
+button:hover {
+  background: #273b64;
+  text-decoration: none;
+}
+
+select {
+  padding: 0.4em;
+}
+
+#id_query_string {
+  width: 95%;
+}
+
+/*
+ * Results
+ */
+
+/* Should we style the elements directly or use divs and then inherit the
+ * properties?
+ */
+
+div#search_results ul {
+  margin: 0.5em 0.4em 0.5em 0.4em;
+  padding: 0;
+  list-style-type: none;
+}
+
+.result_header {
+  background-color: #e3e3e3;
+  border-radius: 0.4em 0.4em 0 0 ;
+  margin:0;
+  padding: 2px;
+}
+
+li.result_item {
+  background-color: whitesmoke;
+  margin-bottom: 0.5em;
+  border-radius: 0.4em;
+}
+
+.result_bar {
+  padding: 1em 0.4em 1em 0.4em;
+  }
+/* End Results */
+
+/*
+ * Logo
+ */
+
+#logo { display:none; }
+
+#logo_mobile {
+  display: block;
+  max-width: 305px;
+  margin: auto;
+}
+
+/*
+ * Tips
+ */
+
+.tip {
+  padding: 1em 1em 1em 1em;
+  background-color: whitesmoke;
+  border-radius: 1em;
+  opacity: 0.8;
+}
+
+/*
+ * Text pages
+ */
+
+.content-text {
+  margin: 0.4em;
+}
+
+/*
+ * Profile
+ */
+
+div#sidebar { }
+
+div#content_column { }

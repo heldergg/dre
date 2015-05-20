@@ -12,20 +12,19 @@
   <meta property="og:site_name" content="Diários da República - Versão do cidadão">
   <meta property="fb:admins" content="webmaster@tretas.org">
   <meta property="og:description" content="Gestão de Etiquetas">
-  <link rel="stylesheet" type="text/css" href="/static/css/settings.css">
 {% endblock %}
 
 {% block content_column %}
 <div class="content-text"><div id="search_results">
 <h1>Etiquetas de {{ user.username }}</h1>
 
-<p>Pode acrescentar etiquetas aos seus marcadores. Isto é útil para organizar
+<p style="max-width:30em;">Pode acrescentar etiquetas aos seus marcadores. Isto é útil para organizar
 os marcadores e ajudá-lo a encontrar o que procura. Pode filtrar os marcadores
-pelas etiquetas que lhes atribuíu. 
+pelas etiquetas que lhes atribuíu.
 
 <ul>
     {% for tag in tag_list %}
-      <li><span class="tag" style="{{ tag.style }}">{{ tag.name }}</span> - <a href="{% url 'edit_tag' tag.id %}?next={{ request.get_full_path|urlencode }}">Editar</a> <a href="{% url 'delete_tag' tag.id %}?next={{ request.get_full_path|urlencode }}">Apagar</a></li> 
+      <li><span class="tag" style="{{ tag.style }}">{{ tag.name }}</span> - <a href="{% url 'edit_tag' tag.id %}?next={{ request.get_full_path|urlencode }}">Editar</a> <a href="{% url 'delete_tag' tag.id %}?next={{ request.get_full_path|urlencode }}">Apagar</a></li>
     {% empty %}
     <li>Não tem etiquetas definidas.
     {% endfor %}

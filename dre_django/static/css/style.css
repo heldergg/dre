@@ -2,153 +2,19 @@
 /* General */
 /***********/
 
-body {
-  background: #fdfeff;
-  background-image: url('/static/img/esfera_armilar.png');
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  background-attachment:fixed;
-  padding: 0;
-  margin: 0;
-  font-family: verdana, arial, sans-serif;
-  font-size: 13px;
-  color: #022263;
-  line-height: 150%;
-  }
-
-h1 {
-  text-align:center;
-  line-height: 150%;
-  margin-bottom: 2em;
-  }
-
-h2 {
-  margin-top: 1em;
-  }
-
-input {
-  border: 1px solid #6f94de;
-  background-color: white;
-  font-size: 1.3em;
-  border: 1px solid #6f94de;
-  }
-
-cite {
-  color: gray;
-  }
-
 .error { color:red; }
 
 /* Hide, just visible on print media */
 .only_print {
   display: none;
-  }
+}
 
 .clear_both {
   clear:both;
   height:1px;
   width:1px;
   overflow:hidden;
-  }
-
-/************/
-/* Top Menu */
-/************/
-
-.header {
-  background: #4060a2;
-  margin: 0;
-  position: relative;
-  color: white;
-  font-size: 120%;
-  height: 100%;
-  padding: 0.8em 0.5em 0.8em 0.5em;
-  border-style: solid;
-  border-width: 0 0 2px 0;
-  border-color: #6f94de;
-  }
-
-.header img {
-  margin: -1.5em 0 -0.8em 0 ;
 }
-
-.header img:hover {
-  background-color: green;
-  border-radius: 0.3em;
-}
-
-.header a {
-  color: white;
-  background-color: #4765a2;
-  text-decoration: none;
-  padding: 0.3em 0.6em 0.4em 0.6em;
-  border-radius: 0.3em;
-  }
-
-.header a:hover {
-  background-color: #e89900;
-  text-decoration: none;
-  }
-
-a.user {
-  color: #ffc021;
-  text-decoration: none;
-  }
-
-#header_right {
-  float: right;
-  margin-right: 3px;
-  }
-
-#header_left {
-  float: left;
-  margin-right: 3px;
-  }
-
-.noback a:hover {
-  background-color: #4060a2;
-}
-
-/***********/
-/* Content */
-/***********/
-
-#content {
-  background-image: url('http://static.tretas.org/dre/img/alfa.png');
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  padding: 1em;
-  }
-
-.content-text {
-  max-width:50em;
-  margin:auto;
-  text-align: justify;
-  }
-
-.content-text tt {
-  background-color: #e89900;
-  text-decoration: none;
-  padding: 0.2em 0.3em 0.2em 0.3em;
-  border-radius: 0.3em;
-  }
-
-.resultnote {
-  padding: 0px;
-  margin: 0.5em 0px;
-  max-width: 1000px;
-  }
-
-/* Logos */
-
-.dre_logo {
-  margin-bottom: 1.5em;
-  }
-
-/* Form fields */
-#id_query_string {
-  width: 60%;
-  }
 
 /* To center the content */
 /* to use insted of the deprecated align and center */
@@ -157,60 +23,36 @@ a.user {
   text-align: center;
   margin-top: 1em;
   margin-bottom: 1em;
-  }
+}
 
 .center_text table {
   margin-left:auto;
   margin-right:auto;
-  }
-
-/***********/
-/* Results */
-/***********/
-
-#search_results { }
-
-#search_results ul {
-  list-style-type: none; 
-  padding: 0;
-  }
-
-#search_results ul li {
-  padding: 0.4em;
 }
 
-.result_header { }
+/* Three columns */
 
-/* TODO: remove the result_notes class */
-.result_notes, .document_notes {
-  position: relative;
-  max-width: 50em;
-  padding: 10px;
-  background-color: #fff;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
-  opacity:0.9;
-  }
-
-.result_bar {
-  padding: 1em 0 1em 0;
-  }
-
-.pagination {
-  padding-top: 1.5em;
-  padding-bottom: 2em;
-  text-align: center;
-  }
-
-.deco_toolbar {
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
+.one_third {
+  width:33%;
+  float:left;
 }
 
-.deco_tb_inlaid {
-  padding:0.5em 0 0.5em 0.5em;
-  margin:-1.5em 0 0 0;
+/* Mix */
+
+.hidden {display: none;}
+
+.nobreak {white-space: pre;}
+
+/*
+ * Tips
+ */
+
+.code a {
+  text-decoration: none;
+}
+
+.code a:visited {
+  color: #022263;
 }
 
 /********/
@@ -230,57 +72,186 @@ a.user {
   margin: 0;
 }
 
-.tag_remove img { 
-  display: inline-block; 
-  vertical-align: middle; }
+.tag_remove img {
+  display: inline-block;
+vertical-align: middle; }
 
-/*************/
-/* Bookmarks */
-/*************/
-
-.result_item {
-  background: #f9f9f9;
-  border-radius: 0.5em;
-  margin-bottom: 0.5em;
-  opacity:0.9;
+.tags {
+  text-align: left;
 }
 
-/***********/
-/* Filters */
-/***********/
-
-#filter_control {
-  padding: 0.5em;
-  background-color: #acb5c8;
-  border-radius: 0.4em;
-  }
-
-#filter_control table {
-  }
-
-#filter_control table td {
-  vertical-align: top;
-  }
-
-/*****************/
-/* Notifications */
-/*****************/
-
-#notification {
-  position:fixed;
-  top: 4em;
-  right: 2em;
-  padding: 1.5em; 
-  background: black;
-  color: white;
-  border-radius: 0.8em;
-  opacity:0.8;
-  max-width: 12em;
-  display: none;
+.tag {
+  line-height: 200%;
 }
-
-/* Mix */
 
 .hidden {display: none;}
 
-.nobreak {white-space: pre;}
+.add_tag {
+  margin-top: 0.3em;
+}
+
+.ui-autocomplete-loading {
+  background: white url('/static/img/progress.gif') right center no-repeat;
+}
+
+.highlight {
+  background: #6f94de;
+  border-radius: 0.5em;
+}
+
+.tag_control, .tag  {
+  cursor: pointer;
+}
+
+
+/*
+ * Pagination
+ */
+
+.pagination {
+  padding-top: 1.5em;
+  padding-bottom: 2em;
+  text-align: center;
+}
+
+/************
+ * Settings *
+ ************/
+
+/* Column layout */
+
+#wrap {
+  margin: -1em 0 0 -1em;
+  padding: 0.4em;
+}
+
+ul.errorlist {
+  list-style-type: none;
+  max-width: 20em;
+  margin: auto;
+  padding: 0;
+}
+
+ul.errorlist li {
+  background-color: #f9a1a1;
+  padding: 0.3em;
+  margin:0;
+}
+
+#sidebar {
+  float: left;
+  width: 12em;
+  padding: 4em 0 0 0 ;
+}
+
+#content_column {
+  position: relative;
+  float: left;
+  margin: 1em;
+}
+
+/* Menu */
+
+ul.sidemenu {
+  list-style: none;
+}
+
+
+ul.sidemenu li {
+  display: block;
+  background-color: whitesmoke;
+  margin: 1em 1em 1em -2em;
+
+  border: solid 1px;
+  border-radius: 0.3em;
+  box-shadow: 0.1em 0.3em 0.2em;
+}
+
+ul.sidemenu a {
+  display: block;
+  text-decoration: none;
+  height: 100%;
+  padding: 0.5em;
+  border-radius: 0.3em;
+}
+
+ul.sidemenu a:hover {
+  background-color: orange;
+  color: white;
+}
+
+ul.sidemenu a:active {
+  background-color: #4060a2;
+  color: white;
+}
+
+ul.sidemenu a:visited {
+  color: #0000ee;
+}
+
+a.highlight {
+  background-color: #022263;
+  color: white !important;
+}
+
+a.highlight:visited {
+  background-color: #022263;
+  color: white !important;
+}
+
+/* Forms */
+
+form#settings p {
+  text-align: center;
+  clear: both;
+}
+
+div.help_text {
+  text-align: justify;
+  margin-bottom: 0.5em;
+  clear: both;
+  max-width: 30em;
+}
+
+form#settings label {
+  display: table-cell;
+  vertical-align: middle;
+  float: left;
+  width: 10em;
+  text-align: left;
+  margin-right: 0.2em;
+  margin-top: 0.3em;
+}
+
+form#settings input {
+  width: 10em;
+}
+
+/********
+ * Auth *
+ ********/
+
+form#alone {
+  display: block;
+  margin: auto;
+  padding: 0.4em;
+  max-width: 30em;
+}
+
+form#alone label {
+  display: inline-block;
+  float: left;
+  width: 10em;
+  text-align: left;
+  margin-right: 0.2em;
+  margin-top: 0.3em;
+  font-weight: bold;
+}
+
+form#alone p {
+  clear: both;
+  text-align: center;
+}
+form#alone input {
+  max-width: 15em;
+}

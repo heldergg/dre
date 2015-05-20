@@ -1,0 +1,317 @@
+/******************/
+/* Normal Screens */
+/******************/
+
+/* @media screen and (max-width:800px){ */
+
+body {
+  background: #fdfeff;
+  background-image: url('/static/img/esfera_armilar.png');
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-attachment:fixed;
+  padding: 0;
+  margin: 0;
+  font-family: verdana, arial, sans-serif;
+  font-size: 13px;
+  color: #022263;
+  line-height: 150%;
+  }
+
+h1 {
+  text-align:center;
+  line-height: 150%;
+  margin-bottom: 2em;
+  }
+
+h2 {
+  margin-top: 1em;
+  }
+
+cite {
+  color: gray;
+  }
+
+/************/
+/* Top Menu */
+/************/
+
+nav#mobile_menu {
+  display: none;
+}
+
+nav#main_menu {
+  background: #4060a2;
+  margin: 0;
+  position: relative;
+  color: white;
+  font-size: 120%;
+  height: 100%;
+  padding: 0.8em 0.5em 0.8em 0.5em;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-color: #6f94de;
+  }
+
+nav#main_menu img {
+  margin: -1.5em 0 -0.8em 0 ;
+}
+
+nav#main_menu img:hover {
+  background-color: green;
+  border-radius: 0.3em;
+}
+
+nav#main_menu a {
+  color: white;
+  background-color: #4765a2;
+  text-decoration: none;
+  padding: 0.3em 0.6em 0.4em 0.6em;
+  border-radius: 0.3em;
+  }
+
+nav#main_menu a:hover {
+  background-color: #e89900;
+  text-decoration: none;
+  }
+
+#menu_right {
+  float: right;
+  margin-right: 3px;
+  }
+
+#menu_left {
+  float: left;
+  margin-right: 3px;
+  }
+
+a.user {
+  color: #ffc021;
+  text-decoration: none;
+  }
+
+.noback a:hover {
+  background-color: #4060a2;
+}
+
+/* Horizontal list */
+
+ul.horizontal_list {
+  margin: 0;
+  padding: 0;
+  display: inline;
+  list-style-type: none;
+}
+
+ul.horizontal_list li {
+  display: inline;
+}
+
+/***********/
+/* Content */
+/***********/
+
+#content {
+  padding: 1em;
+  }
+
+.content-text {
+  max-width:50em;
+  margin:auto;
+  text-align: justify;
+  }
+
+.content-text tt {
+  background-color: #e89900;
+  text-decoration: none;
+  padding: 0.2em 0.3em 0.2em 0.3em;
+  border-radius: 0.3em;
+  }
+
+.resultnote {
+  padding: 0px;
+  margin: 0.5em 0px;
+  max-width: 1000px;
+  }
+
+/* Logos */
+
+.dre_logo {
+  margin-bottom: 1.5em;
+  }
+
+/***********/
+/* Results */
+/***********/
+
+#search_results { }
+
+#search_results ul {
+  list-style-type: none;
+  padding: 0;
+  }
+
+#search_results ul li {
+  padding: 0.4em;
+}
+
+.result_header { }
+
+/* TODO: remove the result_notes class */
+.result_notes, .document_notes {
+  position: relative;
+  max-width: 50em;
+  padding: 10px;
+  background-color: #fff;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1);
+  opacity:0.9;
+  }
+
+.result_bar {
+  padding: 1em 0 1em 0;
+  }
+
+.deco_toolbar {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+.deco_tb_inlaid {
+  padding:0.5em 0 0.5em 0.5em;
+  margin:-1.5em 0 0 0;
+}
+
+/*************/
+/* Bookmarks */
+/*************/
+
+.result_item {
+  background: #f9f9f9;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+  opacity:0.9;
+}
+
+/***********/
+/* Filters */
+/***********/
+
+#filter_control {
+  padding: 0.5em;
+  background-color: #acb5c8;
+  border-radius: 0.4em;
+  text-align: left;
+  }
+
+#filter_control p {
+  margin: 0 0 0.3em 0;
+}
+
+#filter_control label {
+  display: table-cell;
+  vertical-align: middle;
+  float: left;
+  width: 9em;
+  text-align: right;
+  margin-right: 0.2em;
+  margin-top: 0.3em;
+}
+
+#filter_control span {
+  padding: 0 5px 0 0;
+}
+
+.filter_left {
+  border-right: solid 2px #4060a2;
+  padding: 0.5em;
+  max-width: 55%;
+  float: left;
+}
+
+.filter_right {
+  padding: 0.5em;
+  height: 100%;
+  float: left;
+}
+
+.filter_bottom {
+  text-align: right;
+}
+
+input {
+  border: 1px solid #6f94de;
+  background-color: white;
+  font-size: 1.3em;
+  border: 1px solid #6f94de;
+  padding: 0.2em;
+  }
+
+input[type=date] {
+  width: 7em;
+}
+
+button {
+  border: none;
+  background: #4060a2;
+  border-radius: 5px;
+  color: white;
+  font-size: 12pt;
+  padding: 0.3em;
+}
+
+button:hover {
+  background: #273b64;
+  text-decoration: none;
+}
+
+select {
+  padding: 0.4em;
+}
+
+/* Form fields */
+#id_query_string {
+  width: 60%;
+}
+
+/*****************
+ * Notifications *
+ *****************/
+
+#notification {
+  position:fixed;
+  top: 4em;
+  right: 2em;
+  padding: 1.5em;
+  background: black;
+  color: white;
+  border-radius: 0.8em;
+  opacity:0.8;
+  max-width: 12em;
+  display: none;
+}
+
+/********
+ * Logo *
+ ********/
+
+#logo_mobile { display: none; }
+
+/********
+ * Tips *
+ ********/
+
+.tip {
+  background-image: url('/static/img/light_bulb.png');
+  background-repeat: no-repeat;
+  background-position: 1em center;
+  margin: 3em auto 0 auto;
+  padding: 1em 1em 1em 130px;
+  max-width: 40em;
+  min-height: 130px;
+  background-color: whitesmoke;
+  border-radius: 2em;
+  opacity: 0.8;
+}
+

@@ -4,12 +4,6 @@
 
 {% block header %}
   <meta name="robots" content="noindex, nofollow">
-  <script type="text/javascript" src="{{ STATIC_URL }}newsrss/js/jquery.autofocus-min.js"></script>
-  <script type="text/javascript">
-  $(document).ready(function() {
-      $("#id_username").autofocus();
-  });
-  </script>
   <meta name="keywords" content="procura,diplomas,documentos,diário da república">
   <meta name="description" content="Procura de diplomas no Diário da República Electrónico - página de login">
   <meta property="og:title" content="Diários da República - Login">
@@ -22,46 +16,24 @@
 {% endblock %}
 
 {% block body_content %}
-<h1>Autenticação</h1>
 
-<div class="center_text">
-{% if auth_error %}
-<p class="warning">O seu nome e/ou palavra-passe estão errados. Por favor tente de novo.
-</p>
-{% endif %}
-<form method="post" action="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
-<table>
-  <tr>
-    <th><label for="id_username">Utilizador:</label></th>
-    <td>{{ form.username }}</td>
-  </tr>
-  <tr>
-    <th><label for="id_password">Palavra-Passe:</label></th>
-    <td>{{ form.password }}</td>
-  </tr>
-  <tr>
-    <th><label for="id_autologin">Login automatico?</label></th>
-    <td>{{ form.autologin }}</td>
-  </tr>
-  <tr>
-    <td colspan="2" style="text-align:left;">Esqueceu-se da sua palavra-passe? 
-      Clique <a href="{% url 'password_reset' %}">aqui</a>.</td>
-  </tr>
-  {% if form.captcha %}
-  <tr>
-    <td colspan="2">{{ form.captcha }}<br>{{ form.captcha.errors }}</td>
-  </tr>
-  {% endif %}
-  <tr>
-    <td colspan=2>
-      <div class="center_text">
-        <button style="width:6em" type="submit" value="Submit">Entrar</button>
-      </div>
-    </td>
-  </tr>
-</table>
-<input type="hidden" name="next" value="{{ next }}" />
-<input type="submit" style="width:0px;height:0px;border:none;padding:0px;font-size:0px">
-</form>
-</div>
+  <form id="alone" method="post" action="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}">{% csrf_token %}
+  <h1>Autenticação</h1>
+    {% if auth_error %}
+    <p class="warning">O seu nome e/ou palavra-passe estão errados. Por favor tente de novo.
+    </p>
+    {% endif %}
+    <p><label for="id_username">Utilizador:</label> {{ form.username }}</p>
+    <p><label for="id_password">Palavra-Passe:</label> {{ form.password }}</p>
+    <p><label for="id_autologin">Login automatico?</label> {{ form.autologin }}</p>
+    <p>Esqueceu-se da sua palavra-passe? Clique <a href="{% url 'password_reset' %}">aqui</a>.</p>
+    {% if form.captcha %}
+      {{ form.captcha }}<br>{{ form.captcha.errors }}
+    {% endif %}
+    <div class="center_text">
+      <button style="width:6em" type="submit" value="Submit">Entrar</button>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}" />
+    <input type="submit" style="width:0px;height:0px;border:none;padding:0px;font-size:0px">
+  </form>
 {% endblock %}

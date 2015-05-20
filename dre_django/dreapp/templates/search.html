@@ -4,7 +4,6 @@
 {% block title %}Diários da República - Procura de Documentos{% endblock %}
 
 {% block header %}
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/tips.css">
   <meta name="keywords" content="procura,diplomas,documentos,diário da república">
   <meta name="description" content="Procura de diplomas no Diário da República Electrónico">
   <meta property="og:title" content="Diários da República - Procura de Documentos">
@@ -16,17 +15,22 @@
   <meta property="og:description" content="Procura de diplomas no Diário da República">
   {% if query %}<link rel="alternate" type="application/rss+xml" title="RSS Desta Busca" href="{% url 'rss' %}{{ query }}">{% endif %}
   {% if page.object_list %}
-  <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.css" />
   <script src="{{ STATIC_URL }}js/keyboard_nav.js"></script>
   {% endif %}
 {% endblock %}
 
 {% block body_content %}
 <div class="center_text">
-  <a href="/">
-    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png" 
+  <a id="logo" href="/">
+    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png"
     width="305" height="135" alt="Tretas logotipo">
   </a>
+  <a id="logo_mobile" class="noprint" href="/">
+    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png"
+    width="100%" alt="Tretas logotipo">
+  </a>
+
   <div class="intro">Indexador do Diário da República</div>
   <form method="GET" action="">
       <p>
@@ -39,7 +43,7 @@
 {% if spell_correction %}
 <div class="center_text">
   <p>Será que queria dizer: <a href="/?q={{ spell_correction }}">{{ spell_correction }}</a>?</p>
-</div> 
+</div>
 {% endif %}
 
 {% if page.object_list %}
@@ -60,7 +64,7 @@
 {% if not success %}
 <div class="center_text error">
   <p>Não consegui encontrar resultados com: "{{ form.cleaned_data.q }}"</p>
-</div> 
+</div>
 {% endif %}
 {% show_tips %}
 {% endif %}
