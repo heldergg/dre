@@ -15,7 +15,7 @@
   </script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
   {% endif %}
-  <meta name="keywords" content="{{ document.title }}, diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.date|date:"Y" }}, {{ document.c_emitting }}">
+  <meta name="keywords" content="portugal,leis,legislação,{{ document.title }}, diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.date|date:"Y" }}, {{ document.c_emitting }}">
   <meta name="description" content="{{ document.note_escaped }}">
   <meta name="author" content="{{ document.c_emitting }}">
   <!-- Open Graph protocol metadata -->
@@ -45,7 +45,7 @@
   <li><strong>Fonte</strong>: {{ document.source }}
   <li><strong>Data</strong>: <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}{% if document.series == 2 %}?series=2{% endif %}"><span itemprop="datePublished" content="{{ document.date|date:"Y-m-d" }}">{{ document.date|date:"Y-m-d" }}</span></a>
   <li><strong><a href="{% url 'related_document' document.id %}">Documentos relacionados</a></strong>
-  {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %} 
+  {% if not document.in_force %}<li><strong style="color:red;">Diploma não vigente</strong>{% endif %}
   {% if document.conditional %}<li><strong style="color:red;">Vigência condicional</strong>{% endif %}
   {% if document.processing %}<li><strong style="color:red;">Em tratamento</strong>{% endif %}
   <li><strong>Secções desta página:</strong>:
@@ -140,7 +140,7 @@
     <li>Texto integral do documento: {{ document.plain_text }} ;
     {% endif %}
     {% if document.dre_pdf %}
-    <li>Extracto do Diário da República original: 
+    <li>Extracto do Diário da República original:
     http://dre.tretas.org{% url 'document_org_pdf' document.id %} .
     {% endif %}
   </ul>
@@ -183,15 +183,15 @@
       <img src="{{ STATIC_URL }}img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
       {% else %}
       <img src="{{ STATIC_URL }}img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
-      {% endif %} 
+      {% endif %}
       {% if result.in_force %}
       <img src="{{ STATIC_URL }}img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
       {% else %}
       <img src="{{ STATIC_URL }}img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
-      {% endif %} 
+      {% endif %}
       <span class="result_date">
         <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
-      {{ result.date|date:"Y-m-d" }}</span></a> - 
+      {{ result.date|date:"Y-m-d" }}</span></a> -
       <a href="{% url 'document_display' docid=result.id %}">
       <span class="result_tipo">{{ result.doc_type.title }}</span>
       <span class="result_number">{{ result.number }}</span></a> -
@@ -218,15 +218,15 @@
       <img src="{{ STATIC_URL }}img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
       {% else %}
       <img src="{{ STATIC_URL }}img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
-      {% endif %} 
+      {% endif %}
       {% if result.in_force %}
       <img src="{{ STATIC_URL }}img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
       {% else %}
       <img src="{{ STATIC_URL }}img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
-      {% endif %} 
+      {% endif %}
       <span class="result_date">
         <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
-      {{ result.date|date:"Y-m-d" }}</span></a> - 
+      {{ result.date|date:"Y-m-d" }}</span></a> -
       <a href="{% url 'document_display' docid=result.id %}">
       <span class="result_tipo">{{ result.doc_type.title }}</span>
       <span class="result_number">{{ result.number }}</span></a> -
