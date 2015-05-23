@@ -37,6 +37,13 @@
   float:left;
 }
 
+/* No border in IE image links */
+
+img {
+  border:none;
+  outline:none;
+}
+
 /* Mix */
 
 .hidden {display: none;}
