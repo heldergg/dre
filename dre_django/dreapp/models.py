@@ -564,12 +564,6 @@ class DocumentCache(models.Model):
 
     html = property(get_html)
 
-
-class FailedDoc(models.Model):
-    claint = models.IntegerField(unique=True) # dre.pt site id
-    tries = models.IntegerField(default=1)
-    timestamp = models.DateTimeField(default=datetime.datetime.now())
-
 TEXT_DOC        = 0
 TEXT_SUMMARY_PT = 1
 TEXT_SUMMARY_EN = 2
