@@ -330,8 +330,7 @@ class DREReader( object ):
 
         # Checks if the document already has the digesto text
         try:
-            document_text = DocumentText.objects.get( document = document,
-                    text_type = 0)
+            document_text = DocumentText.objects.get( document = document )
         except ObjectDoesNotExist:
             logger.warn('Getting digesto text.')
         else:
@@ -349,7 +348,7 @@ class DREReader( object ):
         # Save the text to the database
         document_text = DocumentText()
         document_text.document = document
-        document_text.text_url = 'digesto_url % doc_id'
+        document_text.text_url = digesto_url % doc_id
         document_text.text = text
         document_text.save()
 

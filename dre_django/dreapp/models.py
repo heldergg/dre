@@ -331,7 +331,7 @@ class Document(models.Model):
     def has_text(self):
         try:
             # doc_text - text extracted from "Texto Integral" html
-            doc_text = DocumentText.objects.get( document = self, text_type = 0)
+            doc_text = DocumentText.objects.get( document = self )
         except ObjectDoesNotExist:
             doc_text = None
 
@@ -523,7 +523,7 @@ class DocumentCache(models.Model):
         self.timestamp = datetime.datetime.now()
         filename = self.document.plain_pdf_filename()
         try:
-            doc_text = DocumentText.objects.get( document = self.document, text_type = 0)
+            doc_text = DocumentText.objects.get( document = self.document )
         except ObjectDoesNotExist:
             doc_text = None
 
@@ -564,10 +564,6 @@ class DocumentCache(models.Model):
 
     html = property(get_html)
 
-TEXT_DOC        = 0
-TEXT_SUMMARY_PT = 1
-TEXT_SUMMARY_EN = 2
-
 class DocumentText(models.Model):
     '''
     This table is used to store raw html retrieved from dre.pt
@@ -575,9 +571,5 @@ class DocumentText(models.Model):
     document  = models.ForeignKey(Document)
     timestamp = models.DateTimeField(default = datetime.datetime.now())
     text_url  = models.URLField()
-    text_type = models.IntegerField(default=0)
 
     text = models.TextField()
-
-    class Meta:
-        unique_together = ('document', 'text_type')
