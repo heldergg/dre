@@ -31,7 +31,7 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 # Local Imports
-from dreapp.models import Document, DocumentNext, DocumentText
+from dreapp.models import Document, DocumentText
 import dreapp.index
 from mix_utils import fetch_url
 from dreerror import DREError
@@ -145,7 +145,6 @@ class DREReader( object ):
     create_cache       # Creates a cache entry
 
     save_doc           # Saves a document metadata to the database
-    next_doc           # Saves the next doc info to the database
 
     save_doc_list      # downloads the doc list obtained on `get_document_list`
     '''
@@ -200,7 +199,6 @@ class DREReader( object ):
 
     def extract_metadata(self, raw_dl):
         dl = []
-        prev_doc = {}
         for raw_doc in raw_dl:
             # Header with a link (to a PDF)
             has_pdf = True
@@ -276,12 +274,8 @@ class DREReader( object ):
                 'digesto': digesto,
                 'series': series,
                 'document': None,
-                'next': None
                 }
 
-            if prev_doc:
-                prev_doc['next'] = doc
-            prev_doc = doc
             dl.append(doc)
 
         return dl
@@ -407,7 +401,7 @@ class DREReader( object ):
     def log_doc(self, doc):
         txt = 'Document saved:\n'
         for key,item in doc.items():
-            if key not in ('next', 'summary', 'document'):
+            if key not in ('summary', 'document'):
                 txt += '   %-12s: %s\n' % (key, item)
         logger.warn(txt[:-1])
 
@@ -418,20 +412,6 @@ class DREReader( object ):
         # Create the document html cache
         if document.plain_text:
             DocumentCache.objects.get_cache(document)
-
-
-    def next_doc(self, doc, mode = NEW ):
-        document = doc['document']
-
-        # Save the 'next' information to DocumentNext
-        if mode == MODIFY:
-            return
-        document_next = DocumentNext()
-        document_next.document = document
-        document_next.doc_type = doc['next']['doc_type'] if doc['next'] else ''
-        document_next.number   = doc['next']['number'] if doc['next'] else ''
-        document_next.save()
-
 
     def save_doc_list(self, mode = NEW):
         if not self.doc_list:
@@ -454,7 +434,6 @@ class DREReader( object ):
                 # if we have a pdf then we get it
                 self.save_pdf( doc )
             self.create_cache( doc )
-            self.next_doc( doc )
             self.log_doc( doc )
 
             time.sleep(1)
