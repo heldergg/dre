@@ -18,7 +18,7 @@
 {% block body_content %}
 <div class="content_text" style="max-width:50em;margin:auto;">
   <h1>Documentos mais consultados</h1>
- 
+
   <p>Lista dos 10 documentos mais consultados
   {% if period == 1 %}nas últimas 24 horas {% endif %}
   {% if period == 2 %}nos últimos 7 dias {% endif %}
@@ -43,11 +43,11 @@
         {% endif %}
         <span class="result_date">
           <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
-        {{ result.date|date:"Y-m-d" }}</span></a> - 
+        {{ result.date|date:"Y-m-d" }}</span></a> -
         <a href="{% url 'document_display' docid=result.id %}">
-        <span class="result_tipo">{{ result.doc_type.title }}</span>
+        <span class="result_tipo">{{ result.doc_type }}</span>
         <span class="result_number">{{ result.number }}</span></a> -
-        <span class="result_emiting">{{ result.emiting_body.title }}</span>
+        <span class="result_emiting">{{ result.emiting_body }}</span>
         {% if result.notes %}<p class="result_notes">{{ result.note_abrv }}</p>{% endif %}
       </li>
       {% empty %}
@@ -56,9 +56,9 @@
     </ul>
 
     <p class="noprint center_text"> [
-      <a href="{% url 'top' %}?period=1">Top do último dia</a> | 
-      <a href="{% url 'top' %}?period=2">Top da última semana</a> | 
-      <a href="{% url 'top' %}?period=3">Top do último mês</a> ] 
+      <a href="{% url 'top' %}?period=1">Top do último dia</a> |
+      <a href="{% url 'top' %}?period=2">Top da última semana</a> |
+      <a href="{% url 'top' %}?period=3">Top do último mês</a> ]
     </p>
   </div>
 

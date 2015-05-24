@@ -193,9 +193,9 @@
         <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
       {{ result.date|date:"Y-m-d" }}</span></a> -
       <a href="{% url 'document_display' docid=result.id %}">
-      <span class="result_tipo">{{ result.doc_type.title }}</span>
+      <span class="result_tipo">{{ result.doc_type }}</span>
       <span class="result_number">{{ result.number }}</span></a> -
-      <span class="result_emiting">{{ result.emiting_body.title }}</span>
+      <span class="result_emiting">{{ result.emiting_body }}</span>
       <p class="result_notes">{{ result.note_abrv }}</p>
     </li>
   {% endfor %}
@@ -228,9 +228,9 @@
         <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
       {{ result.date|date:"Y-m-d" }}</span></a> -
       <a href="{% url 'document_display' docid=result.id %}">
-      <span class="result_tipo">{{ result.doc_type.title }}</span>
+      <span class="result_tipo">{{ result.doc_type }}</span>
       <span class="result_number">{{ result.number }}</span></a> -
-      <span class="result_emiting">{{ result.emiting_body.title }}</span>
+      <span class="result_emiting">{{ result.emiting_body }}</span>
       <p class="result_notes">{{ result.note_abrv }}</p>
     </li>
   {% endfor %}

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# ATENTION: Use only on the development environment!
-
-cd ../dre_django/
-./dev-manage.py collectstatic
-
-cd ../collected_static
-rsync --verbose -a . hgg@108.59.11.69:~/webapps/tretas_static/dre
