@@ -51,7 +51,7 @@ nav#mobile_menu {
   right:0.3em;
 }
 
-nav#mobile_menu h1 {
+nav#mobile_menu p {
   position: absolute;
   display: block;
   margin: 0;
@@ -59,6 +59,7 @@ nav#mobile_menu h1 {
   text-align: left;
   bottom: 0;
   font-size: 16px;
+  font-weight: bold;
 }
 
 
