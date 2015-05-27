@@ -53,6 +53,7 @@ NEW = 1
 MODIFY = 2
 
 digesto_url = 'https://dre.pt/home/-/dre/%d/details/maximized?serie=II&parte_filter=32'
+digesto_status_url = 'https://dre.pt/web/guest/analisejuridica/-/aj/publicDetails/maximized?diplomaId=%d'
 
 ##
 ## Re
@@ -205,8 +206,17 @@ class DREReader( object ):
             try:
                 raw_header = raw_doc.a.renderContents().strip()
             except AttributeError:
-                raw_header = raw_doc.span.renderContents().strip()
+                try:
+                    raw_header = raw_doc.span.renderContents().strip()
+                except AttributeError:
+                    # Some entries don't have a link or even a <span>
+                    # We ignore (for now) these entries.
+                    continue
                 has_pdf = False
+
+            if 'Série III' in raw_header:
+                # Ignore series 3 docs
+                continue
 
             series = 1 if 'Série I ' in raw_header else 2
 
@@ -341,9 +351,14 @@ class DREReader( object ):
 
         # Parse the text
         # <li class="formatedTextoWithLinks">
-        text = soup.find( 'li', { 'class': 'formatedTextoWithLinks' }
-                ).renderContents()
-        text = text.replace('<span>Texto</span>','')
+        try:
+            text = soup.find( 'li', { 'class': 'formatedTextoWithLinks' }
+                    ).renderContents()
+            text = text.replace('<span>Texto</span>','')
+        except AttributeError:
+            # No digesto text, abort
+            logger.debug('No digesto text.')
+            return
 
         # Save the text to the database
         document_text = DocumentText()
@@ -352,15 +367,44 @@ class DREReader( object ):
         document_text.text = text
         document_text.save()
 
+    def get_in_force_status(self, doc):
+        doc_id = doc['digesto']
+        document = doc['document']
+        soup = read_soup( digesto_status_url % doc_id )
 
-    def save_doc(self, doc, mode = NEW ):
-        if mode == MODIFY:
-            try:
-                document = Document.objects.get(claint = doc['id'] )
-            except ObjectDoesNotExist:
-                mode = NEW
-        if mode == NEW:
-            document = Document()
+        try:
+            text = soup.find( 'div', { 'class': 'naoVigenteDetails' }
+                    ).span.renderContents().strip()
+            if text == 'Revogado':
+                document.in_force = False
+                document.save()
+                logger.debug('Update in_force')
+        except AttributeError:
+            return
+
+    def check_duplicate( self, doc ):
+        document = doc['document']
+        try:
+            sid = transaction.savepoint()
+            document.save()
+            transaction.savepoint_commit(sid)
+            logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
+        except IntegrityError:
+            # Duplicated document
+            transaction.savepoint_rollback(sid)
+            logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
+            doc['document'] = Document.objects.get(claint = doc['id'] )
+            raise DREReaderError('Duplicate document')
+
+        # For dates before the site change we should try to verify
+        # the document duplication by other means (since the 'claint' changed
+        # on the new site
+
+        if doc['date'] < datetime.date(2014,9,19):
+            pass
+
+    def get_db_obj(self, doc):
+        document = Document()
 
         document.claint       = doc['id']
         document.doc_type     = doc['doc_type']
@@ -381,21 +425,11 @@ class DREReader( object ):
         document.series       = doc['series']
         document.timestamp    = datetime.datetime.now()
 
-        try:
-            sid = transaction.savepoint()
-            document.save()
-            transaction.savepoint_commit(sid)
-        except IntegrityError:
-            # Duplicated document
-            transaction.savepoint_rollback(sid)
-            logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
-            doc['document'] = Document.objects.get(claint = doc['id'] )
-            raise DREReaderError('Duplicate document')
-
-        logger.debug('ID: %d http://dre.tretas.org/dre/%d/' % (document.id, document.id) )
-
         doc['document'] = document
 
+    def save_doc(self, doc):
+        self.get_db_obj( doc )
+        self.check_duplicate( doc )
 
     def log_doc(self, doc):
         txt = 'Document saved:\n'
@@ -407,17 +441,16 @@ class DREReader( object ):
 
     def create_cache( self, doc ):
         document = doc['document']
-
         # Create the document html cache
         if document.plain_text:
             DocumentCache.objects.get_cache(document)
 
-    def save_doc_list(self, mode = NEW):
+    def save_doc_list(self):
         if not self.doc_list:
             logger.critical('Couldn\'t get documents for %s' % self.date.isoformat())
         for doc in self.doc_list:
             try:
-                self.save_doc( doc, mode )
+                self.save_doc( doc )
             except DREReaderError:
                 # Duplicated document: even if the document is duplicated we
                 # check for the "digesto" text since sometimes this is created
@@ -425,12 +458,17 @@ class DREReader( object ):
                 if doc['digesto']:
                     # Check the "digesto" integral text
                     self.get_digesto( doc )
+                    # Check if the document is in force
+                    self.get_in_force_status( doc )
                 continue
+            # Get the "digesto" integral text
             if doc['digesto']:
-                # Get the "digesto" integral text
                 self.get_digesto( doc )
+            # Check if the document is in force
+            if doc['digesto']:
+                self.get_in_force_status( doc )
+            # Get the pdf version
             if doc['url']:
-                # if we have a pdf then we get it
                 self.save_pdf( doc )
             self.create_cache( doc )
             self.log_doc( doc )
