@@ -17,6 +17,7 @@ import sys
 import time
 import urllib2
 import zlib
+from difflib import SequenceMatcher as SM
 
 # Append the current project path
 sys.path.append(os.path.abspath('../lib/'))
@@ -29,6 +30,8 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.utils import IntegrityError
+from django.db.models import Q
+
 
 # Local Imports
 from dreapp.models import Document, DocumentText
@@ -54,6 +57,25 @@ MODIFY = 2
 
 digesto_url = 'https://dre.pt/home/-/dre/%d/details/maximized?serie=II&parte_filter=32'
 digesto_status_url = 'https://dre.pt/web/guest/analisejuridica/-/aj/publicDetails/maximized?diplomaId=%d'
+
+synonyms = [
+    [ 'acordo colectivo de trabalho', 'acordo coletivo de trabalho' ],
+    [ 'alvará-extracto', 'alvará (extrato)' ],
+    [ 'anúncio-extracto', 'anúncio (extrato)' ],
+    [ 'aviso-extracto', 'aviso (extrato)' ],
+    [ 'contrato-extracto', 'contrato (extrato)' ],
+    [ 'declaração de rectificação', 'declaração de retificação' ],
+    [ 'declaração-extracto', 'declaração (extrato)' ],
+    [ 'decreto lei', 'decreto-lei' ],
+    [ 'deliberação-extracto', 'deliberação (extrato)' ],
+    [ 'despacho-extracto', 'despacho (extrato)' ],
+    [ 'directiva', 'diretiva' ],
+    [ 'listagem-extracto', 'listagem (extrato)' ],
+    [ 'portaria-extracto', 'portaria (extrato)' ],
+    [ 'regulamento-extracto', 'regulamento (extrato)' ],
+    [ 'relatório (extrato)', 'relatório-extrato' ],
+    [ 'decreto lei', 'decreto-lei' ],
+    ]
 
 ##
 ## Re
@@ -115,6 +137,11 @@ def read_soup(page):
     url, html, cookie_jar = fetch_url( page )
     # Parse the page
     return bs4.BeautifulSoup( html )
+
+def st_ratio( st1, st2 ):
+    st1 = st1.lower().replace( '-', ' ').replace('(','').replace(')','')
+    st2 = st2.lower().replace( '-', ' ').replace('(','').replace(')','')
+    return SM(None, st1, st2).ratio()
 
 ##
 ## Scraper
@@ -382,7 +409,39 @@ class DREReader( object ):
         except AttributeError:
             return
 
+    def update_pdf( self, doc ):
+        if doc['url'] and doc['document'].dre_pdf != doc['url']:
+            doc['document'].dre_pdf = doc['url']
+            doc['document'].save()
+
     def check_duplicate( self, doc ):
+        # For dates before the site change we should try to verify
+        # the document duplication by other means (since the 'claint' changed
+        # on the new site
+        if doc['date'] < datetime.datetime(2014,9,19):
+            # Does the current doc_type have synonyms?
+            doc_types = [ doc['doc_type'].lower() ]
+            for sn in synonyms:
+                if doc['doc_type'].lower() in sn:
+                    doc_types = sn
+
+            # Create a query for the synonyms:
+            dt_qs = Q( doc_type__iexact = doc_types[0] )
+            for dt in doc_types[1:]:
+                dt_qs = dt_qs | Q( doc_type__iexact = dt )
+
+            dl = Document.objects.filter(
+                    date__exact = doc['date'] ).filter(
+                    dt_qs ).filter(
+                    number__iexact = doc['number'] )
+
+            for d in dl:
+                if st_ratio( doc['emiting_body'], d.emiting_body ) > 0.75:
+                    doc['document'] = d
+                    raise DREReaderError('Duplicate document')
+
+        # For other dates we simply use the db integrity checks to spot a
+        # duplicate
         document = doc['document']
         try:
             sid = transaction.savepoint()
@@ -396,12 +455,6 @@ class DREReader( object ):
             doc['document'] = Document.objects.get(claint = doc['id'] )
             raise DREReaderError('Duplicate document')
 
-        # For dates before the site change we should try to verify
-        # the document duplication by other means (since the 'claint' changed
-        # on the new site
-
-        if doc['date'] < datetime.date(2014,9,19):
-            pass
 
     def get_db_obj(self, doc):
         document = Document()
@@ -460,6 +513,10 @@ class DREReader( object ):
                     self.get_digesto( doc )
                     # Check if the document is in force
                     self.get_in_force_status( doc )
+                # In the new dre.pt the doc's pdf url has changed. Because of
+                # this even in duplicated documents we update the pdf url.
+                if doc['url']:
+                    self.update_pdf( doc )
                 continue
             # Get the "digesto" integral text
             if doc['digesto']:
