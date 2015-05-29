@@ -43,6 +43,10 @@ def usage():
         -h
         --help              This help screen
 
+    Options:
+        --no_serie_1
+        --no_serie_2        Ignore documents from series one or two
+
     ''' % { 'script_name': sys.argv[0] }
 
 
@@ -53,13 +57,31 @@ if __name__ == '__main__':
                                    ['help',
                                     'read_date=', 'read_range=',
                                     'dump', 'update_cache',
-                                    'create_cache='
+                                    'create_cache=',
+                                    'no_serie_1', 'no_serie_2',
                                    ])
     except getopt.GetoptError, err:
         print str(err)
         print
         usage()
         sys.exit(1)
+
+    # Defaults
+    series_1 = True
+    series_2 = True
+
+    # Options
+    for o, a in opts:
+        if o == '--no_serie_1':
+            series_1 = False
+        elif o == '--no_serie_2':
+            series_2 = False
+
+    series = []
+    if series_1:
+        series.append(1)
+    if series_2:
+        series.append(2)
 
     # Commands
     for o, a in opts:
@@ -74,7 +96,7 @@ if __name__ == '__main__':
                 sys.exit(1)
 
             dr = DREReader( date )
-            dr.read_index()
+            dr.read_index( series )
             dr.save_doc_list()
 
             sys.exit()
@@ -100,7 +122,7 @@ if __name__ == '__main__':
             date = date1
             while date <= date2:
                 dr = DREReader( date )
-                dr.read_index()
+                dr.read_index( series )
                 dr.save_doc_list()
                 date += datetime.timedelta(1)
                 time.sleep( 5 )

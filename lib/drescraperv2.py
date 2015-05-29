@@ -147,7 +147,10 @@ def st_ratio( st1, st2 ):
 ## Scraper
 ##
 
-class DREReaderError(Exception):
+class DREDuplicateError(Exception):
+    pass
+
+class DREScraperError(Exception):
     pass
 
 class DREReader( object ):
@@ -180,7 +183,6 @@ class DREReader( object ):
     def __init__( self, date ):
         self.date = date
         self.base_url = 'https://dre.pt'
-        self.url = None
         self.url = 'https://dre.pt/web/guest/pesquisa-avancada/-/asearch/advanced/maximized?types=DR&dataPublicacao=%(date)s' % { 'date': date.date() }
 
     ##
@@ -245,7 +247,7 @@ class DREReader( object ):
                 # Ignore series 3 docs
                 continue
 
-            series = 1 if 'Série I ' in raw_header else 2
+            series = 2 if 'série ii' in raw_header.lower() else 1
 
             if 'DIGESTO' in raw_header:
                 # Header is not a link
@@ -318,7 +320,7 @@ class DREReader( object ):
         return dl
 
 
-    def read_index(self):
+    def read_index(self, read_series ):
         '''Gets the document list'''
         doc_list = []
 
@@ -327,10 +329,9 @@ class DREReader( object ):
         for dr in dr_list:
             a = dr.a
             dr_internal_id = int(dr_number_re.match(a['href']).groups('dr_number_re')[0])
-            series = 1 if 'Série I ' in a.renderContents() else 2
-
-            # Falta descobrir como extraír os contratos, se estivermos
-            # na série 2 basta acrescentar &at=c ao url
+            series = 2 if  'série ii' in a.renderContents().lower() else 1
+            if series not in read_series:
+                continue
 
             page = 1
             get_contracts = series == 2
@@ -435,10 +436,26 @@ class DREReader( object ):
                     dt_qs ).filter(
                     number__iexact = doc['number'] )
 
-            for d in dl:
-                if st_ratio( doc['emiting_body'], d.emiting_body ) > 0.75:
-                    doc['document'] = d
-                    raise DREReaderError('Duplicate document')
+            if len(dl) > 1:
+                # We have a number of documents that, for a given date, have
+                # duplicates with the same number and type. The dates can be
+                # listed with:
+                # select
+                #   count(*), date, doc_type, number
+                # from
+                #   dreapp_document
+                # where
+                #   date < '2014-9-18'
+                # group by
+                #   date, doc_type, number
+                # having
+                #   count(*) > 1;
+                logger.error('Duplicate document in the database: %(doc_type)s %(number)s %(date)s' % doc)
+                raise DREScraperError('More than one doc with the same number and type.')
+
+            if len(dl) == 1:
+                doc['document'] = dl[0]
+                raise DREDuplicateError('Duplicate document')
 
         # For other dates we simply use the db integrity checks to spot a
         # duplicate
@@ -453,7 +470,7 @@ class DREReader( object ):
             transaction.savepoint_rollback(sid)
             logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
             doc['document'] = Document.objects.get(claint = doc['id'] )
-            raise DREReaderError('Duplicate document')
+            raise DREDuplicateError('Duplicate document')
 
 
     def get_db_obj(self, doc):
@@ -504,7 +521,7 @@ class DREReader( object ):
         for doc in self.doc_list:
             try:
                 self.save_doc( doc )
-            except DREReaderError:
+            except DREDuplicateError:
                 # Duplicated document: even if the document is duplicated we
                 # check for the "digesto" text since sometimes this is created
                 # long after the original date of the document.
@@ -518,6 +535,9 @@ class DREReader( object ):
                 if doc['url']:
                     self.update_pdf( doc )
                 continue
+            except DREScraperError:
+                continue
+
             # Get the "digesto" integral text
             if doc['digesto']:
                 self.get_digesto( doc )
