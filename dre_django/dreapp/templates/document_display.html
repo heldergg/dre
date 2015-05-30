@@ -124,9 +124,6 @@
 
 <div class="noprint">
   <ul>
-    {% if document.plain_text %}
-    <li><a href="{{ document.plain_text }}">Texto integral do documento</a> (PDF);
-    {% endif %}
     {% if document.dre_pdf %}
     <li><a rel="nofollow" href="{% url 'document_org_pdf' document.id %}">
       Extracto do Diário da República original</a> (PDF).
