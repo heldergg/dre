@@ -406,7 +406,7 @@ class DREReader( object ):
             if text == 'Revogado':
                 document.in_force = False
                 document.save()
-                logger.debug('Update in_force')
+                logger.warning('Update in_force: %(doc_type)s %(number)s %(date)s' % doc)
         except AttributeError:
             return
 
@@ -414,6 +414,7 @@ class DREReader( object ):
         if doc['url'] and doc['document'].dre_pdf != doc['url']:
             doc['document'].dre_pdf = doc['url']
             doc['document'].save()
+            logger.debug('PDF\'s url updated: %(doc_type)s %(number)s %(date)s' % doc)
 
     def check_duplicate( self, doc ):
         # For dates before the site change we should try to verify
@@ -468,7 +469,7 @@ class DREReader( object ):
         except IntegrityError:
             # Duplicated document
             transaction.savepoint_rollback(sid)
-            logger.debug('We have this document: %(doc_type)s %(number)s claint=%(id)d' % doc )
+            logger.debug('We have this document: %(doc_type)s %(number)s %(date)s' % doc )
             doc['document'] = Document.objects.get(claint = doc['id'] )
             raise DREDuplicateError('Duplicate document')
 
