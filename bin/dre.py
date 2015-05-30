@@ -47,6 +47,11 @@ def usage():
         --no_serie_1
         --no_serie_2        Ignore documents from series one or two
 
+        --filter_type <type>
+                            Process only documents of this type
+        --filter_number <number>
+                            Process only documents with this number
+
     ''' % { 'script_name': sys.argv[0] }
 
 
@@ -59,6 +64,7 @@ if __name__ == '__main__':
                                     'dump', 'update_cache',
                                     'create_cache=',
                                     'no_serie_1', 'no_serie_2',
+                                    'filter_type=', 'filter_number=',
                                    ])
     except getopt.GetoptError, err:
         print str(err)
@@ -69,6 +75,8 @@ if __name__ == '__main__':
     # Defaults
     series_1 = True
     series_2 = True
+    filter_type = None
+    filter_number = None
 
     # Options
     for o, a in opts:
@@ -76,6 +84,10 @@ if __name__ == '__main__':
             series_1 = False
         elif o == '--no_serie_2':
             series_2 = False
+        elif o == '--filter_type':
+            filter_type = a.lower()
+        elif o == '--filter_number':
+            filter_number = a.lower()
 
     series = []
     if series_1:
@@ -96,7 +108,7 @@ if __name__ == '__main__':
                 sys.exit(1)
 
             dr = DREReader( date )
-            dr.read_index( series )
+            dr.read_index( series, filter_type, filter_number )
             dr.save_doc_list()
 
             sys.exit()
@@ -122,7 +134,7 @@ if __name__ == '__main__':
             date = date1
             while date <= date2:
                 dr = DREReader( date )
-                dr.read_index( series )
+                dr.read_index( series, filter_type, filter_number )
                 dr.save_doc_list()
                 date += datetime.timedelta(1)
                 time.sleep( 5 )

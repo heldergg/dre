@@ -59,6 +59,11 @@ digesto_url = 'https://dre.pt/home/-/dre/%d/details/maximized?serie=II&parte_fil
 digesto_status_url = 'https://dre.pt/web/guest/analisejuridica/-/aj/publicDetails/maximized?diplomaId=%d'
 
 synonyms = [
+    [ 'acórdão',
+      'acórdão do supremo tribunal administrativo',
+      'acórdão do supremo tribunal de justiça',
+      'acórdão do tribunal constitucional',
+      'acórdão do tribunal de contas', ],
     [ 'acordo colectivo de trabalho', 'acordo coletivo de trabalho' ],
     [ 'alvará-extracto', 'alvará (extrato)' ],
     [ 'anúncio-extracto', 'anúncio (extrato)' ],
@@ -75,6 +80,15 @@ synonyms = [
     [ 'regulamento-extracto', 'regulamento (extrato)' ],
     [ 'relatório (extrato)', 'relatório-extrato' ],
     [ 'decreto lei', 'decreto-lei' ],
+    [ 'decreto do presidente da república',
+      'decreto',
+      'decreto do representante da república para a região autónoma da madeira' ],
+    [ 'resolução',
+      'resolução da assembleia da república',
+      'resolução da assembleia legislativa da região autónoma da madeira',
+      'resolução da assembleia legislativa da região autónoma dos açores',
+      'resolução da assembleia nacional',
+      'resolução do conselho de ministros', ],
     ]
 
 ##
@@ -102,12 +116,10 @@ dr_number_re = re.compile( r'^https://dre.pt/web/guest/pesquisa-avancada/-/asear
 ##
 
 def strip_html( html ):
-    soup = bs4.BeautifulSoup( html )
-    # Break text by paragraph
-    txt = '\n'.join([ p.renderContents() for p in soup.findAll('p') ])
+    html = html.replace('</p>','\n').replace('\n\n','\n')
     # Remove html tags
-    txt = re.sub(r'<.*?>','', txt)
-    return txt
+    txt = re.sub(r'<.*?>','', html)
+    return txt.strip()
 
 
 def save_file(filename, url):
@@ -152,6 +164,7 @@ class DREDuplicateError(Exception):
 
 class DREScraperError(Exception):
     pass
+
 
 class DREReader( object ):
     '''
@@ -227,7 +240,7 @@ class DREReader( object ):
         return raw_dl
 
 
-    def extract_metadata(self, raw_dl):
+    def extract_metadata(self, raw_dl, filter_type, filter_number ):
         dl = []
         for raw_doc in raw_dl:
             # Header with a link (to a PDF)
@@ -274,7 +287,7 @@ class DREReader( object ):
             try:
                 summary = strip_html(
                         raw_doc.find('div', {'class': 'summary'}
-                            ).renderContents().strip())
+                            ).renderContents())
             except AttributeError:
                 summary = ''
 
@@ -310,17 +323,23 @@ class DREReader( object ):
                 'number': number,
                 'dr_number': dr_number,
                 'date': self.date,
+                'date_st': self.date.date(),
                 'digesto': digesto,
                 'series': series,
                 'document': None,
                 }
+
+            if filter_type and filter_type not in doc_type.lower():
+                continue
+            if filter_number and filter_number not in number.lower():
+                continue
 
             dl.append(doc)
 
         return dl
 
 
-    def read_index(self, read_series ):
+    def read_index(self, read_series, filter_type, filter_number ):
         '''Gets the document list'''
         doc_list = []
 
@@ -350,7 +369,8 @@ class DREReader( object ):
                     else:
                         url_template = url_template_org
                         break
-                dl = self.extract_metadata( raw_doc_list )
+
+                dl = self.extract_metadata( raw_doc_list, filter_type, filter_number )
                 doc_list += dl
                 page += 1
 
@@ -370,7 +390,7 @@ class DREReader( object ):
         try:
             document_text = DocumentText.objects.get( document = document )
         except ObjectDoesNotExist:
-            logger.warn('Getting digesto text.')
+            logger.warn('Getting digesto text: %(doc_type)s %(number)s %(date_st)s' % doc)
         else:
             return
 
@@ -403,10 +423,10 @@ class DREReader( object ):
         try:
             text = soup.find( 'div', { 'class': 'naoVigenteDetails' }
                     ).span.renderContents().strip()
-            if text == 'Revogado':
+            if text == 'Revogado' and document.in_force:
                 document.in_force = False
                 document.save()
-                logger.warning('Update in_force: %(doc_type)s %(number)s %(date)s' % doc)
+                logger.warning('Update in_force: %(doc_type)s %(number)s %(date_st)s' % doc)
         except AttributeError:
             return
 
@@ -414,7 +434,7 @@ class DREReader( object ):
         if doc['url'] and doc['document'].dre_pdf != doc['url']:
             doc['document'].dre_pdf = doc['url']
             doc['document'].save()
-            logger.debug('PDF\'s url updated: %(doc_type)s %(number)s %(date)s' % doc)
+            logger.debug('PDF\'s url updated: %(doc_type)s %(number)s %(date_st)s' % doc)
 
     def check_duplicate( self, doc ):
         # For dates before the site change we should try to verify
@@ -435,7 +455,8 @@ class DREReader( object ):
             dl = Document.objects.filter(
                     date__exact = doc['date'] ).filter(
                     dt_qs ).filter(
-                    number__iexact = doc['number'] )
+                    number__iexact = doc['number'] ).filter(
+                    series__exact = doc['series'] )
 
             if len(dl) > 1:
                 # We have a number of documents that, for a given date, have
@@ -451,7 +472,7 @@ class DREReader( object ):
                 #   date, doc_type, number
                 # having
                 #   count(*) > 1;
-                logger.error('Duplicate document in the database: %(doc_type)s %(number)s %(date)s' % doc)
+                logger.error('Duplicate document in the database: %(doc_type)s %(number)s %(date_st)s' % doc)
                 raise DREScraperError('More than one doc with the same number and type.')
 
             if len(dl) == 1:
@@ -469,7 +490,6 @@ class DREReader( object ):
         except IntegrityError:
             # Duplicated document
             transaction.savepoint_rollback(sid)
-            logger.debug('We have this document: %(doc_type)s %(number)s %(date)s' % doc )
             doc['document'] = Document.objects.get(claint = doc['id'] )
             raise DREDuplicateError('Duplicate document')
 
@@ -507,7 +527,8 @@ class DREReader( object ):
         for key,item in doc.items():
             if key not in ('summary', 'document'):
                 txt += '   %-12s: %s\n' % (key, item)
-        logger.warn(txt[:-1])
+        logger.debug(txt[:-1])
+        logger.warn('Got *new* document: %(doc_type)s %(number)s %(date_st)s' % doc )
 
 
     def create_cache( self, doc ):
@@ -518,11 +539,13 @@ class DREReader( object ):
 
     def save_doc_list(self):
         if not self.doc_list:
-            logger.critical('Couldn\'t get documents for %s' % self.date.isoformat())
+            logger.debug('Couldn\'t get documents for %s' % self.date.isoformat())
         for doc in self.doc_list:
+            logger.debug('*** Processing document: %(doc_type)s %(number)s %(date_st)s' % doc )
             try:
                 self.save_doc( doc )
             except DREDuplicateError:
+                logger.debug('We have this document: %(doc_type)s %(number)s %(date_st)s' % doc )
                 # Duplicated document: even if the document is duplicated we
                 # check for the "digesto" text since sometimes this is created
                 # long after the original date of the document.
