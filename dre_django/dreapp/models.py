@@ -296,10 +296,10 @@ class Document(models.Model):
                             '%02d' % self.day() )
 
     def plain_pdf_filename(self):
-        return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.claint)
+        return os.path.join(self.archive_dir(), 'plain-%s.pdf' % self.id)
 
     def dre_pdf_filename(self):
-        return os.path.join(self.archive_dir(), 'dre-%s.pdf' % self.claint)
+        return os.path.join(self.archive_dir(), 'dre-%s.pdf' % self.id)
 
     # URLs
     def plain_pdf_url(self):
@@ -308,7 +308,7 @@ class Document(models.Model):
                             '%d' % self.year(),
                             '%02d' % self.month(),
                             '%02d' % self.day(),
-                            'plain-%s.pdf' % self.claint)
+                            'plain-%s.pdf' % self.id)
 
     def dre_pdf_url(self):
         return  os.path.join(
@@ -316,7 +316,7 @@ class Document(models.Model):
                             '%d' % self.year(),
                             '%02d' % self.month(),
                             '%02d' % self.day(),
-                            'dre-%s.pdf' % self.claint)
+                            'dre-%s.pdf' % self.id)
 
     # Representation
     def plain_html(self):
