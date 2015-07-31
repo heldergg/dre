@@ -124,9 +124,13 @@
 
 <div class="noprint">
   <ul>
+    {% if document.plain_text %}
+    <li><a rel="nofollow" href="{{ document.plain_pdf_url }}">
+        Texto integral site antigo do dre.pt</a> (PDF)</li>
+    {% endif %}
     {% if document.dre_pdf %}
     <li><a rel="nofollow" href="{% url 'document_org_pdf' document.id %}">
-      Extracto do Diário da República original</a> (PDF).
+        Extracto do Diário da República original</a> (PDF)</li>
     {% endif %}
   </ul>
 </div>
@@ -134,7 +138,7 @@
 <div class="only_print">
   <ul>
     {% if document.plain_text %}
-    <li>Texto integral do documento: {{ document.plain_text }} ;
+    <li>Texto integral do documento: http://dre.tretas.org{{ document.plain_pdf_url }} ;
     {% endif %}
     {% if document.dre_pdf %}
     <li>Extracto do Diário da República original:
