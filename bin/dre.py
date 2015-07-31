@@ -44,6 +44,7 @@ def usage():
         --help              This help screen
 
     Options:
+        --update            Update mode, re-reads the documents
         --no_serie_1
         --no_serie_2        Ignore documents from series one or two
 
@@ -63,8 +64,9 @@ if __name__ == '__main__':
                                     'read_date=', 'read_range=',
                                     'dump', 'update_cache',
                                     'create_cache=',
-                                    'no_serie_1', 'no_serie_2',
+                                    'no_series_1', 'no_series_2',
                                     'filter_type=', 'filter_number=',
+                                    'update'
                                    ])
     except getopt.GetoptError, err:
         print str(err)
@@ -73,33 +75,29 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Defaults
-    series_1 = True
-    series_2 = True
-    filter_type = None
-    filter_number = None
+    filter_doc= {} # Document filtering options
+    filter_dr= {}  # Journal filtering options
+    options= {}    # Document reading options
 
     # Options
     for o, a in opts:
-        if o == '--no_serie_1':
-            series_1 = False
-        elif o == '--no_serie_2':
-            series_2 = False
+        if o == '--no_series_1':
+            filter_dr['no_series_1'] = True
+        elif o == '--no_series_2':
+            filter_dr['no_series_2'] = True
         elif o == '--filter_type':
-            filter_type = a.lower()
+            filter_doc['doc_type'] = a.lower()
         elif o == '--filter_number':
-            filter_number = a.lower()
-
-    series = []
-    if series_1:
-        series.append(1)
-    if series_2:
-        series.append(2)
+            filter_doc['number'] = a.lower()
+        elif o == '--update':
+            options['update'] = True
 
     # Commands
     for o, a in opts:
         if o in ('-r', '--read_date'):
             import datetime
-            from drescraperv2 import DREReader
+            from drescraperv3 import DREReadDay, DREDocSave
+            from drescraperv3 import DREDuplicateError
 
             try:
                 date = datetime.datetime.strptime( a, '%Y-%m-%d' )
@@ -107,16 +105,21 @@ if __name__ == '__main__':
                 print 'A date in ISO format must be passed to this command'
                 sys.exit(1)
 
-            dr = DREReader( date )
-            dr.read_index( series, filter_type, filter_number )
-            dr.save_doc_list()
+            day = DREReadDay(date)
+            for doc in day.read_index(filter_dr, filter_doc):
+                update_obj = DREDocSave(doc, options)
+                try:
+                    update_obj.save_doc()
+                except DREDuplicateError:
+                    pass
 
             sys.exit()
 
         elif o == '--read_range':
             import datetime
             import time
-            from drescraperv2 import DREReader
+            from drescraperv3 import DREReadDay, DREDocSave
+            from drescraperv3 import DREDuplicateError
 
             try:
                 date1, date2 = a.split(':')
@@ -133,9 +136,15 @@ if __name__ == '__main__':
 
             date = date1
             while date <= date2:
-                dr = DREReader( date )
-                dr.read_index( series, filter_type, filter_number )
-                dr.save_doc_list()
+                day = DREReadDay(date)
+                for doc in day.read_index(filter_dr, filter_doc):
+                    update_obj = DREDocSave(doc, options)
+                    try:
+                        update_obj.save_doc()
+                        time.sleep(2)
+                    except DREDuplicateError:
+                        pass
+
                 date += datetime.timedelta(1)
                 time.sleep( 5 )
 
