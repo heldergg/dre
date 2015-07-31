@@ -62,7 +62,7 @@ django.setup()
 
 # Django imports
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db.models import Q
 from django.db import transaction
 
@@ -175,7 +175,7 @@ def first_child(soup):
     '''
     for element in soup.children:
         # Ignore empty elements
-        if not str(element).strip():
+        if not str(element.encode('utf-8')).strip():
             continue
         return element
     return None
@@ -241,8 +241,8 @@ DR_ID_NUMBER_RE = re.compile(r'^https://dre.pt/web/guest/pesquisa-avancada/'
 
 # Document type and number:
 DOCTYPE_NUMBER_RE = re.compile(ur'^(?P<doc_type>.*?)(?:\s+n.º\s+)'
-                               ur'(?P<number>[0-9A-Za-z/-]+)'
-                               ur'.*?(?:Diário da República\s+n.º\s+|'
+                               ur'(?P<number>[0-9A-Za-z\s/-]+)'
+                               ur'.*?-\s(?:Diário da República\s+n.º\s+|'
                                ur'Diário do Governo\s+n.º\s+|'
                                ur'Diário do Govêrno\s+n.º\s+)'
                                ur'(?P<dr_number>[0-9A-Za-z/-]+).*$',
@@ -287,35 +287,32 @@ class DREReadDoc(object):
         self.data['notes'] = notes
 
     def parse_claint(self, tag):
-        # TODO: test for documents without PDF
         claint = int(tag['href'].split('/')[-1])
         self.data['claint'] = claint
 
     def parse_pdfurl(self, tag):
-        # TODO: test for documents without PDF
         pdf_url = DREPT_URL % tag['href']
         self.data['pdf_url'] = pdf_url
-
 
     def parse_doc_type_number(self, text):
         # If we have document type and number:
         try:
             dtn = DOCTYPE_NUMBER_RE.match(text)
-            self.data['doc_type'] = dtn.group('doc_type')
-            self.data['number'] = dtn.group('number')
+            self.data['doc_type'] = dtn.group('doc_type').strip()
+            self.data['number'] = dtn.group('number').strip()
             return
         except AttributeError:
             pass
 
-        raise DREParseError('Could not parse the document: %s' % text)
         # We have a document type but no number
         try:
             dtn = DOCTYPE_NONUMBER_RE.match(text)
-            self.data['doc_type'] = dtn.group('doc_type')
+            self.data['doc_type'] = dtn.group('doc_type').strip()
             self.data['number'] = ''
             return
         except AttributeError:
             pass
+
         # No document, no document number
         if 'Sem diploma' in text:
             self.data['doc_type'] = 'Não especificado'
@@ -336,7 +333,7 @@ class DREReadDoc(object):
 
     def parse_header(self, soup):
         '''
-        Serveral types of headers are presented on the document listings:
+        Several types of headers are presented on the document listings:
 
         i) PDF link plus an rgba number:
             a) If the claint (the pdf number) and the rgba number are different
@@ -345,15 +342,26 @@ class DREReadDoc(object):
                there's no digesto entry: for example the first document, series
                1 from 2000-6-1 (Decreto do Presidente da República n.º 27/2000);
 
+        ii) No PDF link or claint
+            Example: Second series, 1990-06-02
+            These docs do not have claint, we make claint=-1 on these cases
+
         '''
         header = first_child(soup)
-
-        header_text = header.stripped_strings.next()
-
-        self.parse_claint(header)
-        self.parse_pdfurl(header)
-        self.parse_digesto(header)
-        self.parse_doc_type_number(header_text)
+        try:
+            # Type i) header
+            header_text = header.stripped_strings.next()
+            self.parse_claint(header)
+            self.parse_pdfurl(header)
+            self.parse_digesto(header)
+            self.parse_doc_type_number(header_text)
+        except AttributeError:
+            # Type ii) header
+            header_text = header.strip()
+            self.parse_doc_type_number(header_text)
+            self.data['claint'] = -1
+            self.data['pdf_url'] = ''
+            self.data['digesto'] = None
 
     def parse(self, soup):
         self.parse_emiting_body(soup)
@@ -496,7 +504,7 @@ class DREDocSave(object):
                 # Do not retrieve documents based on claint that have timestamp
                 # before 2014-9-18
                 doc_obj=None
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, MultipleObjectsReturned):
             doc_obj=None
         return doc_obj
 
@@ -723,22 +731,3 @@ class DREDocSave(object):
         # Save PDF
         if self.options['save_pdf']:
             self.save_pdf(doc_obj)
-
-
-
-# MAIN
-
-if __name__ == '__main__':
-    import datetime
-    day = DREReadDay(datetime.date(1911, 1, 3))
-    day = DREReadDay(datetime.date(2015, 7, 10))
-    day = DREReadDay(datetime.date(1990, 6, 2))
-    day = DREReadDay(datetime.date(2000, 6, 7))
-
-    for doc in day.read_index(filter_dr={'no_series_2': True},
-                              filter_doc={}):
-        update_obj = DREDocSave(doc, options={})
-        try:
-            update_obj.save_doc()
-        except DREDuplicateError:
-            pass
