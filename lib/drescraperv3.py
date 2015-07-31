@@ -28,7 +28,7 @@ Usage:
         # default_options = {
         #        'update': False, # Do not update existing objects
         #        'update_metadata': True,
-        #        'update_digesto': True,
+        #        'update_digesto': True, # Force digesto update even if we have it
         #        'update_cache': True,
         #        'update_inforce': True,
         #        'save_pdf': True,
@@ -194,7 +194,7 @@ def strip_html(html):
 def msg_doc(st, doc):
     data = doc.data
     return '%-15s ' % st + '%s %s of %s' % (data['doc_type'], data['number'],
-            doc.journal.data['date'])
+            doc.journal.data['date'].date())
 
 def check_dirs(date):
     archive_dir=os.path.join(ARCHIVEDIR,
@@ -441,7 +441,7 @@ class DREReadDay(object):
     '''
     def __init__(self, date):
         self.date = date
-        self.index_url = INDEX_URL % date
+        self.index_url = INDEX_URL % date.date()
 
     def read_index(self, filter_dr = {}, filter_doc={}):
         '''
