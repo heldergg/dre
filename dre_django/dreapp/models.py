@@ -329,17 +329,11 @@ class Document(models.Model):
         return re.sub(r'<.*?>', '', html)
 
     def has_text(self):
-        try:
-            # doc_text - text extracted from "Texto Integral" html
-            doc_text = DocumentText.objects.get( document = self )
-        except ObjectDoesNotExist:
-            doc_text = None
-
         if self.plain_text:
             # PDF with integral text
             return True
 
-        if doc_text:
+        if self.plain_txt().strip():
             # Integral text extracted from html
             return True
 
