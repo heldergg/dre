@@ -38,8 +38,6 @@ def usage():
                             Creates (or updates) the cache for the documents
                             in the date range
 
-        --update_cache      Refresh the document's html cache
-
         -h
         --help              This help screen
 
@@ -69,7 +67,7 @@ if __name__ == '__main__':
                                     'hr:dv',
                                    ['help',
                                     'read_date=', 'read_range=',
-                                    'dump', 'update_cache',
+                                    'dump',
                                     'create_cache=',
                                     'no_series_1', 'no_series_2',
                                     'filter_type=', 'filter_number=',
@@ -188,21 +186,6 @@ if __name__ == '__main__':
             sys.exit()
 
 
-        elif o == '--update_cache':
-            from dreapp.models import Document, DocumentCache
-            page_size = 5000
-
-            results = Document.objects.exclude( plain_text__exact = '' )
-
-            for i in range(0,results.count(), page_size):
-                j = i + page_size
-                print '* Processing documents %d through %d' % (i,j)
-                for doc in results[i:j]:
-                    DocumentCache.objects.get_cache(doc)
-
-            sys.exit()
-
-
         elif o == '--create_cache':
             import datetime
             from dreapp.models import Document, DocumentCache
@@ -232,8 +215,6 @@ if __name__ == '__main__':
                     print doc.date, doc.doc_type, doc.number
                     cache = DocumentCache.objects.get_cache_object(doc)
                     cache.build_cache()
-
-
             sys.exit()
 
 
