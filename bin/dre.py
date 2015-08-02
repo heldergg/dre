@@ -44,7 +44,6 @@ def usage():
         --help              This help screen
 
     Options:
-        --update            Update mode, re-reads the documents
         --no_serie_1
         --no_serie_2        Ignore documents from series one or two
 
@@ -52,6 +51,14 @@ def usage():
                             Process only documents of this type
         --filter_number <number>
                             Process only documents with this number
+
+        Update options, choose only one:
+
+        --update            Update mode, re-reads the documents
+        --update_metadata   Update only the metadata
+
+        NOTE: on every update option if a new document is found it will be
+        retrieved completely.
 
     ''' % { 'script_name': sys.argv[0] }
 
@@ -66,7 +73,8 @@ if __name__ == '__main__':
                                     'create_cache=',
                                     'no_series_1', 'no_series_2',
                                     'filter_type=', 'filter_number=',
-                                    'update'
+                                    'update',
+                                    'update_metadata',
                                    ])
     except getopt.GetoptError, err:
         print str(err)
@@ -91,6 +99,15 @@ if __name__ == '__main__':
             filter_doc['number'] = a.lower()
         elif o == '--update':
             options['update'] = True
+        elif o == '--update_metadata':
+            options = {
+                'update': True,
+                'update_metadata': True,
+                'update_digesto': False,
+                'update_cache': False,
+                'update_inforce': False,
+                'save_pdf': False,
+                }
 
     # Commands
     for o, a in opts:

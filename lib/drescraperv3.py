@@ -428,6 +428,7 @@ class DREReadJournal(object):
         doc_list = []
         sufix = ''
         while True:
+            logger.debug('JOURNAL: Read journal page')
             soup = read_soup(JOURNAL_URL % (dr_id_number, page, sufix))
             doc_page = self.get_document_list(soup)
             for doc in doc_page:
@@ -436,6 +437,7 @@ class DREReadJournal(object):
                 except DREParseError:
                     pass
             if not doc_page:
+                logger.debug('JOURNAL: Empty page')
                 if not sufix and self.data['series']==2:
                     page = 0
                     sufix = '?at=c'
@@ -570,13 +572,7 @@ class DREDocSave(object):
             doc_obj = check()
             if doc_obj:
                 self.mode=UPDATE
-                if not self.options['update']:
-                    logger.debug(msg_doc('IGNORING duplicated document:',
-                        self.doc))
-                    raise DREDuplicateError('Not going to process this doc.')
-                logger.warn(msg_doc('UPDATE mode:', self.doc))
                 return doc_obj
-        logger.warn(msg_doc('NEW mode:', self.doc))
         return Document()
 
     def save_metadata(self, doc_obj):
@@ -603,7 +599,6 @@ class DREDocSave(object):
         doc_obj.series       = journal_data['series']
         doc_obj.timestamp    = datetime.datetime.now()
         doc_obj.save()
-        logger.debug(msg_doc('Metadata saved:', self.doc))
 
 
     ##
@@ -686,7 +681,6 @@ class DREDocSave(object):
         if not self.doc.data['digesto']:
             return
         soup=read_soup(DIGESTO_STATUS_URL % self.doc.data['digesto'])
-        logger.debug(msg_doc('Update inforce:', self.doc))
         try:
             text = soup.find( 'div', { 'class': 'naoVigenteDetails' }
                     ).span.renderContents().strip()
@@ -715,19 +709,37 @@ class DREDocSave(object):
     def save_doc(self):
         # Check for document duplication
         doc_obj = self.check_duplicate()
+        if self.mode == UPDATE:
+            if not self.options['update']:
+                logger.debug(msg_doc('IGNORING duplicated document:',
+                    self.doc))
+                raise DREDuplicateError('Not going to process this doc.')
+            else:
+                logger.warn(msg_doc('UPDATE mode:', self.doc))
+                logger.debug('doc_obj: %s' % doc_obj)
+        else:
+            logger.warn(msg_doc('NEW mode:', self.doc))
         # Save metadata
         if self.mode==NEW or (self.mode==UPDATE and
                               self.options['update_metadata']):
+            logger.debug(msg_doc('Metadata:', self.doc))
             self.save_metadata(doc_obj)
         # Save digesto
-        if self.options['update_digesto']:
+        if self.mode==NEW or (self.mode==UPDATE and
+                              self.options['update_digesto']):
             self.process_digesto(doc_obj)
         # Update cache
-        if self.options['update_cache']:
+        if self.mode==NEW or (self.mode==UPDATE and
+                              self.options['update_cache']):
+            logger.debug(msg_doc('Cache:', self.doc))
             self.update_cache(doc_obj)
         # Update inforce
-        if self.options['update_inforce']:
+        if self.mode==NEW or (self.mode==UPDATE and
+                              self.options['update_inforce']):
+            logger.debug(msg_doc('Update inforce:', self.doc))
             self.update_inforce(doc_obj)
         # Save PDF
-        if self.options['save_pdf']:
+        if self.mode==NEW or (self.mode==UPDATE and
+                              self.options['save_pdf']):
+            logger.debug(msg_doc('Get PDF:', self.doc))
             self.save_pdf(doc_obj)
