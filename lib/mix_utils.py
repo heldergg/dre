@@ -17,6 +17,7 @@ import urlparse
 import unicodedata
 import StringIO
 import gzip
+import random
 
 from drelog import logger
 from dreerror import DREError
@@ -122,4 +123,7 @@ def fetch_url( url, data=None, cj=None ):
             logger.warn('HTTP Error! Sleeping for 5 minutes: %s' % msg)
             time.sleep(300)
 
+    t=random.randint(1,5)
+    logger.debug('Sleeping %ds' % t)
+    time.sleep(t)
     return url, payload, cj

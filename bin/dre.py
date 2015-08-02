@@ -156,12 +156,9 @@ if __name__ == '__main__':
                     update_obj = DREDocSave(doc, options)
                     try:
                         update_obj.save_doc()
-                        time.sleep(2)
                     except DREDuplicateError:
                         pass
-
                 date += datetime.timedelta(1)
-                time.sleep( 5 )
 
             sys.exit()
 
