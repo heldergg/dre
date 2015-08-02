@@ -73,6 +73,7 @@ from dreapp.models import Document, DocumentText
 import bs4
 from mix_utils import fetch_url
 from drelog import logger
+import dreapp.index # Necessary to create the indexing events
 
 ##
 ## Constants
