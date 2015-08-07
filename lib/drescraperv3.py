@@ -52,6 +52,7 @@ import sys
 import os
 import os.path
 import datetime
+import urllib2
 
 # Django environment
 sys.path.append(os.path.abspath('../lib/'))
@@ -209,16 +210,7 @@ def check_dirs(date):
 
 def save_file(filename, url):
     k = 1
-    while True:
-        try:
-            data_blob=fetch_url(url)[1]
-            break
-        except urllib2.HTTPError:
-            logger.error('Could not read file: %s DOC: %s' % ( url, filename))
-            k += 1
-            if k == MAX_ATTEMPTS:
-                raise DREFileError('Couldn\'t get the file: %s' % url)
-            time.sleep(2)
+    data_blob=fetch_url(url)[1]
     with open(filename, 'wb') as f:
         f.write(data_blob)
         f.close()
@@ -418,6 +410,11 @@ class DREReadJournal(object):
         return True
 
     def get_document_list(self, soup):
+        pagination = soup.find('div', { 'class': 'pagination' })
+        if pagination:
+            pagination.extract()
+            pagination = soup.find('div', { 'class': 'pagination' })
+            pagination.extract()
         doc_list_page = soup.find('div', { 'class': 'list' })
         if doc_list_page:
             return doc_list_page.find('ul', recursive=False).find_all('li')

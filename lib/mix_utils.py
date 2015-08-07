@@ -100,14 +100,15 @@ def fetch_url( url, data=None, cj=None ):
                     pass
 
             repeat = False
-        except socket.timeout:
+        except (socket.timeout, socket.error) as e:
             repeat += 1
             if repeat > MAXREPEAT:
                 logger.critical('Socket timeout! Aborting')
                 raise
             logger.debug('Socket timeout! Sleeping for 5 minutes')
             time.sleep(300)
-        except urllib2.URLError, msg:
+        except (urllib2.URLError, urllib2.HTTPError) as e:
+            msg = e.message
             repeat += 1
             if repeat > MAXREPEAT:
                 logger.critical('HTTP Error! Aborting. Error repeated %d times: %s' % (MAXREPEAT, msg) )
