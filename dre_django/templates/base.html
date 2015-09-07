@@ -48,8 +48,8 @@
     <div id="menu_left">
       <ul class="horizontal_list">
         <li><a href="/">Procurar</a>
-        <li><a href="{% url 'today_results' %}">Hoje</a>
-        <li><a href="{% url 'top' %}">Top</a>
+        <li><a href="{% url 'today_results' %}" title="Documentos publicados hoje ou na data indicada.">Hoje</a>
+        <li><a href="{% url 'top' %}" title="Documentos mais vistos pelos utilizadores deste site.">Top</a>
         {% if user.is_authenticated %}
         <li><a href="{% url 'bookmark_display' user.id %}">Marcadores</a>
         {% endif %}
