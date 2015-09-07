@@ -230,17 +230,23 @@ class Document(models.Model):
             return False
 
     # Connection to other documents
-    def out_links(self):
-        return self.connects_to.all().order_by('date')
+    def out_links(self, all_series=False):
+        result = self.connects_to.all()
+        if not all_series:
+            result = self.connects_to.filter(series__exact=1)
+        return result.order_by('date')
 
-    def in_links(self):
-        return self.document_set.all().order_by('date')
+    def in_links(self, all_series=False):
+        result = self.document_set.all()
+        if not all_series:
+            result = self.document_set.filter(series__exact=1)
+        return result.order_by('date')
 
-    def links(self):
+    def links(self, all_series=False):
         '''Adjacent vertexes'''
-        for vertex in self.out_links():
+        for vertex in self.out_links(all_series):
             yield vertex
-        for vertex in self.in_links():
+        for vertex in self.in_links(all_series):
             yield vertex
 
     def out_edges(self):

@@ -173,7 +173,7 @@
 <h2><a name="out_links">Ligações deste documento</a></h2>
 
 <div class="result_notes">
-  <p>Este documento liga ao{{ document.connects_to.all.count|pluralize }} seguinte{{ document.connects_to.all.count|pluralize }} documento{{ document.connects_to.all.count|pluralize }}:
+  <p>Este documento liga ao{{ document.connects_to.all.count|pluralize }} seguinte{{ document.connects_to.all.count|pluralize }} documento{{ document.connects_to.all.count|pluralize }} (apenas ligações para documentos da Serie I do DR):
   <ul style="list-style-type:none;padding:0.5em;">
   {% for result in document.out_links %}
     <li>
@@ -208,7 +208,7 @@
 <h2><a name="in_links">Ligações para este documento</a></h2>
 
 <div class="result_notes">
-  <p>Este documento é referido no{{ document.document_set.all.count|pluralize }} seguinte{{ document.document_set.all.count|pluralize }} documento{{ document.document_set.all.count|pluralize }}:
+  <p>Este documento é referido no{{ document.document_set.all.count|pluralize }} seguinte{{ document.document_set.all.count|pluralize }} documento{{ document.document_set.all.count|pluralize }} (apenas ligações a partir de documentos da Série I do DR):
   <ul style="list-style-type:none;padding:0.5em;">
   {% for result in document.in_links %}
     <li>
