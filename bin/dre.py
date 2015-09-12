@@ -42,8 +42,8 @@ def usage():
         --help              This help screen
 
     Options:
-        --no_serie_1
-        --no_serie_2        Ignore documents from series one or two
+        --no_series_1
+        --no_series_2        Ignore documents from series one or two
 
         --filter_type <type>
                             Process only documents of this type
