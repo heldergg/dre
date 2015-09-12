@@ -75,6 +75,7 @@ import bs4
 from mix_utils import fetch_url
 from drelog import logger
 import dreapp.index # Necessary to create the indexing events
+import dreapp.keyword # Necessary to create the keyword generating events
 
 ##
 ## Constants
@@ -699,7 +700,14 @@ class DREDocSave(object):
         archive_dir=check_dirs(self.doc.journal.data['date'])
         pdf_file_name=os.path.join(archive_dir,
                 'dre-%d.pdf' % doc_obj.id)
-        save_file(pdf_file_name, self.doc.data['pdf_url'])
+        try:
+            save_file(pdf_file_name, self.doc.data['pdf_url'])
+        except urllib2.HTTPError:
+            # There are some documents on dre.pt that point to a PDF but
+            # return a 404 code. We are going to keet the info about the
+            # PDF url in the metadata maybe in the future this is fixed
+            # by dre.pt.
+            return
 
     ##
     # Main Save

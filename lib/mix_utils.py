@@ -36,7 +36,7 @@ du = debug_unicode
 
 # Socket timeout in seconds
 socket.setdefaulttimeout(60)
-MAXREPEAT = 2
+MAXREPEAT = 3
 
 class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
     def http_error_301(self, req, fp, code, msg, headers):
@@ -108,7 +108,7 @@ def fetch_url( url, data=None, cj=None ):
             logger.debug('Socket timeout! Sleeping for 5 minutes')
             time.sleep(300)
         except (urllib2.URLError, urllib2.HTTPError) as e:
-            msg = e.message
+            msg = str(e)
             repeat += 1
             if repeat > MAXREPEAT:
                 logger.critical('HTTP Error! Aborting. Error repeated %d times: %s' % (MAXREPEAT, msg) )
