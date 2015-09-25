@@ -16,7 +16,7 @@
 
 {% block body_content %}
 <div class="content-text">
-  <h1>Acerca do DRE Tretas</h1>
+  <a name="acerca"><h1>Acerca do DRE Tretas</h1>
     <p>Este site disponibiliza uma cópia tão fiel quanto possível do <a href="http://dre.pt/">Diário da República Electrónico</a>, em caso de dúvida deverá sempre recorrer à fonte oficial.
 
     <p>O motivo que nos levou a fazer este trabalho foi a baixa qualidade do site oficial. Não nos referimos ao design do site, que melhorou muito na nova versão de Setembro de 2014, mas sim à falta de funcionalidades que consideramos básicas, tais como:
@@ -29,16 +29,51 @@
 
     <p>Por estes motivos, decidimos criar este site onde tentaremos remediar as questões acima citadas bem como desenvolver soluções que permitam aos cidadãos explorar a legislação de formas inovadoras e práticas...
 
-    <p>Todos os cidadãos são convidados a utilizar este site. Qualquer 
-       comentário, crítica ou sugestão pode ser enviado para: 
+    <p>Todos os cidadãos são convidados a utilizar este site. Qualquer
+       comentário, crítica ou sugestão pode ser enviado para:
        <a href="mailto:webmaster@tretas.org">webmaster@tretas.org</a>.</p>
 
-    <p>Helder Guerreiro</p> 
+    <p>Helder Guerreiro</p>
     <p>José Lopes</p>
 
-    <p>Nota: esta introdução foi alterada em Maio de 2015, pode consultar as versões anteriores na <a href="https://github.com/heldergg/dre/commits/master/dre_django/templates/about.html">página do projecto</a> no github.
+    <p>Nota: esta introdução foi alterada em Setembro de 2015, pode consultar as versões anteriores na <a href="https://github.com/heldergg/dre/commits/master/dre_django/templates/about.html">página do projecto</a> no github.
 
-  <h2>Nota técnica</h2>
+  <a name="esquecimento"><h2>Direito ao esquecimento</h2>
+
+  <p>Nós, no dre.tretas.org, não temos qualquer influência sobre
+  a INCM (Imprensa Nacional Casa da Moeda), que compõe e publica
+  o Diário da República. Se julga que a presença do seu nome
+  ou de quaisquer outros dados pessoais em documentos publicados
+  no Diário da República atenta ao seu direito à privacidade,
+  terá de levar o problema à INCM.</p>
+
+  <p>Compreendemos, no entanto, que queira remover
+  conteúdos sensíveis dos motores de busca ao abrigo do <a
+  href="https://pt.wikipedia.org/wiki/Direito_ao_esquecimento"
+  target="_blank">Direito ao Esquecimento</a>.  Pode tentar
+  fazer com que os motores de busca deixem de listar o seu nome ao
+  abrigo de uma decisão do Tribunal de Justiça da União Europeia
+  (<a href="http://curia.europa.eu/jcms/upload/docs/application/pdf/2014-05/cp140070pt.pdf" target="_blank">C-131/12</a>, PDF, 13 de maio de 2014). Para o efeito tem várias alternativas:</p>
+  <ul>
+    <li>O site <a href="https://forget.me" target="_blank">Forget Me</a> envia o
+  seu pedido para vários motores de busca;</li>
+    <li>O Google tem um formulário onde pode fazer esse pedido, pode aceder a
+  esse formulário <a href="https://support.google.com/legal/contact/lr_eudpa?product=websearch&hl=pt" target="_blank">nesta página</a>;</li>
+    <li>O Bing, <a href="https://www.bing.com/webmaster/tools/eu-privacy-request" target="_blank">tem este formulário</a></li>
+  </ul>
+
+  <p>Finalmente, se assim o entender, pode enviar-nos um mail para <a
+  href="mailto:webmaster@tretas.org">webmaster@tretas.org</a>. Nesse
+  mail deve de indicar o URL das páginas que pretende retirar
+  dos motores de busca, deve também de indicar o motivo para a
+  retirada das páginas. Se considerarmos que o motivo tem mérito,
+  acrescentaremos um código às páginas em questão que fará com que os
+  motores de busca que respeitem esse código não indexem a página.
+  Evidentemente não nos podemos responsabilizar
+  pelas acções dos motores de busca nem garantir que estes irão obedecer às
+  nossas directivas.</p>
+
+  <a name="nota_tecnica"><h2>Nota técnica</h2>
 
   <p>Este sistema corre sobre Linux, utilizam-se os seguintes sistemas principais:
 
@@ -47,12 +82,12 @@
     <li>Índice feito utilizando a biblioteca <a href="http://xapian.org/">Xapian</a>;
     <li>Interface web feita com <a href="https://www.djangoproject.com/">Django</a>;
     <li>O brasão de armas (esfera armilar e o escudo português) foi retirado <a href="http://pt.wikipedia.org/wiki/Bandeira_de_Portugal">desta</a> página. É uma obra de Vítor Luís Rodrigues e António Martins-Tuválkin contratada pela Presidência da República em Junho de 2004 com o fim expresso de ser posta no domínio público;
-    <li>Os icons utilizados no site foram retirados da colecção de icons do <a href="http://www.kde.org/">Projecto KDE</a>, estão sob licença GPL v2. 
+    <li>Os icons utilizados no site foram retirados da colecção de icons do <a href="http://www.kde.org/">Projecto KDE</a>, estão sob licença GPL v2.
   </ul>
 
   <p>Corre num servidor HP ML310 G8.
 
-  <h2>Desenvolvimento deste sistema</h2>
+  <a name="codigo"><h2>Desenvolvimento deste sistema</h2>
 
   <p>Todo o site foi feito usando software livre.
 
@@ -61,7 +96,7 @@
   reports</em>, etc, na <a href="https://github.com/heldergg/dre">página
   do projecto</a> no github.
 
-  <a name="base_de_dados"></a><h2>Base de dados</h2>
+  <a name="base_de_dados"><h2>Base de dados</h2>
 
   <p>Pode fazer o download de toda a legislação que recolhemos do 'dre.pt' na
   ligação seguinte:
@@ -79,15 +114,15 @@
 
   <ol>
     <li>Os ficheiros com os dados recolhidos estão alojados no site Dropbox;
-    <li>Os ficheiros foram comprimidos usando a ferramenta 
+    <li>Os ficheiros foram comprimidos usando a ferramenta
     <a href="http://www.bzip.org/">bzip2</a>. Depois de descomprimidos expandem
-    para ficheiros relativamente pesados, com cerca de 250MB no caso da versão 
+    para ficheiros relativamente pesados, com cerca de 250MB no caso da versão
     <a href="http://pt.wikipedia.org/wiki/JSON">JSON</a> e cerca de <strong>1.5GB</strong> na versão SQL;
     <li>Temos uma explicação sobre o formato destes ficheiros <a href="http://blog.tretas.org/2014/02/23/obter-a-legislacao-do-dre-tretas-org/">neste post</a>;
     <li>Estes ficheiros são gerados todos os Domingos às 10:00.
   </ol>
 
-  <a name="lista_funcionalidades"></a><h2>Lista de funcionalidades</h2>
+  <a name="lista_funcionalidades"><h2>Lista de funcionalidades</h2>
 
   <ul>
     <li>Procura em texto livre usando a biblioteca <a href="http://xapian.org">Xapian</a>:
@@ -100,7 +135,7 @@
     <li>Possibilidade de transformar uma busca num feed RSS, neste caso os resultados são sempre apresentados ordenados por data descendente, desta forma o feed apresenta sempre os últimos diplomas sobre o assunto da busca. Evidentemente não convém usar buscas com modificadores de data pois, se o fizer, o feed RSS será estático para essa data;
     <li>Navegação por datas:
     <ul>
-      <li>Filtragem por uma série de critérios: 
+      <li>Filtragem por uma série de critérios:
       <ul>
         <li>Série;
         <li>Tipo de documento;
@@ -129,7 +164,7 @@
         <li>Dados pessoais;
         <li>Palavra chave;
         <li>Gestão de etiquetas;
-        <li>Definições várias (controlo geral de privacidade, ajustes da 
+        <li>Definições várias (controlo geral de privacidade, ajustes da
         interface).
       </ul>
     </ul>
@@ -137,7 +172,7 @@
 
 
   <div style="display:none;">
-    <p><a href="{% url 'browse_day' year=1974 month=4 day=25 %}">Este link</a> 
+    <p><a href="{% url 'browse_day' year=1974 month=4 day=25 %}">Este link</a>
     serve apenas para proporcionar aos motores de busca um caminho
     para todo o conteúdo do site.</p>
   </div>

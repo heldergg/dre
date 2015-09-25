@@ -385,6 +385,12 @@ class Document(models.Model):
     def get_absolute_url(self):
         return reverse('document_display', kwargs={ 'docid':self.id })
 
+    def no_index(self):
+        '''
+        Returns True if the document is present in the NoIndexDocument table
+        '''
+        return bool(self.noindexdocument_set.all())
+
 DOCUMENT_VERSION = getattr(settings, 'DOCUMENT_VERSION', 1)
 
 class CacheManager(models.Manager):
@@ -573,3 +579,11 @@ class DocumentText(models.Model):
     text_url  = models.URLField()
 
     text = models.TextField()
+
+class NoIndexDocument(models.Model):
+    '''
+    The documents listed on this page will not be indexed by the search engines
+    '''
+    document  = models.ForeignKey(Document, unique=True)
+    timestamp = models.DateTimeField(default = datetime.datetime.now())
+    motive    = models.CharField(max_length=1024)
