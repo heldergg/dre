@@ -17,6 +17,7 @@ from djapian.resultset import ResultSet
 ##
 
 NUMBER_ENTRIES = getattr(settings, 'NUMBER_ENTRIES', 25)
+NUMBER_ENTRIES_QUERY = getattr(settings, 'NUMBER_ENTRIES_QUERY', 25)
 SITE_URL = getattr(settings, 'SITE_URL', 'http://dre.tretas.org')
 
 class LatestEntriesFeed(Feed):
@@ -31,13 +32,13 @@ class LatestEntriesFeed(Feed):
     def items(self, request):
         query = request.GET.get('q', None)
         if not query:
-            return Document.objects.order_by('-timestamp')[:NUMBER_ENTRIES]
+            return Document.objects.order_by('-date')[:NUMBER_ENTRIES]
         else:
             # Return an rss resulting from a database query
             indexer = Document.indexer
             results = ResultSet(indexer, query, parse_query=True).order_by('-date')
             object_list = []
-            for obj in results[:NUMBER_ENTRIES]:
+            for obj in results[:NUMBER_ENTRIES_QUERY]:
                 object_list.append(obj.instance)
 
             return object_list
