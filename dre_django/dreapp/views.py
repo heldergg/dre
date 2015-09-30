@@ -477,3 +477,14 @@ def top( request ):
 
     return render_to_response('top.html', context,
             context_instance=RequestContext(request))
+
+def last( request ):
+    '''Shows the last 300 documents for the search engine benefict
+    '''
+    context = {}
+
+    results = Document.objects.all().order_by('-date')[:300]
+
+    context['results'] = results
+    return render_to_response('last.html', context,
+            context_instance=RequestContext(request))

@@ -30,6 +30,9 @@ urlpatterns = patterns('dreapp.views',
 
     # Top documents
     url(r'^top/$','top', name='top'),
+
+    # Last documents
+    url(r'^last/$','last', name='last'),
     )
 
 ##
