@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load bookmarks %}
+
+{% block title %}Diários da República - últimos 300 documentos{% endblock %}
+
+{% block header %}
+  <meta name="keywords" content="procura,diplomas,documentos,diário da república,top,documentos mais consultados">
+  <meta name="description" content="Procura de diplomas no Diário da República - lista dos documentos mais consultados no site no último dia, na última semana e no último mês.">
+  <meta property="og:title" content="Diários da República - Documentos mais consultados">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://dre.tretas.org">
+  <meta property="og:image" content="http://dre.tretas.org{{ STATIC_URL }}img/esfera_armilar_200.png">
+  <meta property="og:site_name" content="Diários da República - Versão do cidadão">
+  <meta property="fb:admins" content="webmaster@tretas.org">
+  <meta property="og:description" content="Procura de diplomas no Diário da República - lista dos documentos mais consultados no site no último dia, na última semana e no último mês.">
+{% endblock %}
+
+{% block body_content %}
+<div class="content_text" style="max-width:50em;margin:auto;">
+  <h1>Últimos 300 Documentos</h1>
+
+  <div class="results" id="search_results">
+    <ul>
+      {% for result in results %}
+      <li>
+        {% if result.plain_text or result.dre_pdf %}
+        <img src="{{ STATIC_URL }}img/attach.png" title="Tem documento" alt="Tem documento" height=16px width=16px>
+        {% else %}
+        <img src="{{ STATIC_URL }}img/attach-no.png" title="Não tem documento" alt="Não tem documento" height=16px width=16px>
+        {% endif %}
+        {% if result.in_force %}
+        <img src="{{ STATIC_URL }}img/in_force.png" title="Em vigor" alt="Em vigor" height=16px width=16px>
+        {% else %}
+        <img src="{{ STATIC_URL }}img/not_in_force.png" title="Diploma não vigente" alt="Diploma não vigente" height=16px width=16px>
+        {% endif %}
+        <span class="result_date">
+          <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
+        {{ result.date|date:"Y-m-d" }}</span></a> -
+        <a href="{% url 'document_display' docid=result.id %}">
+        <span class="result_tipo">{{ result.doc_type }}</span>
+        <span class="result_number">{{ result.number }}</span></a> -
+        <span class="result_emiting">{{ result.emiting_body }}</span>
+        {% if result.notes %}<p class="result_notes">{{ result.note_abrv }}</p>{% endif %}
+      </li>
+      {% empty %}
+      <li>Não temos resultados de montento, por favor volte mais tarde.
+      {% endfor %}
+    </ul>
+
+  </div>
+
+</div>
+{% endblock %}
+
