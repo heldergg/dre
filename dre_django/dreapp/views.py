@@ -38,6 +38,7 @@ abreviation_list = (
     (r'dec\.?\s*lei\.?', 'decreto-lei'),
     (r'd\.?\s*lei\.?', 'decreto-lei'),
     (r'dec\s*lei', 'decreto-lei'),
+    (r'dec-lei', 'decreto-lei'),
     (r'decreto\s*lei', 'decreto-lei'),
 )
 
