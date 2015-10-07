@@ -299,6 +299,10 @@ def document_display( request, docid ):
 
     document = get_object_or_404(Document, pk=docid )
 
+    if document.no_index():
+        return redirect(reverse( 'forgetme'))
+
+
     context['document'] = document
     context['url'] = urllib.quote_plus( SITE_URL + reverse( 'document_display',
             kwargs = { 'docid': docid }) )

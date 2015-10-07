@@ -2,6 +2,7 @@
 
 # Global Imports:
 from django.conf.urls import patterns, url
+from django.views.generic import TemplateView
 
 urlpatterns = patterns('dreapp.views',
     # Browsing index:
@@ -33,6 +34,11 @@ urlpatterns = patterns('dreapp.views',
 
     # Last documents
     url(r'^last/$','last', name='last'),
+
+    # Forget me page
+    url(r'^forgetme$',
+        TemplateView.as_view(template_name='forgetme.html'),
+        name='forgetme'),
     )
 
 ##
@@ -40,7 +46,6 @@ urlpatterns = patterns('dreapp.views',
 ##
 
 from dreapp.syndication import LatestEntriesFeed
-from django.views.generic import TemplateView
 
 urlpatterns += patterns('',
     # Latest feeds
