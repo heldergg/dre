@@ -42,8 +42,8 @@ class LatestEntriesFeed(Feed):
             return object_list
         elif date:
             try:
-                date = datetime.strptime('%Y-%d-%m').date()
-                return Document.objects.filter(date__exact=date).order_by('-date')
+                date = datetime.strptime(date, '%Y-%m-%d').date()
+                return Document.objects.filter(date__exact=date).order_by('-date','doc_type', 'number')
             except:
                 # silently abort
                 pass
