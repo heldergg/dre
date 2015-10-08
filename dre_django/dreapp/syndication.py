@@ -31,17 +31,25 @@ class LatestEntriesFeed(Feed):
 
     def items(self, request):
         query = request.GET.get('q', None)
-        if not query:
-            return Document.objects.order_by('-date')[:NUMBER_ENTRIES]
-        else:
+        date  = request.GET.get('d', None)
+        if query:
             # Return an rss resulting from a database query
             indexer = Document.indexer
             results = ResultSet(indexer, query, parse_query=True).order_by('-date')
             object_list = []
             for obj in results[:NUMBER_ENTRIES_QUERY]:
                 object_list.append(obj.instance)
-
             return object_list
+        elif date:
+            try:
+                date = datetime.strptime('%Y-%d-%m').date()
+                return Document.objects.filter(date__exact=date).order_by('-date')
+            except:
+                # silently abort
+                pass
+        # Default action
+        return Document.objects.order_by('-date')[:NUMBER_ENTRIES]
+
 
     def item_title(self, item):
         return item.title()
