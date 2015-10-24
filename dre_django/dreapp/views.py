@@ -135,7 +135,11 @@ def search(request):
 
     for obj in context['page'].object_list:
         obj.instance.docid = obj.docid
-        object_list.append(obj.instance)
+        no_index = obj.instance.no_index()
+        if request.user.is_authenticated() or not no_index:
+            object_list.append(obj.instance)
+        if no_index and not request.user.is_authenticated():
+            context['forgetme'] = True
 
     context['page'].object_list = object_list
 
@@ -300,9 +304,8 @@ def document_display( request, docid ):
 
     document = get_object_or_404(Document, pk=docid )
 
-    if document.no_index():
-        return redirect(reverse( 'forgetme'))
-
+    if document.no_index() and not request.user.is_authenticated():
+        return redirect(reverse('forgetme'))
 
     context['document'] = document
     context['url'] = urllib.quote_plus( SITE_URL + reverse( 'document_display',

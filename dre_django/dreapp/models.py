@@ -584,6 +584,5 @@ class NoIndexDocument(models.Model):
     '''
     The documents listed on this page will not be indexed by the search engines
     '''
-    document  = models.ForeignKey(Document, unique=True)
     timestamp = models.DateTimeField(default = datetime.datetime.now())
-    motive    = models.CharField(max_length=1024)
+    document  = models.ForeignKey(Document, unique=True)

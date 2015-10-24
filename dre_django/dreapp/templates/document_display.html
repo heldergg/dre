@@ -28,7 +28,6 @@
   <meta property="og:site_name" content="Diários da República">
   <meta property="og:article:published_time" content="{{ document.date|date:"Y-m-d" }}">
   <meta property="og:article:author" content="{{ document.emiting_body }}">
-  {% if document.no_index %}<meta name="robots" content="nofollow,noindex,noarchive">{% endif %}
 {% endblock %}
 
 {% block body_content %}
