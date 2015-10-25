@@ -66,9 +66,10 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db.models import Q
 from django.db import transaction
+from django.db import IntegrityError
 
 # App imports
-from dreapp.models import Document, DocumentText
+from dreapp.models import Document, DocumentText, NoIndexDocument
 
 # Local imports
 import bs4
@@ -132,6 +133,8 @@ SYNONYMS = [
      u'resolução da assembleia nacional',
      u'resolução do conselho de ministros', ],
     ]
+
+NO_INDEX_CHECK=settings.NO_INDEX_CHECK
 
 ARCHIVEDIR=settings.ARCHIVEDIR
 
@@ -599,6 +602,53 @@ class DREDocSave(object):
         doc_obj.timestamp    = datetime.datetime.now()
         doc_obj.save()
 
+    def check_forgetme(self, doc_obj):
+        '''
+        Checks for a number of conditions upon which a document is added to
+        the "no indexable" table (model NoIndexDocument)
+
+        To update the NoIndexDocument table directly use:
+
+        insert into dreapp_noindexdocument (document_id)
+        select
+            dreapp_document.id
+        from
+            dreapp_document
+            left join dreapp_noindexdocument
+            on dreapp_noindexdocument.document_id = dreapp_document.id
+        where
+            series=2 and
+            (lower(doc_type) like '%contumácia%' or
+             lower(emiting_body) like '%juízo cível do tribunal%' or
+             lower(emiting_body) like '%juízo criminal%' or
+             lower(emiting_body) like '%tribunal da comarca%' or
+             lower(notes) like '%declaração de insolvência%' or
+             lower(notes) like '%exoneração do passivo%' or
+             lower(notes) like '%notificação dos credores%' or
+             lower(notes) like '%autos de processo%') and
+            dreapp_noindexdocument.document_id is null;
+        '''
+        if doc_obj.series != 2:
+            # Consider only documents on the second series
+            return
+
+        obj = doc_obj.dict_repr()
+        for key, check in NO_INDEX_CHECK:
+            st = obj[key]
+            if type(st) == list:
+                st = ' '.join(st)
+            if type(st) == str:
+                # The encoding is 'utf-8'
+                st = st.decode('utf-8')
+            st = st.lower()
+            if check in st:
+                try:
+                    forgetme = NoIndexDocument()
+                    forgetme.document = doc_obj
+                    forgetme.save()
+                except IntegrityError:
+                    pass
+                break
 
     ##
     # Update DIGESTO
@@ -730,6 +780,7 @@ class DREDocSave(object):
                               self.options['update_metadata']):
             logger.debug(msg_doc('Metadata:', self.doc))
             self.save_metadata(doc_obj)
+            self.check_forgetme(doc_obj)
         # Save digesto
         if self.mode==NEW or (self.mode==UPDATE and
                               self.options['update_digesto']):
