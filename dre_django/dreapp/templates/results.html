@@ -7,6 +7,7 @@
   </div></div>
   <ul>
     {% for result in page.object_list %}
+    {% if not result.no_index or user.is_authenticated %}
     <li class="result_item">
       <div class="result_header">
         {% if user.is_authenticated %}
@@ -32,6 +33,7 @@
       </div>
       {% if result.notes %}<p class="result_notes">{{ result.note_abrv }}</p>{% endif %}
     </li>
+    {% endif %}
     {% endfor %}
   </ul>
   {% if forgetme %}

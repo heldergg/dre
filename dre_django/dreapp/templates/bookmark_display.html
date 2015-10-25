@@ -62,6 +62,7 @@
 
   <ul>
     {% for document in results %}
+    {% if not document.no_index or user.is_authenticated %}
     <li class="result_item">
     <div class="result_header">
       {% if user.is_authenticated %}
@@ -107,6 +108,7 @@
     </div> <!-- decoration -->
 
     </li>
+    {% endif %}
     {% empty %}
     <li>Não tem bookmarks definidos.
     {% endfor %}
