@@ -34,5 +34,13 @@
     </li>
     {% endfor %}
   </ul>
+  {% if forgetme %}
+  <div class="center_text error">
+    <p>Alguns resultados poderão ter sido removidos ao abrigo do direito ao
+    esquecimento. Ver, por favor,
+    <a href="https://pt.wikipedia.org/wiki/Direito_ao_esquecimento"
+      target="_blank">Direito ao Esquecimento</a>.
+  </div>
+  {% endif %}
   {% include "pagination.html" %}
 </div>

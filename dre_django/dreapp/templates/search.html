@@ -53,14 +53,6 @@
   {% endif %}
 
   {% include "results.html" %}
-  {% if forgetme %}
-  <div class="center_text error">
-    <p>Alguns resultados poderão ter sido removidos ao abrigo do direito ao
-    esquecimento. Ver, por favor,
-    <a href="https://pt.wikipedia.org/wiki/Direito_ao_esquecimento"
-      target="_blank">Direito ao Esquecimento</a>.
-  </div>
-  {% endif %}
   <p class="noprint center_text">
   [ <span class="nobreak"><a href="{{ query }}&m={{ mquery }}&order=-date">Ordenar por data descendente</a> |</span>
   <span class="nobreak"><a href="{{ query }}&m={{ mquery }}&order=date">Ordenar por data ascendente</a> |</span>

@@ -175,7 +175,11 @@ def related( request, docid ):
 
     for obj in context['page'].object_list:
         obj.instance.docid = obj.docid
-        object_list.append(obj.instance)
+        no_index = obj.instance.no_index()
+        if request.user.is_authenticated() or not no_index:
+            object_list.append(obj.instance)
+        if no_index and not request.user.is_authenticated():
+            context['forgetme'] = True
 
     context['page'].object_list = object_list
 
@@ -293,6 +297,15 @@ def browse_day( request, year, month, day ):
         page = paginator.num_pages
 
     context['page'] = paginator.page(page)
+    object_list = []
+    for obj in context['page'].object_list:
+        no_index = obj.no_index()
+        if request.user.is_authenticated() or not no_index:
+            object_list.append(obj)
+        if no_index and not request.user.is_authenticated():
+            context['forgetme'] = True
+    context['page'].object_list = object_list
+
     context['query'] = re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] )
     context['query_date'] = re.sub(r'&date=\d+-\d+-\d+', '', '?%s' % request.META['QUERY_STRING'] )
 
