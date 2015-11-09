@@ -32,7 +32,7 @@ ALLOWED_HOSTS = [
     '.tretas.org',
     ]
 
-SITE_URL = 'http://dre.tretas.org'
+SITE_URL = '{{ SITE_URL }}'
 
 ##
 ## Database definition
@@ -133,6 +133,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
+    'dre_context_processors.site',
 )
 
 

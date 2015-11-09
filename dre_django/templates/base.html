@@ -13,7 +13,7 @@
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print" />
   <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" />
   <link rel="alternate" type="application/rss+xml" title="RSS Geral" href="{% url 'rss' %}" />
-  <link rel="search" type="application/opensearchdescription+xml" href="http://dre.tretas.org/osd.xml" title="Busca Diários da República" />
+  <link rel="search" type="application/opensearchdescription+xml" href="{{ SITE_URL }}/osd.xml" title="Busca Diários da República" />
   <script src="{{ STATIC_URL }}jquery/jquery-1.9.1.min.js"></script>
   <script src="{{ STATIC_URL }}js/base.js"></script>
   {% block header %}{% endblock %}

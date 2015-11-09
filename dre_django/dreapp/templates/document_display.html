@@ -21,8 +21,8 @@
   <!-- Open Graph protocol metadata -->
   <meta property="og:title" content="{{ document.title }}">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="http://dre.tretas.org{% url 'document_display' document.id %}">
-  <meta property="og:image" content="http://dre.tretas.org{{ STATIC_URL }}img/esfera_armilar_200.png">
+  <meta property="og:url" content="{{ SITE_URL }}{% url 'document_display' document.id %}">
+  <meta property="og:image" content="{{ SITE_URL }}{{ STATIC_URL }}img/esfera_armilar_200.png">
   <meta property="og:description" content="{{ document.note_escaped }}">
   <meta property="og:locale" content="pt_PT">
   <meta property="og:site_name" content="Diários da República">
@@ -138,11 +138,11 @@
 <div class="only_print">
   <ul>
     {% if document.plain_text %}
-    <li>Texto integral do documento: http://dre.tretas.org{{ document.plain_pdf_url }} ;
+    <li>Texto integral do documento: {{ SITE_URL }}{{ document.plain_pdf_url }} ;
     {% endif %}
     {% if document.dre_pdf %}
     <li>Extracto do Diário da República original:
-    http://dre.tretas.org{% url 'document_org_pdf' document.id %} .
+    {{ SITE_URL }}{% url 'document_org_pdf' document.id %} .
     {% endif %}
   </ul>
 </div>
@@ -246,7 +246,7 @@ leitura do Diário da República correspondente. Não nos responsabilizamos por
 quaisquer incorrecções produzidas na transcrição do original para este formato.
 
 <div class="only_print">
-  <p>O URL desta página é: <span itemprop="url">http://dre.tretas.org{% url 'document_display' document.id %}</span>
+  <p>O URL desta página é: <span itemprop="url">{{ SITE_URL }}{% url 'document_display' document.id %}</span>
 </div>
 
 </div>
