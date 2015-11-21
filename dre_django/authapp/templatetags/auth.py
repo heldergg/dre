@@ -48,7 +48,7 @@ class AvatarNode(GravatarNode):
     def render(self, context):
         try:
             size = self.size.resolve(context)
-            gravatar_url = 'http://www.gravatar.com/avatar/' + self.hash( context ) + "?"
+            gravatar_url = 'https://www.gravatar.com/avatar/' + self.hash( context ) + "?"
             gravatar_url += urllib.urlencode({'d':DEFAULT_GRAVATAR, 's':str(size)})
             return gravatar_url
         except template.VariableDoesNotExist:
