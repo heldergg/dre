@@ -330,7 +330,7 @@ def document_display( request, docid ):
 def forgetme( request ):
     content=render_to_string('forgetme.html',
             context_instance=RequestContext(request))
-    return HttpResponse(content, status=404)
+    return HttpResponse(content, status=410)
 
 def document_org_pdf( request, docid ):
     document = get_object_or_404(Document, pk=docid )
