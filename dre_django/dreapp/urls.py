@@ -4,12 +4,6 @@
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 
-class TemplateView404(TemplateView):
-    status = 404
-    def render_to_response(self, context, **response_kwargs):
-        response_kwargs['status'] = self.status
-        return super(TemplateView, self).render_to_response(context, **response_kwargs)
-
 urlpatterns = patterns('dreapp.views',
     # Browsing index:
     url(r'^data/$', 'browse', name='browse'),
@@ -40,11 +34,6 @@ urlpatterns = patterns('dreapp.views',
 
     # Last documents
     url(r'^last/$','last', name='last'),
-
-    # Forget me page
-    url(r'^forgetme$',
-        TemplateView404.as_view(template_name='forgetme.html'),
-        name='forgetme'),
     )
 
 ##

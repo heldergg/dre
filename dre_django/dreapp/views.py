@@ -16,6 +16,7 @@ from django.db.models import Q, Max, Min
 from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.db import connections
 
 # Local Imports:
@@ -313,7 +314,7 @@ def document_display( request, docid ):
     document = get_object_or_404(Document, pk=docid )
 
     if document.no_index() and not request.user.is_authenticated():
-        return redirect(reverse('forgetme'))
+        return forgetme(request)
 
     context['document'] = document
     context['url'] = urllib.quote_plus( SITE_URL + reverse( 'document_display',
@@ -325,6 +326,11 @@ def document_display( request, docid ):
 
     return render_to_response('document_display.html', context,
                 context_instance=RequestContext(request))
+
+def forgetme( request ):
+    content=render_to_string('forgetme.html',
+            context_instance=RequestContext(request))
+    return HttpResponse(content, status=404)
 
 def document_org_pdf( request, docid ):
     document = get_object_or_404(Document, pk=docid )
@@ -343,8 +349,6 @@ def document_org_pdf( request, docid ):
 
 def document_json( request, docid ):
     document = get_object_or_404(Document, pk=docid )
-
-
     return HttpResponse(json.dumps(document.dict_repr()),
             content_type='application/json')
 
