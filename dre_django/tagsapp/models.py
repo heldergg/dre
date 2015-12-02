@@ -5,8 +5,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db import transaction
-
-import datetime
+from django.utils import timezone
 
 ##
 # Exceptions
@@ -34,7 +33,7 @@ class Tag(models.Model):
     objects = TagManager()
 
     user =  models.ForeignKey(User)
-    timestamp = models.DateTimeField(default=datetime.datetime.now)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     name = models.CharField(max_length=128)
     public = models.BooleanField( default=True )

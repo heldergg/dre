@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-import datetime
+from django.utils import timezone
 
 ##
 #  Notes
@@ -18,7 +18,7 @@ import datetime
 
 class Note(models.Model):
     user =  models.ForeignKey(User)
-    timestamp = models.DateTimeField(default=datetime.datetime.now)
+    timestamp = models.DateTimeField(default=timezone.now)
     public = models.BooleanField( default=True )
 
     txt = models.TextField(max_length = 1024*20)

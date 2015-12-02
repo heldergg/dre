@@ -4,7 +4,6 @@ import os
 import re
 import cgi
 
-import datetime
 from django.conf import settings
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -12,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
@@ -209,7 +209,7 @@ class Document(models.Model):
     dre_pdf = models.URLField()
     pdf_error = models.BooleanField(default=False)
 
-    timestamp = models.DateTimeField(default=datetime.datetime.now())
+    timestamp = models.DateTimeField(default=timezone.now)
 
     # Reverse generic relations
     bookmarks = generic.GenericRelation(Bookmark)
@@ -422,7 +422,7 @@ class DocumentCache(models.Model):
     document = models.ForeignKey(Document, unique=True)
     version  = models.IntegerField()
     _html    = models.TextField()
-    timestamp = models.DateTimeField(default=datetime.datetime.now())
+    timestamp = models.DateTimeField(default=timezone.now)
 
     objects = CacheManager()
 
@@ -526,7 +526,7 @@ class DocumentCache(models.Model):
     def build_cache(self):
         # Rebuild the cache
         self.version = DOCUMENT_VERSION
-        self.timestamp = datetime.datetime.now()
+        self.timestamp = timezone.now()
         filename = self.document.plain_pdf_filename()
         try:
             doc_text = DocumentText.objects.get( document = self.document )
@@ -575,7 +575,7 @@ class DocumentText(models.Model):
     This table is used to store raw html retrieved from dre.pt
     '''
     document  = models.ForeignKey(Document)
-    timestamp = models.DateTimeField(default = datetime.datetime.now())
+    timestamp = models.DateTimeField(default = timezone.now)
     text_url  = models.URLField()
 
     text = models.TextField()
@@ -584,5 +584,5 @@ class NoIndexDocument(models.Model):
     '''
     The documents listed on this page will not be indexed by the search engines
     '''
-    timestamp = models.DateTimeField(default = datetime.datetime.now())
+    timestamp = models.DateTimeField(default = timezone.now)
     document  = models.ForeignKey(Document, unique=True)
