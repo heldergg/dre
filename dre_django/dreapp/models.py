@@ -5,7 +5,8 @@ import re
 import cgi
 
 from django.conf import settings
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -212,9 +213,9 @@ class Document(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
 
     # Reverse generic relations
-    bookmarks = generic.GenericRelation(Bookmark)
-    tags = generic.GenericRelation(TaggedItem)
-    user_notes = generic.GenericRelation(Note)
+    bookmarks = GenericRelation(Bookmark)
+    tags = GenericRelation(TaggedItem)
+    user_notes = GenericRelation(Note)
 
     # Connection to other documents
     connects_to = models.ManyToManyField('self',  symmetrical=False)

@@ -7,7 +7,7 @@ except ImportError:
     md = False
 
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone
@@ -27,7 +27,7 @@ class Note(models.Model):
     # https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def html(self):
         if md:

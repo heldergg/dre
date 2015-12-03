@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import os, sys
+import django
+
 
 sys.path.append(os.path.abspath('../lib/'))
 

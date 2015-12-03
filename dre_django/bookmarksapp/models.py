@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 import datetime
@@ -19,7 +19,7 @@ class Bookmark(models.Model):
     # https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     def __unicode__(self):
         return '<bm: %s - %s - model: %s>' % (self.user.username,

@@ -7,8 +7,8 @@ To use the tags defined on this module you must load them to your template with:
 
 The following tags are defined:
 
-{% toggle_bookmark <object> %} - url to toggle a bookmarks on an object. 
-                                 The user must be logged on the system. 
+{% toggle_bookmark <object> %} - url to toggle a bookmarks on an object.
+                                 The user must be logged on the system.
 
 {% bookmark_icon <object> %}   - returns the bookmark icon (on or off).
 '''
@@ -27,9 +27,9 @@ register = template.Library()
 
 # Configuration
 STATIC_URL = getattr(settings, 'STATIC_URL', '/static/')
-BOOKMARK_ON_ICON = getattr( settings, 'BOOKMARK_ON_ICON', 
+BOOKMARK_ON_ICON = getattr( settings, 'BOOKMARK_ON_ICON',
                             '%simg/bookmark_on.png' % STATIC_URL)
-BOOKMARK_OFF_ICON = getattr( settings, 'BOOKMARK_OFF_ICON', 
+BOOKMARK_OFF_ICON = getattr( settings, 'BOOKMARK_OFF_ICON',
                              '%simg/bookmark_off.png' % STATIC_URL)
 
 ##
@@ -61,15 +61,15 @@ class BookmarkIconNode(BookmarkNode):
         img = '<img width=16 height=16 src="%s" title="%s">'
         try:
             obj, content_type = self.resolve_object(context)
-            user = context['request'].user 
-            
-            try: 
+            user = context['request'].user
+
+            try:
                 bookmark = Bookmark.objects.get( user = user,
                                                  object_id  = obj.id,
-                                                 content_type = content_type ) 
-                return img % ( BOOKMARK_ON_ICON, 'Remover marcador' ) 
+                                                 content_type = content_type )
+                return img % ( BOOKMARK_ON_ICON, 'Remover marcador' )
             except ObjectDoesNotExist:
-                return img % ( BOOKMARK_OFF_ICON, 'Criar marcador' ) 
+                return img % ( BOOKMARK_OFF_ICON, 'Criar marcador' )
         except template.VariableDoesNotExist:
             return ''
 
