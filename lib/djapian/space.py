@@ -3,7 +3,7 @@ import new
 
 from django.db import models
 from django.conf import settings
-from django.utils.datastructures import SortedDict
+from collections import OrderedDict
 
 from djapian import utils
 from djapian.database import Database
@@ -14,7 +14,7 @@ class IndexSpace(object):
 
     def __init__(self, base_dir, name):
         self._base_dir = os.path.abspath(base_dir)
-        self._indexers = SortedDict()
+        self._indexers = OrderedDict()
         self._name = name
 
         self.__class__.instances.append(self)
