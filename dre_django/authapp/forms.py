@@ -4,7 +4,7 @@
 
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django import forms
 from middleware import threadlocals
 
