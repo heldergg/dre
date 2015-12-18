@@ -22,7 +22,7 @@ class TagManager(models.Manager):
     def user_tags( self, user, public_only ):
         '''Returns the tags available to a given user'''
         if public_only:
-            return super(TagManager, self).get_query_set().filter(
+            return super(TagManager, self).get_queryset().filter(
                 user__exact = user).filter(
                 public__exact = True).order_by('name')
         else:

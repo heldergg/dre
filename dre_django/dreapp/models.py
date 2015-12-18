@@ -397,7 +397,7 @@ DOCUMENT_VERSION = getattr(settings, 'DOCUMENT_VERSION', 1)
 class CacheManager(models.Manager):
     def get_cache_object(self, document):
         try:
-            cache = super(CacheManager, self).get_query_set(
+            cache = super(CacheManager, self).get_queryset(
                     ).get(document=document)
         except ObjectDoesNotExist:
             cache = DocumentCache()
