@@ -23,7 +23,7 @@ def is_ajax( template = 'is_ajax_template.html', referer = False ):
         def inner_wrapper( request, **karg ):
             is_ajax = request.is_ajax()
             context = f( request, **karg )
-            redirect_to = request.REQUEST.get('next', '')
+            redirect_to = request.GET.get('next', '')
             if is_ajax:
                 return HttpResponse(json.dumps(context),
                             content_type='application/json')

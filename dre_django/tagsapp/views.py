@@ -164,7 +164,7 @@ def suggest( request ):
 def create_edit( request, tag_edit=None ):
     context = {}
     context['title'] = 'Editar Etiqueta' if tag_edit else 'Criar Etiqueta'
-    redirect_to = request.REQUEST.get('next', '')
+    redirect_to = request.GET.get('next', '')
 
     if request.method == 'POST':
         form = ( TagEditForm(request.POST, instance=tag_edit)
@@ -209,7 +209,7 @@ def edit( request, tag_id ):
 @login_required
 def delete( request, tag_id ):
     context = {}
-    redirect_to = request.REQUEST.get('next', '')
+    redirect_to = request.GET.get('next', '')
 
     tag = get_object_or_404(Tag, pk = tag_id)
     user = tag.user

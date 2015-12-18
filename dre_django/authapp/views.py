@@ -34,7 +34,7 @@ def do_login(request, template_name='login.html',
 
     show_captcha = ( obj.failures >= settings.FAILURE_LIMIT)
 
-    redirect_to = request.REQUEST.get(redirect_field_name, '')
+    redirect_to = request.GET.get(redirect_field_name, '')
 
     if request.method == "POST":
         form = authentication_form(data=request.POST, show_captcha=show_captcha)
@@ -87,7 +87,7 @@ def do_logout(request, next_page=None, template_name='logout.html',
 
     logout(request)
     if next_page is None:
-        redirect_to = request.REQUEST.get(redirect_field_name, '')
+        redirect_to = request.GET.get(redirect_field_name, '')
         if redirect_to:
             return HttpResponseRedirect(redirect_to)
         else:
@@ -106,7 +106,7 @@ def registration(request):
     '''User registration.'''
     context= {}
 
-    redirect_to = request.REQUEST.get(REDIRECT_FIELD_NAME, '')
+    redirect_to = request.GET.get(REDIRECT_FIELD_NAME, '')
     context['next'] = redirect_to
 
     # User Info

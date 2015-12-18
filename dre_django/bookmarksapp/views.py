@@ -44,7 +44,7 @@ def toggle_bookmark( request, ctype_id, object_id ):
     except ObjectDoesNotExist:
         raise Http404
 
-    redirect_to = request.REQUEST.get('next', '')
+    redirect_to = request.GET.get('next', '')
 
     bookmark = get_bookmark( user, obj )
 
@@ -72,7 +72,7 @@ def toggle_public( request, ctype_id, object_id ):
     except ObjectDoesNotExist:
         raise Http404
 
-    redirect_to = request.REQUEST.get('next', '')
+    redirect_to = request.GET.get('next', '')
 
     bookmark = get_bookmark( user, obj )
 
