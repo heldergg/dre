@@ -3,7 +3,7 @@
 import os
 import imp
 
-from django.utils.importlib import import_module
+from importlib import import_module
 
 class NoModuleError(Exception):
     """

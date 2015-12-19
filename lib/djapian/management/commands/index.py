@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models, transaction
-from django.utils.daemonize import become_daemon
 from django.contrib.contenttypes.models import ContentType
 
 import os
@@ -34,7 +33,6 @@ def get_indexers(content_type):
             for space in IndexSpace.instances]
     )
 
-@transaction.commit_manually
 def update_changes(verbose, timeout, once, per_page, commit_each, app_models=None):
     counter = [0]
 
@@ -48,12 +46,6 @@ def update_changes(verbose, timeout, once, per_page, commit_each, app_models=Non
             sys.stdout.write('.')
             sys.stdout.flush()
 
-    commiter = Commiter.create(commit_each)(
-        lambda: None,
-        transaction.commit,
-        transaction.rollback
-    )
-
     while True:
         count = Change.objects.count()
         if count > 0 and verbose:
@@ -63,14 +55,13 @@ def update_changes(verbose, timeout, once, per_page, commit_each, app_models=Non
             indexers = get_indexers(ct)
 
             for page in paginate(
-                            Change.objects.filter(content_type=ct, action__in=('add', 'edit'))\
-                                .select_related('content_type')\
-                                .order_by('object_id'),
-                            per_page
-                        ):# The objects must be sorted by date
-                commiter.begin_page()
-
-                try:
+                    Change.objects.filter(content_type=ct,
+                                          action__in=('add', 'edit')
+                                ).select_related('content_type'
+                                ).order_by('object_id'),
+                    per_page
+                    ):# The objects must be sorted by date
+                with transaction.atomic():
                     for indexer in indexers:
                         indexer.update(
                             ct.model_class()._default_manager.filter(
@@ -80,29 +71,19 @@ def update_changes(verbose, timeout, once, per_page, commit_each, app_models=Non
                             per_page,
                             commit_each
                         )
-
                     for change in page.object_list:
                         change.delete()
 
-                    commiter.commit_page()
-                except Exception:
-                    if commit_each:
-                        for change in page.object_list[:counter[0]]:
-                            change.delete()
-                        commiter.commit_object()
-                    else:
-                        commiter.cancel_page()
-                    raise
-
                 reset_counter()
 
-        for ct in get_content_types(app_models, 'delete'):
-            indexers = get_indexers(ct)
-
-            for change in Change.objects.filter(content_type=ct, action='delete'):
-                for indexer in indexers:
-                    indexer.delete(change.object_id)
-                change.delete()
+        with transaction.atomic():
+            for ct in get_content_types(app_models, 'delete'):
+                indexers = get_indexers(ct)
+                for change in Change.objects.filter(content_type=ct,
+                            action='delete'):
+                    for indexer in indexers:
+                        indexer.delete(change.object_id)
+                    change.delete()
 
         # If using transactions and running Djapian as a daemon, transactions
         # need to be committed on each iteration, otherwise Djapian will not
@@ -115,7 +96,9 @@ def update_changes(verbose, timeout, once, per_page, commit_each, app_models=Non
         #                 should implement this method with void functionality".
         # Consistent Nonlocking Reads (InnoDB):
         # http://dev.mysql.com/doc/refman/5.0/en/innodb-consistent-read-example.html
-        transaction.commit()
+
+        # Removed when porting to Django 1.9
+        # transaction.commit()
 
         if once:
             break
@@ -140,9 +123,6 @@ class Command(BaseCommand):
         make_option('--verbose', dest='verbose', default=False,
                     action='store_true',
                     help='Verbosity output'),
-        make_option('--daemonize', dest='make_daemon', default=False,
-                    action='store_true',
-                    help='Do not fork the process'),
         make_option('--loop', dest='loop', default=False,
                     action='store_true',
                     help='Run update loop indefinetely'),
@@ -160,14 +140,13 @@ class Command(BaseCommand):
                     action='store_true',
                     help='Commit/flush changes on every document update'),
     )
-    help = 'This is the Djapian daemon used to update the index based on djapian_change table.'
+    help = 'This is the Djapian tool used to update the index based on djapian_change table.'
 
     requires_model_validation = True
 
     def handle(self, *app_labels, **options):
         verbose = options['verbose']
 
-        make_daemon = options['make_daemon']
         loop = options['loop']
         timeout = options['timeout']
         rebuild_index = options['rebuild_index']
@@ -175,9 +154,6 @@ class Command(BaseCommand):
         commit_each = options['commit_each']
 
         utils.load_indexes()
-
-        if make_daemon:
-            become_daemon()
 
         if app_labels:
             try:
@@ -190,14 +166,14 @@ class Command(BaseCommand):
                     rebuild(verbose, per_page, commit_each, app_models)
                 else:
                     update_changes(verbose, timeout,
-                                   not (loop or make_daemon),
+                                   not loop,
                                    per_page, commit_each, app_models)
         else:
             if rebuild_index:
                 rebuild(verbose, per_page, commit_each)
             else:
                 update_changes(verbose, timeout,
-                               not (loop or make_daemon),
+                               not loop,
                                per_page, commit_each)
 
         if verbose:
