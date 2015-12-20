@@ -304,7 +304,7 @@ class Indexer(object):
             if database is None:
                 database = self._db.open(write=True)
             database.delete_document(self._create_uid(obj))
-        except (IOError, RuntimeError, xapian.DocNotFoundError), e:
+        except (IOError, RuntimeError, xapian.DocNotFoundError):
             pass
 
     def document_count(self):
@@ -467,7 +467,7 @@ class Indexer(object):
 
     def _get_object_weight(self, obj):
         """
-        Returns a default weight value for the object. 
+        Returns a default weight value for the object.
         """
         if hasattr(self.__class__, 'weight'):
             obj_weight = self.field_class(self.__class__.weight, self._model).resolve(obj)
