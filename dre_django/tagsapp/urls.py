@@ -1,25 +1,29 @@
 # -*- coding: utf-8 -*-
 
+# Global Imports
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('tagsapp.views',
+# Local Imports
+from tagsapp import views
+
+urlpatterns = [
     ##
     # Tag management
 
     # Create tag
-    url( r'create/$', 'create', name= 'create_tag' ),
+    url( r'create/$', views.create, name= 'create_tag' ),
 
     # Edit tag
-    url( r'edit/(?P<tag_id>\d+)/$', 'edit', name= 'edit_tag' ),
+    url( r'edit/(?P<tag_id>\d+)/$', views.edit, name= 'edit_tag' ),
 
     # Delete tag
-    url( r'delete/(?P<tag_id>\d+)/$', 'delete', name= 'delete_tag' ),
+    url( r'delete/(?P<tag_id>\d+)/$', views.delete, name= 'delete_tag' ),
 
     # Show tag list
-    url( r'display/$', 'display', name= 'tag_display' ),
+    url( r'display/$', views.display, name= 'tag_display' ),
 
     # Autocomplete suggestions (AJAX only)
-    url( r'suggest/$', 'suggest', name= 'tag_suggest'),
+    url( r'suggest/$', views.suggest, name= 'tag_suggest'),
 
 
     ##
@@ -27,13 +31,12 @@ urlpatterns = patterns('tagsapp.views',
 
     # Tag Object
     url( r'object/(?P<ctype_id>\d+)/(?P<object_id>\d+)/$',
-         'tag_object',
+         views.tag_object,
          name= 'tag_object' ),
 
     # Untag object
     url( r'object/remove/(?P<item_id>\d+)/$',
-         'untag_object',
+         views.untag_object,
          name= 'untag_object' ),
-    
-    )
+    ]
 

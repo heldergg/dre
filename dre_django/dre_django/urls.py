@@ -9,9 +9,11 @@ from django.conf import settings
 from dre_django.sitemap import StaticViewSitemap
 from dreapp.sitemap import DocumentSitemap
 
-urlpatterns = patterns('',
+from dreapp import views
+
+urlpatterns = [
     # Index:
-    url(r'^$', 'dreapp.views.search'),
+    url(r'^$', views.search),
 
     # About:
     url(r'^about/',
@@ -29,40 +31,35 @@ urlpatterns = patterns('',
         name='not_implemented'),
 
     # Authentication and registration
-    (r'^auth/', include('authapp.urls')),
+    url(r'^auth/', include('authapp.urls')),
 
     # Bookmarks
-    (r'^bookmark/', include('bookmarksapp.urls')),
+    url(r'^bookmark/', include('bookmarksapp.urls')),
 
     # Tags
-    (r'^tag/', include('tagsapp.urls')),
+    url(r'^tag/', include('tagsapp.urls')),
 
     # Notes
-    (r'^notes/', include('notesapp.urls')),
+    url(r'^notes/', include('notesapp.urls')),
 
     # Settings
-    (r'settings/', include('settingsapp.urls')),
+    url(r'settings/', include('settingsapp.urls')),
 
     # dreapp
-    (r'^dre/', include('dreapp.urls')),
+    url(r'^dre/', include('dreapp.urls')),
+    ]
 
-    # Examples:
-    # url(r'^$', 'dre_django.views.home', name='home'),
-    # url(r'^dre_django/', include('dre_django.foo.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
-)
 
 sitemaps = {
         'static': StaticViewSitemap,
         'documents': DocumentSitemap,
         }
 
-urlpatterns += patterns('django.contrib.sitemaps.views',
-        url(r'^sitemap\.xml$', 'index', {'sitemaps': sitemaps}),
-        url(r'^sitemap-(?P<section>.+)\.xml$', 'sitemap', {'sitemaps': sitemaps}),
-        )
+from django.contrib.sitemaps import views
+urlpatterns += [
+        url(r'^sitemap\.xml$', views.index, {'sitemaps': sitemaps}),
+        url(r'^sitemap-(?P<section>.+)\.xml$', views.sitemap, {'sitemaps': sitemaps}),
+        ]
 
 
 if settings.DEBUG:

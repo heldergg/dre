@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import patterns, url
+# Global Imports
+from django.conf.urls import url
 
-urlpatterns = patterns('settingsapp.views',
+# Local Imports
+from settingsapp import views
+
+urlpatterns = [
     # Settings configuration
-    url(r'^$', 'settings_form', name='settings_form'),
+    url(r'^$', views.settings_form, name='settings_form'),
+    ]
 
-    )
