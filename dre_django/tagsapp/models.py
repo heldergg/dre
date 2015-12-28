@@ -26,7 +26,7 @@ class TagManager(models.Manager):
                 user__exact = user).filter(
                 public__exact = True).order_by('name')
         else:
-            return super(TagManager, self).get_query_set().filter(
+            return super(TagManager, self).get_queryset().filter(
                 user__exact = user).order_by('name')
 
 class Tag(models.Model):
