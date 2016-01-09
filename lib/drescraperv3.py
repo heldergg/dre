@@ -84,7 +84,7 @@ import dreapp.keyword # Necessary to create the keyword generating events
 
 # URL where to find the list of published journals for a given date
 INDEX_URL = ('https://dre.pt/web/guest/pesquisa-avancada/'
-             '-/asearch/advanced/maximized?types=DR&dataPublicacao=%s'
+             '-/asearch/advanced/maximized?types=DR&dataPublicacao=%s&perPage=1000'
             )
 
 JOURNAL_URL = ('https://dre.pt/web/guest/pesquisa-avancada/'
