@@ -50,10 +50,11 @@ def usage():
         --filter_number <number>
                             Process only documents with this number
 
-        Update options, choose only one:
+        Update options:
 
         --update            Update mode, re-reads the documents
         --update_metadata   Update only the metadata
+        --dont_update_notes To use with --update_metadata
 
         NOTE: on every update option if a new document is found it will be
         retrieved completely.
@@ -72,7 +73,7 @@ if __name__ == '__main__':
                                     'no_series_1', 'no_series_2',
                                     'filter_type=', 'filter_number=',
                                     'update',
-                                    'update_metadata',
+                                    'update_metadata','dont_update_notes'
                                    ])
     except getopt.GetoptError, err:
         print str(err)
@@ -97,15 +98,15 @@ if __name__ == '__main__':
             filter_doc['number'] = a.lower()
         elif o == '--update':
             options['update'] = True
+        elif o == '--dont_update_notes':
+            options['update_notes'] = False
         elif o == '--update_metadata':
-            options = {
-                'update': True,
-                'update_metadata': True,
-                'update_digesto': False,
-                'update_cache': False,
-                'update_inforce': False,
-                'save_pdf': False,
-                }
+            options['update']=True
+            options['update_metadata']=True
+            options['update_digesto']=False
+            options['update_cache']=False
+            options['update_inforce']=False
+            options['save_pdf']=False
 
     # Commands
     for o, a in opts:

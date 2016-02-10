@@ -213,7 +213,6 @@ def check_dirs(date):
     return archive_dir
 
 def save_file(filename, url):
-    k = 1
     data_blob=fetch_url(url)[1]
     with open(filename, 'wb') as f:
         f.write(data_blob)
@@ -489,6 +488,7 @@ class DREDocSave(object):
                 'update_digesto': True,
                 'update_cache': True,
                 'update_inforce': True,
+                'update_notes': True,
                 'save_pdf': True,
                 }
         self.options=Options(options, default_options)
@@ -593,7 +593,8 @@ class DREDocSave(object):
         doc_obj.conditional  = False
         doc_obj.processing   = False
         doc_obj.date         = journal_data['date']
-        doc_obj.notes        = doc_data['notes']
+        if self.options['update_notes']:
+            doc_obj.notes    = doc_data['notes']
         doc_obj.plain_text   = ''
         doc_obj.dre_pdf      = doc_data['pdf_url']
         doc_obj.pdf_error    = False
