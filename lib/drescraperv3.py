@@ -69,7 +69,7 @@ from django.db import transaction
 from django.db import IntegrityError
 
 # App imports
-from dreapp.models import Document, DocumentText, NoIndexDocument
+from dreapp.models import Document, DocumentText, DocumentCache, NoIndexDocument
 
 # Local imports
 import bs4
@@ -492,6 +492,7 @@ class DREDocSave(object):
                 'save_pdf': True,
                 }
         self.options=Options(options, default_options)
+        self.document_text = False
 
     ##
     # Save metadata
@@ -595,7 +596,6 @@ class DREDocSave(object):
         doc_obj.date         = journal_data['date']
         if self.options['update_notes']:
             doc_obj.notes    = doc_data['notes']
-        doc_obj.plain_text   = ''
         doc_obj.dre_pdf      = doc_data['pdf_url']
         doc_obj.pdf_error    = False
         doc_obj.dr_number    = journal_data['dr_number']
@@ -686,6 +686,7 @@ class DREDocSave(object):
         document_text.text_url = DIGESTO_URL % self.doc.data['digesto']
         document_text.text = text
         document_text.save()
+        self.document_text = True
 
     def process_digesto(self, doc_obj):
         '''
@@ -720,8 +721,11 @@ class DREDocSave(object):
 
     def update_cache( self, doc_obj ):
         # Create the document html cache
-        if doc_obj.plain_text:
-            DocumentCache.objects.get_cache(doc_obj)
+        if self.document_text:
+            print "#" * 80
+            print "#" * 80
+            html = DocumentCache.objects.get_cache(doc_obj)
+            print html
 
     ##
     # Update inforce

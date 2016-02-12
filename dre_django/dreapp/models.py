@@ -206,7 +206,7 @@ class Document(models.Model):
 
     notes = models.CharField(max_length=20480)
 
-    plain_text = models.URLField()
+    plain_text = models.URLField(default='')
     dre_pdf = models.URLField()
     pdf_error = models.BooleanField(default=False)
 
@@ -390,7 +390,7 @@ class Document(models.Model):
         '''
         Returns True if the document is present in the NoIndexDocument table
         '''
-        return bool(self.noindexdocument_set.all())
+        return hasattr(self,'noindexdocument')
 
 DOCUMENT_VERSION = getattr(settings, 'DOCUMENT_VERSION', 1)
 
@@ -420,7 +420,7 @@ class DocumentCache(models.Model):
     invalidate the Document cache we only have to increase the DOCUMENT_VERSION
     value.
     '''
-    document = models.ForeignKey(Document, unique=True)
+    document = models.OneToOneField(Document)
     version  = models.IntegerField()
     _html    = models.TextField()
     timestamp = models.DateTimeField(default=timezone.now)
@@ -586,4 +586,4 @@ class NoIndexDocument(models.Model):
     The documents listed on this page will not be indexed by the search engines
     '''
     timestamp = models.DateTimeField(default = timezone.now)
-    document  = models.ForeignKey(Document, unique=True)
+    document  = models.OneToOneField(Document)
