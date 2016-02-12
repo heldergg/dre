@@ -722,10 +722,7 @@ class DREDocSave(object):
     def update_cache( self, doc_obj ):
         # Create the document html cache
         if self.document_text:
-            print "#" * 80
-            print "#" * 80
             html = DocumentCache.objects.get_cache(doc_obj)
-            print html
 
     ##
     # Update inforce
