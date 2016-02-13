@@ -111,9 +111,25 @@ ul.horizontal_list li {
 /* Content */
 /***********/
 
+#wrap {
+  margin:0;
+  padding:0;
+  height: auto;
+  overflow: hidden;
+}
+
 #content {
   padding: 1em;
+  width: auto;
+  overflow: hidden;
   }
+
+#main-sidebar {
+  margin: 1em 0.5em 0 0;
+  padding:0;
+  float:right;
+  width: 300px;
+}
 
 .content-text {
   max-width:50em;
