@@ -205,8 +205,7 @@ def browse( request ):
                 context_instance=RequestContext(request))
 
 def today_results( request ):
-    date = datetime.date.today()
-
+    date = Document.objects.aggregate(Max('date'))['date__max']
     return redirect( reverse('browse_day',
         kwargs= { 'year': date.year,
                   'month': date.month,

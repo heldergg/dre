@@ -5,10 +5,10 @@
   <title>{% block title %}{% endblock %}</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css?v=3" media="screen" />
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style_normal.css?v=3"
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style_normal.css"
     media="screen and (min-width:801px)" />
-  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style_mobile.css?v=3"
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style_mobile.css"
     media="screen and (max-width:800px)" />
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print" />
   <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" />
@@ -48,7 +48,7 @@
     <div id="menu_left">
       <ul class="horizontal_list">
         <li><a href="/">Procurar</a>
-        <li><a href="{% url 'today_results' %}" title="Documentos publicados hoje ou na data indicada.">Hoje</a>
+        <li><a href="{% url 'today_results' %}" title="Documentos publicados hoje ou na data indicada. É apresentada a última data com documentos.">Por data</a>
         <li><a href="{% url 'top' %}" title="Documentos mais vistos pelos utilizadores deste site.">Top</a>
         {% if user.is_authenticated %}
         <li><a href="{% url 'bookmark_display' user.id %}">Marcadores</a>
