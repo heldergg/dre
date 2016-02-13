@@ -331,3 +331,8 @@ select {
   opacity: 0.8;
 }
 
+/* Mix */
+
+.only-mobile {
+  display: none;
+}

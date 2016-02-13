@@ -225,6 +225,10 @@ li.result_item {
  * Text pages
  */
 
+#wrap {
+  margin:auto;
+}
+
 #main-sidebar {
   display: none;
 }
@@ -240,3 +244,9 @@ li.result_item {
 div#sidebar { }
 
 div#content_column { }
+
+/* Mix */
+
+.only-mobile {
+  margin: 1em 0.5em 0 0.5em;
+}
