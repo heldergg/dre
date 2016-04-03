@@ -261,3 +261,41 @@ form#alone p {
 form#alone input {
   max-width: 15em;
 }
+
+/**************
+ * Page marks *
+ **************/
+
+#pagemarks {
+  height: 2em;
+  position:fixed;
+  right:0.3em;
+  bottom:0.3em;
+  opacity: 0.4;
+  z-index: 100;
+}
+.circle {
+  padding:0;
+  color: red;
+  border-radius: 1em;
+  width: 2em;
+  height: 2em;
+  background-color: gainsboro;
+  border: 1px solid gray;
+  text-align: center;
+  display:table-cell;
+  vertical-align:middle;
+  cursor: pointer;
+}
+.flag {
+  width: 2em;
+  height: 2em;
+  position:absolute;
+  left:0.3em;
+  opacity: 0.4;
+  z-index: 100;
+}
+.marker {
+  background-color: whitesmoke;
+}
+

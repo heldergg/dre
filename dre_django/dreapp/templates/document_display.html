@@ -15,6 +15,7 @@
   </script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
   {% endif %}
+  <script src="{{ STATIC_URL }}js/pagemarks.js"></script>
   <meta name="keywords" content="portugal,leis,legislação,{{ document.title }}, diário da república, documento, diploma, {{ document.doc_type.title }}, {{ document.date|date:"Y-m-d" }}, {{ document.date|date:"Y" }}, {{ document.c_emitting }}">
   <meta name="description" content="{{ document.note_escaped }}">
   <meta name="author" content="{{ document.c_emitting }}">
@@ -32,6 +33,13 @@
 
 {% block body_content %}
 {% show_public_notes document %}
+
+<div id="pagemarks" class="noprint" style="display:none;">
+  <div class="circle" id="go_up" title="Saltar para o marcador anterior">&uarr;</div>
+  <div class="circle marker" id="mark" title="Colocar um marcador nesta posição de página">M</div>
+  <div class="circle" id="go_down" title="Saltar para o marcador seguinte">&darr;</div>
+</div>
+
 <div itemscope itemtype="http://schema.org/Article" class="content-text">
 
 {% if user.is_authenticated %}

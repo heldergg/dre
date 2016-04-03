@@ -121,7 +121,29 @@
   <p><tt>ano:1989 mês:5 tipo:portaria</tt>
 
   <hr>
-  <h2>Notas</h2>
+  <a name="pagemarks"></a><h2>Marcadores de página</h2>
+
+  <p>Nos documentos longos é normal, na sua leitura, termos de saltar de um ponto para o outro do documento. Para facilitar este processo criámos uma funcionalidade que permite colocar marcadores ao longo da página e, com um clique de rato, saltar entre esses marcadores.
+
+  <p>A utilização é simples. Clicar nas setas para saltar para o próximo marcador ou para o inicio ou fim do documento:
+
+  <p><div style="display:inline;"><div class="circle" id="go_up">&uarr;</div></div>
+  Saltar para o marcador anterior
+  <p><div style="display:inline;"><div class="circle" id="go_down">&darr;</div></div>
+  Saltar para o marcador seguinte
+
+  <p>Clicar no botão M para colocar um marcador na posição actual:
+
+  <div class="circle marker" id="mark">M</div>
+
+  <p>Finalmente, pode apagar os marcadores clicando simplesmente nos mesmos:
+
+  <div class="circle"><img src="/static/img/mark.svg" width="10px"></div>
+
+  <p>Esta funcionalidade apenas é visível nos documentos longos. Por agora, os marcadores feitos numa determinada página não ficam gravados no perfil do utilizador. No futuro esta é uma funcionalidade que queremos implementar.
+
+  <hr>
+  <a name="notes"></a><h2>Notas</h2>
 
   <p>Os utilizadores registados podem criar notas para cada documento. Essas notas podem conter até vinte mil caracteres cada uma. Para além de texto simples podem ser formatadas utilizando a linguagem '<a href="http://daringfireball.net/projects/markdown/" target="_blank">markdown</a>'. Esta é uma linguagem extremamente simples. Por exemplo se quiser realçar com negrito uma dada palavra, apenas tem de envolver essa palavra em '**', a frase seguinte:
 
