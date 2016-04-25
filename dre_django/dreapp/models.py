@@ -415,10 +415,10 @@ class CacheManager(models.Manager):
 
 class DocumentCache(models.Model):
     '''This table is used to store a cached html representation of the
-    Document's 'plain_pdf' file. The 'version' field must be equal or greater
-    than the settings variable DOCUMENT_VERSION, this way, if it's necessary to
-    invalidate the Document cache we only have to increase the DOCUMENT_VERSION
-    value.
+    Document's text rendered as html. The 'version' field must be equal or
+    greater than the settings variable DOCUMENT_VERSION, this way, if it's
+    necessary to invalidate the Document cache we only have to increase the
+    DOCUMENT_VERSION value.
     '''
     document = models.OneToOneField(Document)
     version  = models.IntegerField()
