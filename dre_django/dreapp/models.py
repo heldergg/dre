@@ -3,6 +3,7 @@
 import os
 import re
 import cgi
+import datetime
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -17,6 +18,8 @@ from django.utils import timezone
 from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
 from notesapp.models import Note
+
+from dre_pdf_parse import parse_pdf
 
 # Needed for dates < 1899 (read note bellow)
 MONTHS = [ u'Janeiro', u'Fevereiro', u'Março', u'Abril', u'Maio',
@@ -493,6 +496,13 @@ class DocumentCache(models.Model):
         return u'%s %s' % (g[0], links_txt )
 
     def build_cache_from_pdf(self, filename):
+        '''
+        This is used to convert the plain text pdf files obtained on the dre.pt
+        site before 2014-09-18. It seems that these files where somehow created
+        from the HTML representation that we could retrieve with both backdoor
+        accesses, because of this it's conceivable that this code is no longer
+        necessary since we got all these HTML on the old and new site.
+        '''
         # Convert the PDF to html
         # TODO: substitute this regexes for compiled regexes
         command = '/usr/bin/pdftohtml -i -nodrm  -noframes -stdout %s' % (
@@ -546,6 +556,9 @@ class DocumentCache(models.Model):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
             html = unicode(html,'utf-8','ignore')
+        elif (os.path.exists(self.document.dre_pdf_filename()) and
+              self.document.date > datetime.date(2016,3,23)):
+            html = parse_pdf(self.document)
         else:
             # No text to represent
             html = ''
@@ -566,6 +579,7 @@ class DocumentCache(models.Model):
         '''
         if self.version < DOCUMENT_VERSION or settings.DEBUG:
             self.build_cache()
+
 
         return self._html
 
