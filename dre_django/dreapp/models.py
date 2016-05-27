@@ -556,8 +556,9 @@ class DocumentCache(models.Model):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
             html = unicode(html,'utf-8','ignore')
-        elif (os.path.exists(self.document.dre_pdf_filename()) and
-              self.document.date > datetime.date(2016,3,23)):
+        elif (os.path.exists(self.document.dre_pdf_filename()) and (
+              self.document.date > datetime.date(2016,3,23) or
+              self.document.doc_type == u'Anúncio de procedimento')):
             html = parse_pdf(self.document)
         else:
             # No text to represent
@@ -579,8 +580,6 @@ class DocumentCache(models.Model):
         '''
         if self.version < DOCUMENT_VERSION or settings.DEBUG:
             self.build_cache()
-
-
         return self._html
 
     html = property(get_html)
