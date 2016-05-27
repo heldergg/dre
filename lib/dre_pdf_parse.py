@@ -97,9 +97,6 @@ class SimpleParser(object):
 
     # Lexer
     def set_type(self,token):
-        if u'Diário da República' in token:
-            print [token]
-            print t_Ignore.match(token)
         for t_type, test in self.lexicon:
             is_match = test(token)
             if is_match and t_type:
