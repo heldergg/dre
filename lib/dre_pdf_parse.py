@@ -212,11 +212,11 @@ class ParsePdf(object):
 class ParseTenderPdf(ParsePdf):
     def get_html(self):
         txt = convert_pdf_to_txt(self.filename).decode('utf-8')
-        txt = txt[txt.find(u'Anúncio de procedimento'):]
+        txt = txt[txt.find(self.doc.doc_type):]
         return parse_tender.run(txt)
 
-
 def parse_pdf(doc):
-    if doc.doc_type.lower() == u'Anúncio de Procedimento'.lower():
+    if (doc.doc_type.lower() == u'Anúncio de Procedimento'.lower() or
+        doc.doc_type.lower() == u'Anúncio de concurso urgente'.lower()):
         return ParseTenderPdf(doc).run()
     return ''

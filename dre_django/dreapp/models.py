@@ -558,6 +558,7 @@ class DocumentCache(models.Model):
             html = unicode(html,'utf-8','ignore')
         elif (os.path.exists(self.document.dre_pdf_filename()) and (
               self.document.date > datetime.date(2016,3,23) or
+              self.document.doc_type == u'Anúncio de concurso urgente' or
               self.document.doc_type == u'Anúncio de procedimento')):
             html = parse_pdf(self.document)
         else:
