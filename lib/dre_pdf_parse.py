@@ -134,6 +134,7 @@ class SimpleParser(object):
 
 pre_massage_rules = (
         (r'Decreto - Lei', 'Decreto-Lei'),
+        (ur'DL nº', u'Decreto-Lei n.º'),
         )
 
 post_massage_rules = (
@@ -162,7 +163,7 @@ tokenizer_rules = {
         }
 
 # Lexer configuration
-t_Ignore = re.compile(ur'(?ui)^Diário\s+da\s+República,\s+2\.ª\s+série\s+-\s+N\.º\s+\d+\s+-\s+\d+\s+de\s+[a-zç]+\s+de\s+\d{4}\s+-\s+Anúncio\s+de\s+procedimento\s+n\.º\s+\d+/\d{4}\s+-\s+Página\s+n\.º\s+\d+')
+t_Ignore = re.compile(ur'(?ui)^Diário\s+da\s+República,\s+2\.ª\s+série\s+-\s+N\.º\s+\d+\s+-\s+\d+\s+de\s+[a-zç]+\s+de\s+\d{4}\s+-\s+(?:Anúncio\s+de\s+procedimento|Anúncio\s+de\s+concurso\s+urgente|Declaração\s+de\s+retificação\s+de\s+anúncio|Aviso\s+de\s+prorrogação\s+de\s+prazo)\s+n\.º\s+\d+/\d{4}\s+-\s+Página\s+n\.º\s+\d+')
 t_Header = re.compile(r'^\d{1,2}\s-\s.*$')
 t_SubHeader = re.compile(r'^\d{1,2}\.\d{1,2}\s-\s.*$')
 t_ListItem01 = re.compile(r'^.+:.+$')
@@ -215,8 +216,16 @@ class ParseTenderPdf(ParsePdf):
         txt = txt[txt.find(self.doc.doc_type):]
         return parse_tender.run(txt)
 
+class ParseGenericPdf(ParsePdf):
+    def get_html(self):
+        txt = convert_pdf_to_txt(self.filename).decode('utf-8')
+        return '<pre>%s</pre>' % txt
+
 def parse_pdf(doc):
     if (doc.doc_type.lower() == u'Anúncio de Procedimento'.lower() or
+        doc.doc_type.lower() == u'Aviso de prorrogação de prazo'.lower() or
+        doc.doc_type.lower() == u'Declaração de retificação de anúncio'.lower() or
         doc.doc_type.lower() == u'Anúncio de concurso urgente'.lower()):
         return ParseTenderPdf(doc).run()
-    return ''
+
+    return ParseGenericPdf(doc).run()
