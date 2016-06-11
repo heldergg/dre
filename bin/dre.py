@@ -104,7 +104,6 @@ if __name__ == '__main__':
             options['update']=True
             options['update_metadata']=True
             options['update_digesto']=False
-            options['update_cache']=False
             options['update_inforce']=False
             options['save_pdf']=False
 

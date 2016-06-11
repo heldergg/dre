@@ -29,7 +29,6 @@ Usage:
         #        'update': False, # Do not update existing objects
         #        'update_metadata': True,
         #        'update_digesto': True, # Force digesto update even if we have it
-        #        'update_cache': True,
         #        'update_inforce': True,
         #        'save_pdf': True,
         #        }
@@ -486,7 +485,6 @@ class DREDocSave(object):
                 'update': False,
                 'update_metadata': True,
                 'update_digesto': True,
-                'update_cache': True,
                 'update_inforce': True,
                 'update_notes': True,
                 'save_pdf': True,
@@ -717,14 +715,6 @@ class DREDocSave(object):
         self.save_digesto(document_text, doc_obj, text)
 
     ##
-    # Update Cache
-
-    def update_cache( self, doc_obj ):
-        # Create the document html cache
-        if self.document_text:
-            html = DocumentCache.objects.get_cache(doc_obj)
-
-    ##
     # Update inforce
 
     def update_inforce(self, doc_obj):
@@ -787,11 +777,6 @@ class DREDocSave(object):
         if self.mode==NEW or (self.mode==UPDATE and
                               self.options['update_digesto']):
             self.process_digesto(doc_obj)
-        # Update cache
-        if self.mode==NEW or (self.mode==UPDATE and
-                              self.options['update_cache']):
-            logger.debug(msg_doc('Cache:', self.doc))
-            self.update_cache(doc_obj)
         # Update inforce
         if self.mode==NEW or (self.mode==UPDATE and
                               self.options['update_inforce']):
