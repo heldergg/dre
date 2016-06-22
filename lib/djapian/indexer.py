@@ -246,6 +246,7 @@ class Indexer(object):
                 commiter.begin_page()
 
                 for obj in page.object_list:
+                    print obj
                     commiter.begin_object()
 
                     try:
