@@ -186,6 +186,7 @@ if __name__ == '__main__':
         elif o == '--create_cache':
             import datetime
             from dreapp.models import Document, DocumentCache
+            from djapian.models import Change
             page_size = 1000
 
             try:
@@ -212,6 +213,10 @@ if __name__ == '__main__':
                     print doc.date, doc.doc_type, doc.number
                     cache = DocumentCache.objects.get_cache_object(doc)
                     cache.build_cache()
+                    change = Change()
+                    change.object = doc
+                    change.action = 'edit'
+                    change.save()
             sys.exit()
 
 
