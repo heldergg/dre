@@ -114,15 +114,9 @@ vertical-align: middle; }
  * Results
  */
 
-.result_notes h1 {
+.result_notes h1,h2,h3,h4,h5,h6 {
   font-size: 100%;
   text-align: left;
-}
-
-.result_notes h2 {
-  font-size: 100%;
-  text-align: left;
-  padding-left: 2em;
 }
 
 .list_item {

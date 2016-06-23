@@ -30,20 +30,20 @@ post_massage_rules = (
 t_is_header = re.compile(r'^(?:\d{1,2}|\d{1,2}\.\d{1,2})\s-\s.*$')
 t_is_list = re.compile(r'^(?:[A-Z](?:\d+)?|\d+|[a-z0-9]+\.\d+)\s*-\s+.*$')
 
-is_header = lambda t: bool(t_is_header.match(t))
-is_upper = lambda t: t[:t.find(':')].isupper()
-any_str = lambda t: True
-is_semicolon = lambda t: t == ';'
-asks_for_continuation = lambda t: t and t[-1] in ','
-is_continuation = lambda t: t and t[0].islower() and not t_is_list.match(t)
+is_header = lambda t,s: bool(t_is_header.match(t))
+is_upper = lambda t,s: t[:t.find(':')].isupper()
+any_str = lambda t,s: True
+is_semicolon = lambda t,s: t == ';'
+asks_for_continuation = lambda t,s: t and t[-1] in ','
+is_continuation = lambda t,s: t and t[0].islower() and not t_is_list.match(t)
 
 tokenizer_rules = {
     'split_rules': r'(?:\n|(;))',
     'merge_rules': [
-        (is_header, is_upper),
-        (asks_for_continuation, any_str),
-        (any_str, is_semicolon),
-        (any_str, is_continuation),
+        (is_header, is_upper, 'Header'),
+        (asks_for_continuation, any_str, 'Sentences'),
+        (any_str, is_semicolon, 'Semicolon'),
+        (any_str, is_continuation, 'The rest'),
         ],
     }
 

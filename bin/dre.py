@@ -221,7 +221,7 @@ if __name__ == '__main__':
                         change.action = 'edit'
                         change.save()
                     except IntegrityError:
-                        logger.error('Djapian change sheduled for doc id=%d' % doc.id)
+                        logger.error('CACHEPDF Djapian change sheduled for doc id=%d' % doc.id)
                         pass
             sys.exit()
 

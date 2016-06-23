@@ -14,6 +14,7 @@ from tender_parser import parse_tender
 from generic_parser import parse_generic_document
 
 import dreapp
+from drelog import logger
 
 ##
 # Pdf parser
@@ -55,22 +56,25 @@ class ParseGenericPdf(ParsePdf):
         return next_document[0] if next_document else None
 
     def cut_out_doc(self, txt):
+        cur_doc=u'%s n.\xba %s' % (self.doc.doc_type, self.doc.number)
+        cur_doc = txt.lower().find(cur_doc.lower())
         next_doc=self.next_doc()
         if next_doc:
-            next_doc=u'%s n.\xba %s' % (next_doc.doc_type, next_doc.number)
-        cur_doc=u'%s n.\xba %s' % (self.doc.doc_type, self.doc.number)
-        if next_doc:
-            return txt[txt.find(cur_doc):txt.find(next_doc)]
-        else:
-            return txt[txt.find(cur_doc):]
+            next_doc = u'%s n.\xba %s' % (next_doc.doc_type, next_doc.number)
+            next_doc = txt.lower().find(next_doc.lower())
+            if next_doc > cur_doc:
+                return txt[cur_doc:next_doc]
+        return txt[cur_doc:]
 
     def get_html(self):
         allowed_areas = (
-                ( 45, 60, 295, 780),
-                (297, 60, 550, 780),
+                ( 45, 40, 295, 780),
+                (297, 40, 550, 780),
                 )
         txt = convert_pdf_to_txt_layout(self.filename, allowed_areas)
         txt = self.cut_out_doc(txt)
+        if not txt:
+            logger.error('CACHEPDF No text for doc id=%d', self.doc.id)
         return parse_generic_document.run(txt)
 
 def parse_pdf(doc):
@@ -79,7 +83,9 @@ def parse_pdf(doc):
             doc.doc_type.lower() == u'Aviso de prorrogação de prazo'.lower() or
             doc.doc_type.lower() == u'Declaração de retificação de anúncio'.lower() or
             doc.doc_type.lower() == u'Anúncio de concurso urgente'.lower()):
+        logger.debug('CACHEPDF Tender text extract from pdf for doc id=%d' % doc.id)
         return ParseTenderPdf(doc).run()
 
     # Generic documents:
+    logger.debug('CACHEPDF Generic text extract from pdf for doc id=%d' % doc.id)
     return ParseGenericPdf(doc).run()
