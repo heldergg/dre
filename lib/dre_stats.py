@@ -64,6 +64,10 @@ class LogReader(object):
         if len(request_path) > 8190:
             request_path = request_path[:8190]
 
+        user_agent = m.group('request_useragent')
+        if len(user_agent)>2048:
+            user_agent = user_agent[:2048]
+
         ln.timestamp = ts
         ln.remote_host = m.group('remote_host')
         ln.remote_user = m.group('remote_user')
@@ -73,7 +77,7 @@ class LogReader(object):
         ln.response_status = int(m.group('response_status'))
         ln.response_bytes = int(m.group('response_bytes')) if m.group('response_bytes') != '-' else 0
         ln.request_referer = m.group('request_referer')
-        ln.request_useragent = m.group('request_useragent')
+        ln.request_useragent = user_agent
 
         ln.save()
 
