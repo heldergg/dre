@@ -124,6 +124,12 @@
 
 {% if document.has_text %}
 <h2><a name="text">Texto do documento</a></h2>
+{% if pdf_warning %}
+<p>Atenção por favor. O texto deste documento foi extraído do ficheiro PDF. O
+processo usado para este fim está sujeito a erros ou até a não funcionar de todo.
+Em caso de dúvida não deixe de consultar os documentos originais{% if document.plain_text or document.dre_pdf %} disponíveis <a href="#anexos">aqui</a>{% endif %}.
+{% endif %}
+
 <div itemprop="articleBody" class="result_notes">
   {% autoescape off %}
   {{ document.plain_html }}

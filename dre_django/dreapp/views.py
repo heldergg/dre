@@ -323,6 +323,8 @@ def document_display( request, docid ):
     if request.user.is_authenticated():
         context['show_user_notes'] = get_setting(request.user, 'show_user_notes')
 
+    context['pdf_warning'] = document.date >= datetime.date(2016,3,24)
+
     return render_to_response('document_display.html', context,
                 context_instance=RequestContext(request))
 
