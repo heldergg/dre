@@ -592,7 +592,7 @@ class DREDocSave(object):
         doc_obj.conditional  = False
         doc_obj.processing   = False
         doc_obj.date         = journal_data['date']
-        if self.options['update_notes']:
+        if self.mode==NEW or self.options['update_notes']:
             doc_obj.notes    = doc_data['notes']
         doc_obj.dre_pdf      = doc_data['pdf_url']
         doc_obj.pdf_error    = False

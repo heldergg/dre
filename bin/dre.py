@@ -43,22 +43,33 @@ def usage():
         --help              This help screen
 
     Options:
+        Filtering options:
+
+        These options filter the documents to be read. Use these options with
+        "--read_date" or "--read_range".
+
         --no_series_1
-        --no_series_2        Ignore documents from series one or two
+        --no_series_2       Ignore documents from series one or two
 
         --filter_type <type>
                             Process only documents of this type
         --filter_number <number>
                             Process only documents with this number
 
-        Update options:
+        Update mode, re-reads the documents:
 
-        --update            Update mode, re-reads the documents
-        --update_metadata   Update only the metadata
-        --dont_update_notes To use with --update_metadata
+        The following options will enable the update mode. All these
+        options are false by default. You have to pick what you intend
+        to update. Use these options with "--read_date" or "--read_range".
+
+        --update_metadata   doc name, number, date, etc
+        --update_notes
+        --update_digesto
+        --update_inforce
+        --save_pdf
 
         NOTE: on every update option if a new document is found it will be
-        retrieved completely.
+        retrieved completely independent of the value of this update options.
 
     ''' % { 'script_name': sys.argv[0] }
 
@@ -73,8 +84,9 @@ if __name__ == '__main__':
                                     'create_cache=',
                                     'no_series_1', 'no_series_2',
                                     'filter_type=', 'filter_number=',
-                                    'update',
-                                    'update_metadata','dont_update_notes'
+                                    'update_metadata','update_notes',
+                                    'update_digesto', 'update_inforce',
+                                    'save_pdf',
                                    ])
     except getopt.GetoptError, err:
         print str(err)
@@ -88,7 +100,14 @@ if __name__ == '__main__':
     options= {}    # Document reading options
 
     # Options
+    options['update_notes'] = False
+    options['update_metadata'] = False
+    options['update_digesto'] = False
+    options['update_inforce'] = False
+    options['save_pdf'] = False
+
     for o, a in opts:
+        # Filter options:
         if o == '--no_series_1':
             filter_dr['no_series_1'] = True
         elif o == '--no_series_2':
@@ -97,16 +116,22 @@ if __name__ == '__main__':
             filter_doc['doc_type'] = a.lower()
         elif o == '--filter_number':
             filter_doc['number'] = a.lower()
-        elif o == '--update':
+        # Update options:
+        elif o == '--update_notes':
             options['update'] = True
-        elif o == '--dont_update_notes':
-            options['update_notes'] = False
+            options['update_notes'] = True
         elif o == '--update_metadata':
-            options['update']=True
-            options['update_metadata']=True
-            options['update_digesto']=False
-            options['update_inforce']=False
-            options['save_pdf']=False
+            options['update'] = True
+            options['update_metadata'] = True
+        elif o == '--update_digesto':
+            options['update'] = True
+            options['update_digesto'] = True
+        elif o == '--update_inforce':
+            options['update'] = True
+            options['update_inforce'] = True
+        elif o == '--save_pdf':
+            options['update'] = True
+            options['save_pdf'] = True
 
     # Commands
     for o, a in opts:
