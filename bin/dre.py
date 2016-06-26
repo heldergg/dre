@@ -21,6 +21,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'dre_django.settings'
 import django
 django.setup()
 from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 def usage():
     print '''Usage: %(script_name)s [options]\n
@@ -38,6 +39,9 @@ def usage():
         --create_cache YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂
                             Creates (or updates) the cache for the documents
                             in the date range
+        --create_cache document_id
+                            Updates the cache for the document with id
+                            document_id
 
         -h
         --help              This help screen
@@ -73,6 +77,22 @@ def usage():
 
     ''' % { 'script_name': sys.argv[0] }
 
+##
+# Utils
+
+def create_update_cache(doc):
+    logger.debug('CACHEPDF to %d %s %s %s' % (doc.id,
+        doc.date, doc.doc_type, doc.number))
+    cache = DocumentCache.objects.get_cache_object(doc)
+    cache.build_cache()
+    try:
+        change = Change()
+        change.object = doc
+        change.action = 'edit'
+        change.save()
+    except IntegrityError:
+        logger.error('CACHEPDF Djapian change already '
+            'sheduled for doc id=%d' % doc.id)
 
 if __name__ == '__main__':
     try:
@@ -215,39 +235,38 @@ if __name__ == '__main__':
             from djapian.models import Change
             from drelog import logger
             page_size = 1000
-
+            doc_id = None
             try:
                 date1, date2 = a.split(':')
             except ValueError:
-                print 'A date range in the format YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂ is needed.'
-                sys.exit()
-
-            try:
-                date1 = datetime.datetime.strptime( date1, '%Y-%m-%d' )
-                date2 = datetime.datetime.strptime( date2, '%Y-%m-%d' )
-            except ValueError:
-               print 'The dates provided must be in ISO format.'
-               sys.exit(1)
-
-
-            results = Document.objects.filter(date__gte = date1
-                    ).filter(date__lte = date2)
-
-            for i in range(0,results.count(), page_size):
-                j = i + page_size
-                print '* Processing documents %d through %d' % (i,j)
-                for doc in results[i:j]:
-                    print doc.date, doc.doc_type, doc.number
-                    cache = DocumentCache.objects.get_cache_object(doc)
-                    cache.build_cache()
-                    try:
-                        change = Change()
-                        change.object = doc
-                        change.action = 'edit'
-                        change.save()
-                    except IntegrityError:
-                        logger.error('CACHEPDF Djapian change sheduled for doc id=%d' % doc.id)
-                        pass
+                try:
+                    doc_id = int(a)
+                except ValueError:
+                    print ('A date range in the format '
+                           'YYYY₁-MM₁-DD₁:YYYY₂-MM₂-DD₂ or a document id '
+                           'is needed.')
+                    sys.exit()
+            if doc_id:
+                try:
+                    doc = Document.objects.get(id=doc_id)
+                except ObjectDoesNotExist:
+                    print 'Doc with id %d does not exist' % doc_id
+                    sys.exit()
+                create_update_cache(doc)
+            else:
+                try:
+                    date1 = datetime.datetime.strptime( date1, '%Y-%m-%d' )
+                    date2 = datetime.datetime.strptime( date2, '%Y-%m-%d' )
+                except ValueError:
+                   print 'The dates provided must be in ISO format.'
+                   sys.exit(1)
+                results = Document.objects.filter(date__gte = date1
+                        ).filter(date__lte = date2)
+                for i in range(0,results.count(), page_size):
+                    j = i + page_size
+                    print '* Processing documents %d through %d' % (i,j)
+                    for doc in results[i:j]:
+                        create_update_cache(doc)
             sys.exit()
 
 
