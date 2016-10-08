@@ -9,9 +9,7 @@
   <link rel="stylesheet" href="/static/css/jquery.multiselect.css" />
   <script src="{{ STATIC_URL }}jquery/jquery-ui-1.10.2.min.js"></script>
   <script src="/static/js/jquery.multiselect.min.js"></script>
-  <script>
-    var date="{{ date|date:"Y-m-d" }}";
-  </script>
+  <script src="{% url 'view_js' %}?date={{ date|date:"Y-m-d" }}"></script>
   <script src="{{ STATIC_URL }}js/browse_filter.js"></script>
   <script src="{{ STATIC_URL }}js/keyboard_nav.js"></script>
   <meta property="og:title" content="Diários da República - Procura de Documentos">

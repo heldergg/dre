@@ -31,6 +31,7 @@ from tagsapp.models import Tag
 
 # Settings
 SITE_URL = getattr(settings, 'SITE_URL', 'http://dre.tretas.org')
+STATIC_URL = getattr(settings, 'STATIC_URL')
 
 abreviation_list = (
     # Use lower case abreviations and expansions
@@ -356,6 +357,7 @@ def document_json( request, docid ):
 def bookmark_display( request, userid ):
     context = {}
     user = get_object_or_404(User, pk=userid)
+    is_owner = user == request.user
 
     # Bookmark Filter Form
     f = context['filter_form'] = BookmarksFilterForm(request.GET, tags_user = user,
@@ -363,11 +365,11 @@ def bookmark_display( request, userid ):
 
     ##
     # Select the bookmarks
-    if user != request.user:
+    if is_owner:
+        results = Document.objects.filter(bookmarks__user__exact = user)
+    else:
         results = Document.objects.filter( Q(bookmarks__user__exact = user) &
                                            Q(bookmarks__public__exact = True))
-    else:
-        results = Document.objects.filter(bookmarks__user__exact = user)
 
     if f.is_valid():
         # Filter the results
@@ -435,6 +437,7 @@ def bookmark_display( request, userid ):
     context['results'] = results
     context['query'] = re.sub(r'&page=\d+', '', '?%s' % request.META['QUERY_STRING'] )
     context['bookmarks_user'] = user
+    context['is_owner'] = is_owner
 
     return render_to_response('bookmark_display.html', context,
                 context_instance=RequestContext(request))
@@ -509,3 +512,22 @@ def last( request ):
     context['results'] = results
     return render_to_response('last.html', context,
             context_instance=RequestContext(request))
+
+
+def view_js(request):
+    '''
+    This view returns a javascript file with variable initializations
+    '''
+    js = ['var STATIC_URL="%s";' % STATIC_URL,
+          ]
+    # Try to get a date:
+    date = request.GET.get('date', None)
+    if date:
+        try:
+            date = str(datetime.datetime.strptime(date, '%Y-%m-%d').date())
+            js.append('var date="%s";' % date)
+        except ValueError:
+            pass
+
+    # Return the date
+    return HttpResponse('\n'.join(js), content_type='application/javascript')

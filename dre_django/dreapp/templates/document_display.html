@@ -9,10 +9,7 @@
 {% block header %}
   <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/note_style.css">
   {% if user.is_authenticated %}
-  <script>
-    var STATIC_URL="{{ STATIC_URL }}";
-    var is_owner = true;
-  </script>
+  <script src="{% url 'view_js' %}"></script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
   {% endif %}
   <script src="{{ STATIC_URL }}js/pagemarks.js"></script>

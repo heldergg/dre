@@ -17,7 +17,7 @@ function note_form_setup() {
             $(note_form_visible).find("img").attr("src", STATIC_URL + "img/edit-note.png");
             };
         if ( this != note_form_visible ) {
-            note_form_visible = this; 
+            note_form_visible = this;
             $(this).find("img").attr("src", STATIC_URL + "img/remove-note.png");
             $(this).parent().parent().find('.add_note').show();
             $(this).parent().parent().find('.user_notes').hide();
@@ -25,7 +25,7 @@ function note_form_setup() {
         else {
             note_form_visible = null;
             };
-        }); 
+        });
     }; // End form_setup
 
 function note_ajax_add_setup() {
@@ -43,7 +43,7 @@ function note_ajax_add_setup() {
             $(image).attr("src", STATIC_URL + "img/remove-note.png");
             if (data.success ) {
                 result_note.empty().append(data.html)
-                result_note.show(); 
+                result_note.show();
             // TODO: Change the form html when adding a new note (must use
             // the modify url...
                 result_note.parent().find('.add_note').hide();
@@ -59,8 +59,6 @@ function note_ajax_add_setup() {
     }; // ajax_add_setup
 
 $(function() {
-    if (is_owner) {
-        note_form_setup();
-        note_ajax_add_setup();
-        };
+    note_form_setup();
+    note_ajax_add_setup();
 });

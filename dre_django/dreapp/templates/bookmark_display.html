@@ -11,12 +11,11 @@
   <link rel="stylesheet" href="/static/css/jquery.multiselect.css" />
   <script src="{{ STATIC_URL }}jquery/jquery-ui-1.10.2.min.js"></script>
   <script src="/static/js/jquery.multiselect.min.js"></script>
-  <script>
-    var STATIC_URL="{{ STATIC_URL }}";
-    var is_owner = "{{ bookmarks_user.username }}"=="{{ user.username }}";
-  </script>
+  <script src="{% url 'view_js' %}"></script>
+  {% if user.is_authenticated and is_owner %}
   <script src="{{ STATIC_URL }}js/tags.js"></script>
   <script src="{{ STATIC_URL }}js/notes.js"></script>
+  {% endif %}
   <script src="{{ STATIC_URL }}js/dre.js"></script>
   <script src="{{ STATIC_URL }}js/keyboard_nav.js"></script>
   <meta name="keywords" content="bookmarks, marcadores, preferidos">

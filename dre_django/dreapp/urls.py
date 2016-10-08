@@ -41,6 +41,9 @@ urlpatterns = [
 
     # Last documents
     url(r'^last/$',views.last, name='last'),
+
+    # Generate dynamic JS
+    url(r'^view_js\.js', views.view_js, name='view_js'),
     ]
 
 ##
