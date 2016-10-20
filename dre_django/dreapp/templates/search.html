@@ -21,33 +21,25 @@
 {% endblock %}
 
 {% block body_content %}
-<div class="center_text">
-  <a id="logo" href="/">
-    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png"
-    width="305" height="135" alt="Tretas logotipo">
-  </a>
-  <a id="logo_mobile" class="noprint" href="/">
-    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png"
-    width="100%" alt="Tretas logotipo">
-  </a>
-
-  <div class="intro">Indexador do Diário da República</div>
-  <form method="GET" action="">
-      <p>
-        <input id="id_query_string" type="search" name="q" value="{{ form.cleaned_data.q }}" maxlength="1000" placeholder="Escreva aqui a sua busca" />
-      </p>
-      <p><button class="big_center"  style="width:8em" type="submit" value="Submit">Busca</button></p>
-  </form>
-</div>
-
-{% if spell_correction %}
-<div class="center_text">
-  <p>Será que queria dizer: <a href="/?q={{ spell_correction }}">{{ spell_correction }}</a>?</p>
-</div>
-{% endif %}
-
 {% if page.object_list %}
 <div class="content-text">
+  <div class="center_text">
+    <form method="GET" action="">
+        <p>
+          <input id="id_query_string" type="search" name="q"
+           value="{{ form.cleaned_data.q }}" maxlength="1000"
+           placeholder="Escreva aqui a sua busca" />
+          <button class="big_center"  style="width:8em" type="submit" value="Submit">Busca</button></p>
+    </form>
+  </div>
+  {% if spell_correction %}
+  <div class="center_text">
+    <p>Será que queria dizer:
+    <a href="/?q={{ spell_correction }}">{{ spell_correction }}</a>?</p>
+  </div>
+  {% endif %}
+
+
   {% if query_modified %}
   <p style="color:blue">Os resultados seguintes são produto de uma busca optimizada. Para ver os resultados de busca não optimizados, clique <a href="/?q={{ query_modified }}&m=F">aqui</a>.
   {% endif %}
@@ -61,6 +53,30 @@
   </p>
 </div>
 {% else %}
+<div class="center_text">
+  <a id="logo" href="/">
+    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png"
+    width="100" height="128" alt="Tretas logotipo">
+  </a>
+  <a id="logo_mobile" class="noprint" href="/">
+    <img class="dre_logo" src="{{ STATIC_URL }}img/tretas_logo.png"
+    width="100%" alt="Tretas logotipo">
+  </a>
+
+  <div class="intro">Procura em texto livre no Diário da República</div>
+  <form method="GET" action="">
+      <p>
+        <input id="id_query_string" type="search" name="q" value="{{ form.cleaned_data.q }}" maxlength="1000" placeholder="Escreva aqui a sua busca" />
+      </p>
+      <p><button class="big_center"  style="width:8em" type="submit" value="Submit">Busca</button></p>
+  </form>
+</div>
+
+{% if spell_correction %}
+<div class="center_text">
+  <p>Será que queria dizer: <a href="/?q={{ spell_correction }}">{{ spell_correction }}</a>?</p>
+</div>
+{% endif %}
 {% if not success %}
 <div class="center_text error">
   <p>Não consegui encontrar resultados com: "{{ form.cleaned_data.q }}"</p>
