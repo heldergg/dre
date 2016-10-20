@@ -25,6 +25,11 @@ urlpatterns = [
         TemplateView.as_view(template_name='help.html'),
         name='help'),
 
+    # FAQ:
+    url(r'^faq/',
+        TemplateView.as_view(template_name='faq.html'),
+        name='faq'),
+
     # Not implemented:
     url(r'^not_implemented/',
         TemplateView.as_view(template_name='not_implemented.html'),

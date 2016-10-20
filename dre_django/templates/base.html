@@ -50,6 +50,7 @@
         <li><a href="/">Procurar</a>
         <li><a href="{% url 'today_results' %}" title="Documentos publicados hoje ou na data indicada. É apresentada a última data com documentos.">Por data</a>
         <li><a href="{% url 'top' %}" title="Documentos mais vistos pelos utilizadores deste site.">Top</a>
+        <li><a href="{% url 'faq' %}" title="Perguntas Frequentes">FAQ</a>
         {% if user.is_authenticated %}
         <li><a href="{% url 'bookmark_display' user.id %}">Marcadores</a>
         {% endif %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Diários da República - Acerca{% endblock %}
+
+{% block header %}
+  <meta name="keywords" content="ajuda,dre,diário da república,leis">
+  <meta name="description" content="Acerca do sistema de procura e armazenamento de Diários da República.">
+  <meta property="og:title" content="Diários da República - Acerca">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ SITE_URL }}">
+  <meta property="og:image" content="{{ SITE_URL }}{{ STATIC_URL }}img/esfera_armilar_200.png">
+  <meta property="og:site_name" content="Diários da República - Versão do cidadão">
+  <meta property="fb:admins" content="webmaster@tretas.org">
+  <meta property="og:description" content="Acerca do sistema de procura e armazenamento de Diários da República.">
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text">
+  <h1>Perguntas Frequentes</h1>
+
+  <p><strong>Dúvidas de utilização:</strong></p>
+  <ol>
+    <li><a href="DUP1">Estou interessado em consultar os concursos públicos. É possível?</a></li>
+    <li><a href="DUP2">O governo mudou, quero estar informado sobre os nomes dos <em>boys</em> que vão sendo colocados. Como fazer?</a></li>
+    <li><a href="DUP3">Gostaria de ter acesso à lista de entidade emitentes. Como o posso fazer?</a></li>
+    <li><a href="DUP4">Gostaria de ser avisado quando sair legislação sobre um determinado tema. Como proceder?</a></li>
+  </ol>
+
+  <p><strong>Dúvidas sobre o site:</strong></p>
+  <ol>
+    <li><a href="#DSP1">Por que motivo se usa o domínio "tretas.org"? Não inspira muita confiança</a></li>
+  </ol>
+
+  <hr>
+  <p><strong>Dúvidas de utilização:</strong></p>
+  <p><a name="DUP1"><strong>1. Estou interessado em consultar os concursos públicos. É possível?</strong></p>
+  <p>Sim, é possível. Os concursos públicos são anunciados nos "anúncios de procedimento". Assim, se procurar por este tipo de documentos vai obter uma listagem dos concursos:</p>
+  <p><tt>tipo:"anúncio de procedimento"</tt></p>
+  <p>Pode depois refinar a busca, por exemplo restringindo a uma entidade emitente:</p>
+  <p><tt>tipo:"anúncio de procedimento" quem:"município de lisboa"</tt></p>
+  <p>Ou então procurando no texto do anúncio:</p>
+  <p><tt>tipo:"anúncio de procedimento" legumes</tt></p>
+  <p>Como esta é uma busca sensível à altura em que é feita, poderá ser conveniente ordenar os resultados das buscas por ordem decrescente de datas, de modo a consultar os concursos mais recentes. Para o efeito basta clicar em "Ordenar por data descendente", no fim da página de resultados.</p>
+  <p>Notar que há outros tipos de documentos relacionados com os concursos públicos, é muito comum temos "Aviso de prorrogação de prazo", "Declaração de retificação de anúncio", " ou "Anúncio de concurso urgente". Todos estes tipos de documento devem ser explorados para se ter uma visão completa dos novos concursos públicos.</p>
+
+  <hr>
+  <p><a name="DUP2"><strong>2. O governo mudou, quero estar informado sobre os nomes dos <em>boys</em> que vão sendo colocados. Como fazer?</strong></p>
+  <p>As nomeações podem ser feitas de várias formas, pelo que não há uma solução geral. Por exemplo, a seguinte busca, ordenada por ordem descendente de data, dá resultados interessantes:</p>
+  <p><tt>nomeia tipo:despacho</tt></p>
+  <p>Estamos a procurar por documentos do tipo "despacho" que contenham a palavra "nomeia" ou variações desta. A palavra "designa" também funciona.</p>
+
+  <hr>
+  <p><a name="DUP3"><strong>3. Gostaria de ter acesso à lista de entidade emitentes. Como o posso fazer?</strong></p>
+  <p>Não disponibilizamos essa informação. Por vários motivos, a nomenclatura das várias entidades emitentes vai mudando ao longo do tempo (no <em>dre.pt</em> de onde extraímos a informação).
+  <p>Por exemplo, em 2015 tínhamos "Ministério da Agricultura e do Mar". Agora, para além de termos dois ministérios, "Ministério do Mar" e "Ministério da Agricultura, Florestas e Desenvolvimento", o nome das entidades emitentes deixou de ter a palavra "ministério", podemos encontrar, simplesmente, como entidade emitente a palavra "Mar".</p>
+  <p>Outro exemplo são os municípios, actualmente (Outubro de 2016) são designados na forma "Município de Lisboa", anteriormente eram designados na forma "Câmara Municipal de Lisboa".</p>
+  <p>Há outros problemas adicionais, muitas vezes há múltiplas entidades emitentes. No entanto não há uma forma de os designar que seja fácil de destrinçar de forma automática, por exemplo, o seguinte é uma entidade presente no DR: "Ministérios dos Negócios Estrangeiros e das Finanças, Gabinete do Ministro da Coordenação Cultural e Ministérios da Cultura e da Ciência e da Educação".</p>
+  <p>Apesar do anterior, se necessita mesmo de uma lista destas entidades, para um dado período ou para todos os documentos, pode obter essa lista a partir do <em>dump</em> da base de dados que <a href="https://dre.tretas.org/about/#base_de_dados">disponibilizamos</a>.</p>
+  <p>Se não conseguir extrair esta informação da base de dados, escreva-nos uma linha para <a href="mailto:webmaster@tretas.org">webmaster@tretas.org</a>.</p>
+
+  <hr>
+  <p><a name="DUP4"><strong>4. Gostaria de ser avisado quando sair legislação sobre um determinado tema. Como proceder?</strong></p>
+  <p>Não temos um sistema de envio de notificações via mail. Não porque seja difícil de fazer, em termos técnicos, mas por que isso exigiria a capacidade, da nossa parte, de enviar grandes quantidades de mail. Isso custa dinheiro e isto é um <em>hobby</em>.</p>
+  <p>Em alternativa ao anterior, disponibilizamos <em><a href="https://pt.wikipedia.org/wiki/RSS">feeds RSS</a></em> construídos a partir da busca que fez. Assim, se deseja procurar por concursos públicos para compra de batatas, em primeiro lugar construiria uma busca do género:</p>
+  <p><tt>tipo:"anúncio de procedimento" batata</tt></p>
+  <p>No final de cada página de resultados, tem uma ligação chamada "Obter esta busca como RSS". Se copiar esta ligação para um leitor de <em>feeds RSS</em> sempre que saírem novos documentos que obedeçam a esta busca será notificado.</p>
+
+  <hr>
+  <p><strong>Dúvidas sobre o site:</strong></p>
+  <p><a name="DSP1"><strong>1. Por que motivo se usa o domínio "tretas.org"? Não inspira muita confiança.</strong></p>
+  <p>No site <a href="https://tretas.org/">tretas.org</a> reúnem-se histórias sobre acontecimentos da política portuguesa. Dai o nome tretas.org, que descreve de forma muito apta o panorama político nacional.</p>
+  <p>Neste site é necessário muitas vezes citar leis e outro tipo de documentos que são publicados no Diário da República. Na altura, em Agosto de 2012, não encontrei nenhum site que me permitisse lincar para os documentos do DR. O site oficial dessa altura usava estratagemas que impediam lincar os seus próprios documentos!</p>
+  <p>Assim, por forma a suprir esta necessidade, construiu-se o <em>scraper</em> necessário para obter os documentos do DRE e garantir desta forma que tínhamos um endereço estável para lincar os documentos necessários.</p>
+  <p>Como já tinha o domínio "tretas.org" foi natural criar o subdomínio "dre.tretas.org" - rápido e sem custos! Entretanto o número de visitas aumentou de forma muito rápida, tornando desaconselhável a mudança de URL.</p>
+  <p>Há ainda um motivo adicional, este <em>hobby</em> tem custos. Um novo domínio é um custo adicional. Estas coisas vão somando.</p>
+</div>
+{% endblock %}
