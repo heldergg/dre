@@ -365,6 +365,15 @@ TIPS = [
     ]
 
 ##
+## Right to be forgotten
+##
+
+# This should be a list of tuples each having a pair column/value. These pairs
+# will be used to identify the documents that should not be visible for non
+# logged in users.
+NO_INDEX_CHECK = []
+
+##
 ## LOCAL
 ##
 
