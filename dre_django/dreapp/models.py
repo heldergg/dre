@@ -386,6 +386,14 @@ class Document(models.Model):
         return self.title()
 
     # Other
+    def slug(self):
+        title = '%s %s' % (self.doc_type, self.number)
+        title = title.lower()
+        title = title.replace(',', ' ')
+        title = re.sub(r' +', ' ', title)
+        title = title.replace(' ', '-')
+        return title
+
     def get_absolute_url(self):
         return reverse('document_display', kwargs={ 'docid':self.id })
 
