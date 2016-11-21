@@ -14,6 +14,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.text import slugify
 
 from bookmarksapp.models import Bookmark
 from tagsapp.models import TaggedItem
@@ -387,11 +388,12 @@ class Document(models.Model):
 
     # Other
     def slug(self):
-        title = '%s %s' % (self.doc_type, self.number)
-        title = title.lower()
-        title = title.replace(',', ' ')
-        title = re.sub(r' +', ' ', title)
-        title = title.replace(' ', '-')
+        number = self.number.replace(' ', '-')
+        title = slugify(self.doc_type)
+        date = slugify('de-%d-de-%s' % (self.day(), MONTHS[self.month()-1]))
+        title = ('%s-%s-%s' % (title, number, date)
+                 if self.number else
+                 '%s-%s' % (title, date))
         return title
 
     def get_absolute_url(self):
