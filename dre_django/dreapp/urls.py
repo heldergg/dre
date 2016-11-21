@@ -19,18 +19,20 @@ urlpatterns = [
         views.browse_day, name='browse_day'),
 
     # Document display
-    url(r'^(?P<docid>\d+)/$',
+    url(r'^(?P<docid>\d+)/[a-zA-Z0-9\-/_]+$',
         views.document_display, name='document_display'),
+    url(r'^(?P<docid>\d+)/$',
+        views.document_redirect, name='document_redirect'),
 
     # Document display (JSON)
-    url(r'^(?P<docid>\d+).json$', views.document_json, name='document_json'),
+    url(r'^(?P<docid>\d+)\.json$', views.document_json, name='document_json'),
 
     # Document display (Original PDF)
-    url(r'^(?P<docid>\d+).dre.pdf$',
+    url(r'^(?P<docid>\d+)\.dre\.pdf$',
         views.document_org_pdf, name='document_org_pdf'),
 
     # Related documents search result
-    url(r'^(?P<docid>\d+)/related/$', views.related, name='related_document'),
+    url(r'^(?P<docid>\d+)\.related$', views.related, name='related_document'),
 
     # Display the bookmarked documents
     url(r'^marcador/(?P<userid>\d+)/$',

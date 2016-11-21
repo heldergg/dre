@@ -308,6 +308,11 @@ def browse_day( request, year, month, day ):
     return render_to_response('browse_day.html', context,
                 context_instance=RequestContext(request))
 
+
+def document_redirect(request, docid):
+    document = get_object_or_404(Document, pk=docid)
+    return redirect(document, permanent=True)
+
 def document_display( request, docid ):
     context = {}
 
@@ -317,9 +322,8 @@ def document_display( request, docid ):
         return forgetme(request)
 
     context['document'] = document
-    context['url'] = urllib.quote_plus( SITE_URL + reverse( 'document_display',
-            kwargs = { 'docid': docid }) )
-    context['text'] =  urllib.quote_plus( document.title().encode('utf-8')  )
+    context['url'] = urllib.quote_plus(SITE_URL + document.get_absolute_url())
+    context['text'] =  urllib.quote_plus(document.title().encode('utf-8'))
 
     if request.user.is_authenticated():
         context['show_user_notes'] = get_setting(request.user, 'show_user_notes')

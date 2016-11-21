@@ -397,7 +397,7 @@ class Document(models.Model):
         return title
 
     def get_absolute_url(self):
-        return reverse('document_display', kwargs={ 'docid':self.id })
+        return '/dre/%d/%s' % (self.id, self.slug())
 
     def no_index(self):
         '''
