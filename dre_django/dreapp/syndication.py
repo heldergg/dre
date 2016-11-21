@@ -18,7 +18,7 @@ from djapian.resultset import ResultSet
 
 NUMBER_ENTRIES = getattr(settings, 'NUMBER_ENTRIES', 25)
 NUMBER_ENTRIES_QUERY = getattr(settings, 'NUMBER_ENTRIES_QUERY', 25)
-SITE_URL = getattr(settings, 'SITE_URL', 'http://dre.tretas.org')
+SITE_URL = getattr(settings, 'SITE_URL', 'https://dre.tretas.org')
 
 class LatestEntriesFeed(Feed):
     title = 'Diários da República'
