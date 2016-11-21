@@ -81,7 +81,7 @@
       {% endif %}
       <span class="document_date">
         <a href="{% url 'browse_day' year=document.year month=document.month day=document.day %}">{{ document.date|date:"Y-m-d" }}</a></span> -
-      <a class="result_link" href="{% url 'document_display' docid=document.id %}">
+      <a class="result_link" href="{{ document.get_absolute_url }}">
         <span class="document_tipo">{{ document.doc_type }}</span>
         <span class="document_number">{{ document.number }}</span></a> -
       <span class="document_emiting">{{ document.emiting_body }}</span>

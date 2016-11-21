@@ -26,7 +26,7 @@
         <span class="result_date">
           <a href="{% url 'browse_day' year=result.year month=result.month day=result.day %}">
         {{ result.date|date:"Y-m-d" }}</a></span> -
-        <a class="result_link" href="{% url 'document_display' docid=result.id %}">
+        <a class="result_link" href="{{ result.get_absolute_url }}">
         <span class="result_tipo">{{ result.doc_type }}</span>
         <span class="result_number">{{ result.number }}</span></a> -
         <span class="result_emiting">{{ result.emiting_body }}</span>
