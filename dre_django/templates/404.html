@@ -1,37 +1,23 @@
-<!doctype html>
-<html>
-<head>
-    <title>Busca Tretas</title>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/print.css" media="print">
-    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-</head>
-<body>
-<!-- Start Header for Printing -->
-<div class="only_print">
- <div id="print_header">
-  <p>Busca Tretas.org</p>
-  <hr>
- </div>
-</div>
-<!-- End Header for Printing -->
+{% extends "base.html" %}
 
-<!-- Body Content -->
-<div id="content">
-<div class="center_text">
-    <a href="/"><img src="{{ STATIC_URL }}img/tretas_logo.png" alt="Tretas dre logotipo" width="305" height="127"></a>
-    <h1>Raios! Não encontrei a página que indicou...</h1>
-    <h1>Erro 404</h1>
+{% block title %}Diários da República - Erro 404{% endblock %}
+
+{% block header %}
+  <meta name="keywords" content="404,dre,diário da república,leis">
+  <meta name="description" content="Acerca do sistema de procura e armazenamento de Diários da República.">
+  <meta property="og:title" content="Diários da República - Acerca">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ SITE_URL }}">
+  <meta property="og:image" content="{{ SITE_URL }}{{ STATIC_URL }}img/esfera_armilar_200.png">
+  <meta property="og:site_name" content="Diários da República - Versão do cidadão">
+  <meta property="fb:admins" content="webmaster@tretas.org">
+  <meta property="og:description" content="Acerca do sistema de procura e armazenamento de Diários da República.">
+{% endblock %}
+
+{% block body_content %}
+<div class="content-text">
+  <h1>Página não encontrada</h1>
+  <a href="/"><img src="{{ STATIC_URL }}img/tretas_logo.png" alt="Tretas dre logotipo"></a>
+  <p>Não encontrei a página que indicou. Tente usar o nosso <a href="/">sistema de procura</a>.</p>
 </div>
-</div>
-<!-- Start Footer for Printing -->
-<div class="only_print">
- <div id="print_footer">
-  <hr>
-  <p>Busca Tretas.org</p>
- </div>
-</div>
-<!-- End Footer for Printing -->
-</body>
-</html>
+{% endblock %}
