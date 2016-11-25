@@ -394,6 +394,7 @@ class Document(models.Model):
         title = ('%s-%s-%s' % (title, number, date)
                  if self.number else
                  '%s-%s' % (title, date))
+        title = title.replace('/','-')
         return title
 
     def get_absolute_url(self):
