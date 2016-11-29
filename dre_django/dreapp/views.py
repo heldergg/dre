@@ -484,7 +484,7 @@ def top( request ):
         where
             response_status = 200 and
             timestamp >= %s and
-            request_path ~ '^/dre/[0-9]+/$'
+            request_path ~ '^/dre/[0-9]+/[a-zA-Z\-/0-9]*$'
         group by
             request_path
         order by hits desc
