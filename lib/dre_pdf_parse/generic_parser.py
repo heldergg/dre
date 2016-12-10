@@ -65,7 +65,7 @@ post_massage_rules = (
 t_is_list = re.compile(r'^(?:(?:[A-Z](?:\d+)?|\d+|[a-z0-9]+\.\d+)\s*-|[a-z]+\))\s+.*$')
 t_is_header = re.compile(ur'(?ui)^(?:Artigo \d+\.º(?:-[A-Z])?|Capítulo\s+(?:[ivxld]+|único)|Secção\s+(?:[ivxld]+|única)|Subsecção\s+(?:[ivxld]+|única)|Anexo(?:\s+\[ivxld]+|\s+único)?|Livro\s+(?:[ivxld]+|único)|Título\s+(?:[ivxld]+|único))$')
 
-any_str = lambda t,s: t and t[-1] not in u':\u201d'
+any_str = lambda t,s: t and t[-1] not in u':\u201d\xab'
 dash_start = lambda t,s: t and t[0] == '-' and s['i'] > 1
 dash_end = lambda t,s: t and t[-1] == '-' and s['i'] > 1
 is_semicolon_or_colon = lambda t,s: t in ';:'
