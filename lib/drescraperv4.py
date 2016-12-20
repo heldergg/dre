@@ -462,7 +462,10 @@ class DREReadJournal(object):
 
 class DREReadDay(object):
     '''
-    Reads the journal entries metadata for a given day
+    Reads the metadata of the 'date's list of journals
+
+    On a given day we will have at least two journals, one from teh first and
+    another one from the second series.
     '''
 
     def __init__(self, date):
@@ -476,6 +479,7 @@ class DREReadDay(object):
         soup = read_soup(self.index_url
                          ).find('div',
                                 {'class': 'search-result'}).findAll('li')
+        print soup
         dr_list = (DREReadJournal(dr_soup, self.date) for dr_soup in soup)
         return (doc
                 for dr in dr_list

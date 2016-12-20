@@ -157,8 +157,8 @@ if __name__ == '__main__':
     for o, a in opts:
         if o in ('-r', '--read_date'):
             import datetime
-            from drescraperv3 import DREReadDay, DREDocSave
-            from drescraperv3 import DREDuplicateError
+            from drescraperv4 import DREReadDay, DREDocSave
+            from drescraperv4 import DREDuplicateError
 
             try:
                 date = datetime.datetime.strptime( a, '%Y-%m-%d' )
@@ -179,8 +179,8 @@ if __name__ == '__main__':
         elif o == '--read_range':
             import datetime
             import time
-            from drescraperv3 import DREReadDay, DREDocSave
-            from drescraperv3 import DREDuplicateError
+            from drescraperv4 import DREReadDay, DREDocSave
+            from drescraperv4 import DREDuplicateError
 
             try:
                 date1, date2 = a.split(':')
