@@ -93,7 +93,7 @@ JOURNAL_URL = ('https://dre.pt/web/guest/pesquisa-avancada/'
                '-/asearch/%d/details/%d/maximized%s'
                )
 
-DREPT_URL = 'https://dre.pt%s'
+DREPDF_URL = 'https://dre.pt/application/conteudo/%s'
 
 DIGESTO_URL = ('https://dre.pt/home/-/dre/%d/details/maximized'
                '?serie=II&parte_filter=32'
@@ -245,6 +245,9 @@ DR_ID_NUMBER_RE = re.compile(r'^https://dre.pt/web/guest/pesquisa-avancada/'
                              r'-/asearch/(?P<int_rd_num>\d+)/details/'
                              r'maximized.*$')
 
+CLAINT_RE = re.compile(r'https://dre.pt/web/guest/pesquisa-avancada/-'
+                       r'/asearch/(?P<claint>\d+)/details/(?P<page>\d+)'
+                       r'/maximized.*$')
 # Document type and number:
 DOCTYPE_NUMBER_RE = re.compile(ur'^(?P<doc_type>.*?)(?:\s+n.º\s+)'
                                ur'(?P<number>[0-9A-Za-z\s/-]+)'
@@ -295,11 +298,13 @@ class DREReadDoc(object):
         self.data['notes'] = notes
 
     def parse_claint(self, tag):
-        claint = int(tag['href'].split('/')[-1])
-        self.data['claint'] = claint
+        # https://dre.pt/web/guest/pesquisa-avancada/-
+        # /asearch/<claint>/details/1/maximized?dreId=<dr_id>
+        dtc = CLAINT_RE.match(tag['href'])
+        self.data['claint'] = int(dtc.group('claint'))
 
     def parse_pdfurl(self, tag):
-        pdf_url = DREPT_URL % tag['href']
+        pdf_url = DREPDF_URL % self.data['claint']
         self.data['pdf_url'] = pdf_url
 
     def parse_doc_type_number(self, text):
@@ -330,14 +335,8 @@ class DREReadDoc(object):
         raise DREParseError('Could not parse the document: %s' % text)
 
     def parse_digesto(self, tag):
-        try:
-            digesto = tag.find('span', {'class': 'rgba'})
-            digesto = int(digesto.renderContents())
-            if digesto == self.data['claint']:
-                digesto = None
-        except AttributeError:
-            digesto = None
-        self.data['digesto'] = digesto
+        # TODO: remove the digesto entry
+        self.data['digesto'] = self.data['claint']
 
     def parse_header(self, soup):
         '''
@@ -348,7 +347,8 @@ class DREReadDoc(object):
                then we have a digesto entry;
             b) If If the claint (the pdf number) and the rgba number the same
                there's no digesto entry: for example the first document, series
-               1 from 2000-6-1 (Decreto do Presidente da República n.º 27/2000);
+               1 from 2000-6-1 (Decreto do Presidente da República n.º
+               27/2000);
 
         ii) No PDF link or claint
             Example: Second series, 1990-06-02
@@ -364,6 +364,7 @@ class DREReadDoc(object):
             self.parse_digesto(header)
             self.parse_doc_type_number(header_text)
         except AttributeError:
+            raise
             # Type ii) header
             header_text = header.strip()
             self.parse_doc_type_number(header_text)
@@ -384,6 +385,9 @@ class DREReadDoc(object):
 
 
 class DREReadJournal(object):
+    '''
+    Reads the journal index.
+    '''
 
     def __init__(self, soup, date):
         self.data = {'date': date}
@@ -479,7 +483,6 @@ class DREReadDay(object):
         soup = read_soup(self.index_url
                          ).find('div',
                                 {'class': 'search-result'}).findAll('li')
-        print soup
         dr_list = (DREReadJournal(dr_soup, self.date) for dr_soup in soup)
         return (doc
                 for dr in dr_list
@@ -696,8 +699,14 @@ class DREDocSave(object):
                              ).renderContents()
             text = text.replace('<span>Texto</span>', '')
         except AttributeError:
-            # No digesto text, abort
-            return ''
+            try:
+                # Public tender listings have a different class
+                text = soup.find('li', {'class': 'formatedTexto'}
+                                 ).renderContents()
+                text = text.replace('<span>Texto</span>', '')
+            except AttributeError:
+                # No digesto text, abort
+                return ''
         return text
 
     def save_digesto(self, document_text, doc_obj, text):
