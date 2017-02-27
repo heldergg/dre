@@ -6,7 +6,8 @@
 
 body {
   background: #fdfeff;
-  background-image: url('/static/img/esfera_armilar.png');
+  background-image: url('/static/img/esfera_armilar.svg');
+  background-size: 30%;
   background-repeat: no-repeat;
   background-position: right bottom;
   background-attachment:fixed;
