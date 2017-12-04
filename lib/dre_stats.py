@@ -33,7 +33,7 @@ PAGE_SIZE  = getattr(settings, 'PAGE_SIZE', 100000)
 ##
 
 logline_re = re.compile(
-    r'^(?P<remote_host>\d+\.\d+\.\d+\.\d+) - '
+    r'^(?P<remote_host>[a-fA-F0-9\.:]+) - '
     r'(?P<remote_user>[a-zA-Z0-9\-"]+) '
     r'\[(?P<timestamp>.*)\] '
     r'"(?P<request_type>[A-Z"]+) (?P<request_path>.+) (?P<request_proto>[^ ]+)" '
