@@ -81,7 +81,7 @@ def usage():
 # Utils
 
 def create_update_cache(doc):
-    logger.debug('CACHEPDF to %d %s %s %s' % (doc.id,
+    logger.debug('Update cache to %d %s %s %s' % (doc.id,
         doc.date, doc.doc_type, doc.number))
     cache = DocumentCache.objects.get_cache_object(doc)
     cache.build_cache()
@@ -91,7 +91,7 @@ def create_update_cache(doc):
         change.action = 'edit'
         change.save()
     except IntegrityError:
-        logger.error('CACHEPDF Djapian change already '
+        logger.error('Djapian indexing already '
             'sheduled for doc id=%d' % doc.id)
 
 if __name__ == '__main__':
