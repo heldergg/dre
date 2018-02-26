@@ -558,11 +558,14 @@ class DocumentCache(models.Model):
         if doc_text:
             # Build the html from the integral text
             html = doc_text.text
-            html = re.sub( r'(Artigo \d+\..)\n',r'<strong>\1</strong>', html)
-            html = re.sub( u'(CAPÍTULO [IVXLD]+)\n',r'<strong>\1</strong>', html)
-            html = re.sub( u'(SECÇÃO [IVXLD]+)\n',r'<strong>\1</strong>', html)
-            html = html.replace('TEXTO :','')
-            html = html.replace('/application/external/eurolex?', 'https://dre.pt/application/external/eurolex?')
+            html = re.sub(r'(Artigo \d+\..)\n', r'<strong>\1</strong>', html)
+            html = re.sub(u'(CAPÍTULO [IVXLD]+)\n', r'<strong>\1</strong>', html)
+            html = re.sub(u'(SECÇÃO [IVXLD]+)\n', r'<strong>\1</strong>', html)
+            html = re.sub(r'<a .*?>(.*?)</a>', r'\1', html)
+            html = html.replace('TEXTO :', '')
+            html = html.replace(
+                    '/application/external/eurolex?',
+                    'https://dre.pt/application/external/eurolex?')
         elif os.path.exists(filename):
             # Build the html from the plain text html
             html = self.build_cache_from_pdf(filename)
