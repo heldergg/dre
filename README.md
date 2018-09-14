@@ -1,1 +1,1 @@
-O projecto agora reside no [GitLab](https://github.com/heldergg/dre/).
+O projecto agora reside no [GitLab](https://gitlab.com/hgg/dre).
